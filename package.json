@@ -3,6 +3,8 @@
 	"description": "",
 	"version": "0.0.1",
 	"private": true,
+	"start": "npx nodemon src/index.ts",
+	"build": "tsc",
 	"scripts": {
 		"start": "vite --port 3000 --host",
 		"build:nocheck": "vite build && cp _redirects dist/_redirects",
