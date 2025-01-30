@@ -1,0 +1,27 @@
+I have 2 selecion box for multiple div structure when click on Add New button with remove option using useFieldArray in react
+
+
+
+Tasklist:
+1)Save Contact Details
+2)In Registration form in mobile number add country code selection box
+
+
+
+Today Tasklist:
+
+1) Link listing page member to profile : Done
+2) Load More option in members listing page
+3) In Profile page show all dynamic data
+4) in Alumni listing page for status change solve that issue : Done
+5) In Registration form in mobile number add country code selection box : Done
+6) when login check profile complete or not and if not then redirect on profile complete setup otherwise members listing page : Done
+7) Send Message submit data in database from profile page : Done
+
+
+7/3 TaskList
+1) Load More option in members listing page : Done
+2) issue in not clearing previous data when navigate other link and back to page: Done
+3) Search with Name or Email in Member Listing page : Done
+4) Make Edit Profile common header and sidebar :
+5) Basic Profile :

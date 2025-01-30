@@ -1,0 +1,250 @@
+ATBB5YVEQbubUpxGZRK5GxF6jsxW723741D0
+
+
+1. git add .
+2. git commit -m "message"
+3. git pull origin main
+4. git push origin main
+
+npx kill-port 5000
+
+ALTER TABLE `email_templates` ADD `update_job_status` LONGTEXT NOT NULL AFTER `new_job_mail`; 
+
+ALTER TABLE `email_templates` ADD `alumni_register_mail_admin` LONGTEXT NOT NULL AFTER `institute_id`; 
+
+ALTER TABLE `business_directorys` ADD `social_youtube` VARCHAR(255) NOT NULL AFTER `social_twitter`; 
+
+
+1) Register screen password strength should be checked.
+Done
+
+2) Location and Contact Information state is not selected as per register form.
+
+3) Location and Contact Information when i save country , save etc.. many field not coming selected.
+
+4) work detail when i select year in start year and select 'Present' in end year it gives error (Start Year must be lessar than End Year).
+
+Done
+
+5) Dahboard member name should have link to their profile.
+Done
+
+6) Member profile page re-design is pending.
+7) when i share job in what's app then in what's app job is not clickable.
+Removed
+8) Refer to Friend popup To field show first name and Last name of user. Now it showing only first name.
+Done
+9) Subject we are fetching default but i did not changed anythig in subject but it is validating.
+Done
+10) When i click on submit email we need to add some loader.
+Done
+11) Apply job popup in select resume section it show all user resume. It should show only logged user profile resumes.
+Done
+
+
+Basic Profile
+1)Salutation
+2)FirstName
+3)Middle Name
+4)Last Name
+5)Nickname
+
+
+
+Tabs : 
+Bassic Profile
+Location
+Education Details
+Work Details
+Resume
+
+
+
+1)Error message show in if filesize exceed in dashboard
+2)in dashboard post content with image and again without refresh page add content and no image but in post its taking previous image : Done
+3)if image upload then no validate on content post editor : Done
+3)in refer to friend add job some details and job url and set in emailtemplate for mail content : Done
+4)overlapping social urls in business directory in responsive : Done
+5)In event detail page I am going and buttons with edit icon needs to proper align : Done
+6)put 1 option with checkbox as filter in dashboard "View only My Posts" and when its checked load only logged in user posted data : Done
+7)list and view with delete and status change
+8)Dashboard Member list make dynamic : Done
+9)Alumni Edit Profile at admin area with tabs
+10)All Email Templates set and in job and event add email 
+11)Job and Event when add from alumni bydefault set status inactive and admin will approve
+
+
+1)Static Name in Dashboard : Done
+2)increase 5-6 lines in feed description then read more : Done
+3)show count in comment : Done
+4)remove ---- in select department and end year : Done
+5)rename university to institute : Done
+6)Make new Job detail page
+7)in sidebar in jobs filter add scroller and collaps, expand
+8)in jobs remove Job Opening from top and just shows Jobs bydefault and then when we change from sidebar like Internship that time change with that name and show as selected in blue color : Done
+9)Send email when update status in Job-Applicants : Done
+10)Add Button Near Manage Job Posting which name is "Applied Jobs" : Done
+11) Remove Team Members from Business directory edit : Done
+12)restrict delete button in Business directory : Done
+13)Add 2 options youtube and website url and remove * : Done
+14)in all upload files need to restrict for filesize and in pixels
+15)clear options in all filters in all pages
+16)when click on I will Join and again click on decline then remove that id from join : Done
+17)add edit icon near YOu are going button : Done
+18)in Group detail page on top right now "Batch of 2007" is static so need to change with dynamic name : Done
+19)in member listing page when select course ,department combo box not changing : Done
+20)In memver detail page need to fix profile image size and Send Message button on right place
+21)Need to add notification icon on header
+22)Add Course, Department, Specialization and Batch End Year in registration page : Done
+23)Redesign registration page
+24)in Dashboard remove image upload option from editor and give option seperate Picture upload : Done
+25)In Education Add from same institute that time institute name before static given now changed with dynamic institute : Done
+26)In Education Add when no department selection that time in group name showing undefined : Done
+
+
+17/12/24
+1)in appropriate, Spam
+2)after post content from dashboard, first admin will approve then other alumnis can see in dashboard
+3)add status and delete button on each feed if logged in user posted that content
+4)Add Course pursued from institute name
+5)
+
+Testing bugs Points
+
+--> department add should work in Admin sie: Done
+--> front end registration should work property with email. : Done
+--> admin side all information about alumni should be visible with tabs.
+--> Add gender selection in front end registration for also. : Done
+
+--> front end profile when i upload picture it is not working. : Done
+--> My Groups all groups are showing if i am not member : Done
+--> In location when i enter full address it is not accepting. : Done
+--> when i reload site state not selected.
+--> work phone number not selected in edit mode. : Done
+--> Professional Details update profile not working. : Done
+--> adding work experience not working. :Done
+--> resume update not working. : Done
+--> change pwd not working. : Done
+$2b$10$GYgJ5crqM8rOfY14U8qXAOzA90ot22VAesuGtJIjepyIFAcguy1HG
+
+Frontend: Below details for done points in main menus
+
+1)Dashboard:
+-User can post on dashboard using top textarea writeen area with any image choose and select
+ particular category and who can see this post that selection
+--Below add post show list of all posts which post by different members category tag and 
+Groups filters and with comment , share and report options
+
+2)Members:
+-List with filters
+-Detail page with send Message Button
+
+3)Jobs:
+-Jobs List with Filters
+-Post Job
+-Post Internship
+-Internship List
+-Detail page of job and internship
+-Manage Job Posting
+-Apply on Job, Refer to friend in Detail page
+-Job APplicants page with filters
+
+4)Business Directory
+-Add Page
+-List with filters
+-Detail page
+-Edit page
+
+5)Newsroom
+-List with filter
+-Detail page
+
+6)Events
+-Add Event
+-Event List with filters
+
+7)My Groups
+-List of Groups
+-Dashboard
+-Newsroom
+-Event
+-Members
+
+*Work in Progress and Remaining points
+1)Before event detail in popup with few details so now we are converting in detail page with full details and Going and
+May be Going list of members
+Desing is done, Dynamic Work in Progress
+
+2)Email Configuration set up for testing in event page so now working in backend creating Email Content setup list and add page and that content apply in frontend mails so this week we are working in this
+
+
+
+ALTER TABLE `business_directorys` ADD `member_ids` VARCHAR(255) NOT NULL AFTER `products`; 
+
+ALTER TABLE `jobs` ADD `is_internship` TINYINT NOT NULL AFTER `institute_id`; 
+ALTER TABLE `jobs` ADD `duration` VARCHAR(255) NOT NULL AFTER `experience_to`; 
+UPDATE `jobs` SET `institute_id` = '2'
+
+
+--> Event and News page we need option to select batch (multiple selection) : Done
+--> Dashboard we need option to upload picture and attach file
+--> Dashboard we need option to select category. Also add option to filter by category. 
+--> Dashboard post show selected category in post.: Done
+--> dashboard post need option to comment and share in every post
+--> dashboard we need to option for report in every post.
+--> From my group remove album option. : Done
+--> In group dashboard show post same as main dashboard but filter to particular group post. : Done
+
+1)Registration
+2)Login
+3)Forgot password
+4)Registered alumni approval by admin from admin area
+5)Edit Profile
+  1) Basic Profile
+  2) Picture
+  3) Location
+  4) Education Details (Add course from other university and from same university)
+  5) Work Details
+  6) Achievements
+  7) Resume
+  8) Account
+5)Members Listing page with filters
+6)Member detail page
+7)Jobs Listing page
+8)Job Detail
+9)Add Job
+10) Manage Job Listing for logged in user
+11) Edit Job
+12) Events Listing with filters
+13) Event Detail
+14) Add Event
+15) News Listing with filters
+16) News Detail 
+17) Dashboard (Add Post and listing of Posts)
+
+Admin area
+1) Login
+2) Users Listing, Add ,Edit , Delete
+3) Alumnis Listing, Add ,Edit , Delete , from listing change status of alumni (Now in alumni we are editing basic details, contact details, picture so we have to give manage options for other details of profile like work ,education, etc..)
+4) Departments(Course) Listing, Add ,Edit , Delete
+5) Roles Listing, Add ,Edit , Delete
+6) Events Listing, Add ,Edit , Delete
+7) News Listing, Add ,Edit , Delete
+8) Jobs Listing, Add ,Edit , Delete
+9) Dashboard Post Listing, Add, Edit, Delete
+
+
+
+Group(University)
+1)If we make Group wise database means multiple institutes have one database to manage using their instinute id
+But their domains are different
+2)for group super admin need to access admin area for all institutes at 1 place
+3)first group login and then see list of institute under it
+4)and select any one institute and show all menus and data according that selected institute
+
+
+Que : with which domain url super admin login and access because each institute has different urls and their admin part
+so for super admin we need to make different admin part ?
+
+
+

@@ -1,0 +1,114 @@
+.profile-completion-container {
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.profile-completion-container h1 {
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.profile-completion-steps {
+  display: flex;
+  margin-bottom: 30px;
+}
+
+.profile-completion-step-ind {
+  width: 100%;
+  display: flex;
+  margin-bottom: 30px;
+}
+
+.profile-completion-step-ind span{
+  display: flex;
+  
+}
+
+.profile-completion-step-ind.current {
+  color: #ffc11a;
+}
+
+.profile-completion-step-ind.completed {
+  color: #aadc00;
+}
+
+.profile-completion-step {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+  font-weight: bold;
+  color: #fff;
+  opacity: 0.5;
+  transition: all 0.3s ease-in-out;
+}
+
+.profile-completion-step.current {
+  background-color: #ffc11a;
+  opacity: 1;
+}
+
+.profile-completion-step.completed {
+  background-color: #aadc00;
+  opacity: 1;
+}
+
+.profile-completion-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.profile-completion-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50%;
+  
+}
+
+.profile-completion-section h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.profile-completion-section p {
+  font-size: 1.2rem;
+  color: #666;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+
+
+
+.profile-picture-upload span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  line-height: 200px;
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
+
+.profile-picture {
+  display: block;
+  font-size: 0.8rem;
+  color: #999;
+  text-align: center;
+  margin-top: 0.5rem;
+  width: 200px;
+  height: 200px;
+}
+

@@ -1,0 +1,209 @@
+/* @import './plugins.css'; */
+/* @import './flaticon.css'; */
+/* @import './bootstrap.min.css'; */
+/* @import './style.css'; */
+/* @import './responsive.css'; */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Inter - variable font */
+@font-face {
+	font-family: "Inter";
+	font-weight: 100 900;
+	font-display: swap;
+	font-style: normal;
+	font-named-instance: "Regular";
+	src: url("/assets/fonts/Inter-roman.var.woff2?v=3.19") format("woff2");
+}
+
+@font-face {
+	font-family: "Inter";
+	font-weight: 100 900;
+	font-display: swap;
+	font-style: italic;
+	font-named-instance: "Italic";
+	src: url("/assets/fonts/Inter-italic.var.woff2?v=3.19") format("woff2");
+}
+
+*,
+body,
+button,
+input,
+select,
+optgroup,
+textarea {
+	font-family: "Inter";
+}
+
+th {
+	font-weight: 500 !important;
+}
+
+html {
+	/* scroll-behavior: smooth;
+	scroll-behavior: auto;
+	scrollbar-color: rgb(230, 230, 230) #ffffff;
+	scrollbar-width: thin;
+	scrollbar-gutter: stable; */
+	/* font-size          : 16px; */
+	font-display: swap;
+	color: rgb(55, 65, 81);
+	text-rendering: optimizeLegibility;
+	font-feature-settings: "kern";
+	font-family: "Inter";
+	-webkit-font-smoothing: subpixel-antialiased !important;
+	text-rendering: optimizeLegibility !important;
+	font-weight: 400;
+}
+
+/* New css */
+.main-wrapper {
+	background: -webkit-gradient(
+		linear,
+		left top,
+		left bottom,
+		from(#f0f2fd),
+		to(#fff8f9)
+	);
+	background: linear-gradient(180deg, #f0f2fd 0%, #fff8f9 100%);
+	min-height: 100vh;
+}
+
+#contentDiv {
+	background: linear-gradient(
+		180deg,
+		rgba(255, 255, 255, 0.4) 0%,
+		rgba(255, 255, 255, 0.4) 100%
+	);
+}
+
+table tbody tr td:first-child {
+	border-radius: 10px 0 0 10px;
+}
+
+table tbody tr td:last-child {
+	border-radius: 0 10px 10px 0;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.animate-fade-in {
+	animation: fadeIn 1s ease-in-out forwards;
+}
+
+.custom-editor-border {
+	border: 2px solid #440178; /* Custom outer border color */
+	border-radius: 8px; /* Optional: rounded corners */
+	padding: 10px; /* Space between the border and the editor */
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: soft shadow */
+	/* height: 200px; */
+}
+
+.custom-editor-border .ck-editor__main {
+	height: 200px;
+}
+
+.custom-editor-border .ck-editor__editable {
+	height: 100%;
+}
+
+.custom-editor-main .ck-editor__main {
+	min-height: 200px;
+}
+
+.custom-editor-main .ck-editor__editable {
+	min-height: 200px;
+}
+.site-description-item-profile-wrapper {
+	margin-bottom: 7px;
+	color: rgba(0, 0, 0, 0.65);
+	font-size: 14px;
+	line-height: 1.5715;
+}
+
+.ant-drawer-body p {
+	display: block;
+	margin-bottom: 16px;
+	color: rgba(0, 0, 0, 0.85);
+	font-size: 16px;
+	line-height: 1.5715;
+}
+
+.site-description-item-profile-p-label {
+	display: inline-block;
+	margin-inline-end: 8px;
+	color: rgba(0, 0, 0, 0.85);
+}
+.custom-site-description-item-profile-wrapper {
+	margin-bottom: 7px;
+	color: rgba(0, 0, 0, 0.65);
+	font-size: 14px;
+	line-height: 1.5715;
+}
+
+.ant-drawer-body p.custom-site-description-item-profile-p {
+	display: block;
+	margin-bottom: 16px;
+	color: rgba(0, 0, 0, 0.85);
+	font-size: 16px;
+	line-height: 1.5715;
+}
+
+.custom-site-description-item-profile-p-label {
+	display: inline-block;
+	margin-inline-end: 8px;
+	color: rgba(0, 0, 0, 0.85);
+	font-weight: 500;
+	font-size: 16px;
+}
+.custom-upload-modal .ant-btn-primary {
+	background-color: #440178 !important;
+	border-color: #440178 !important;
+}
+
+::-webkit-scrollbar {
+	width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+	background: transparent;
+	border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: #cce2f2;
+	border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+	background: #555;
+}
+
+.scrollCustom::-webkit-scrollbar {
+	width: 2px;
+}
+
+.scrollCustom::-webkit-scrollbar-track {
+	background: transparent;
+	border-radius: 5px;
+}
+
+.scrollCustom::-webkit-scrollbar-thumb {
+	background: #a09999;
+	border-radius: 5px;
+}
+.MuiAccordion-gutters {
+	box-shadow: 0px 0px 0px 0px !important;
+}

@@ -1,0 +1,9 @@
+[build.environment]
+  NPM_FLAGS = "--version"
+[build]
+  command = "npx pnpm install --store=node_modules/.pnpm-store && npx pnpm run build"
+[build.processing]
+  skip_processing = true
+[[edge_functions]]
+  function = "csp"
+  path = "/*"
