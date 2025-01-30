@@ -15,7 +15,7 @@ import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { createHtmlPlugin } from "vite-plugin-html";
 // import basicSsl from "@vitejs/plugin-basic-ssl";
-import path from "path";
+import path, { resolve } from "path";
 // import viteCompression from "vite-plugin-compression";
 
 // https://vitejs.dev/config/
@@ -27,17 +27,19 @@ export default defineConfig(({ mode }) => {
 		build: {
 			target: "es2020",
 			minify: true,
+			
+
 			rollupOptions: {
-				onwarn(warning, warn) {
-					// Suppress "Module level directives cause errors when bundled" warnings
-					if (warning.code === "MODULE_LEVEL_DIRECTIVE") {
-						return;
-					}
-					warn(warning);
-				},
-			},
+				input: {
+				  main: resolve(__dirname, 'index.html')
+				}
+			  },
+			
+			
+
 			sourcemap: false, // Disable source maps in production
 		},
+	
 		optimizeDeps: {
 			esbuildOptions: {
 				target: "es2020",
@@ -53,6 +55,14 @@ export default defineConfig(({ mode }) => {
 					},
 				},
 			}),
+			{
+				name: 'copy-redirects',
+				buildEnd() {
+				  import('fs').then(fs => {
+					fs.copyFileSync('_redirects', 'dist/_redirects');
+				  });
+				}
+			  }
 			/* viteCompression({
 				algorithm: "gzip", // Use 'brotliCompress' for Brotli, or include both if needed
 				ext: ".gz", // Set the file extension for gzip
