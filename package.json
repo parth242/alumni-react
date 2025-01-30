@@ -1,6 +1,6 @@
 {
 	"name": "Bldea",
-	"description": "",
+	"description": "Alumni Project",
 	"version": "0.0.1",
 	"private": true,
 	"start": "npx nodemon src/index.ts",
