@@ -55,14 +55,14 @@ export default defineConfig(({ mode }) => {
 					},
 				},
 			}),
-			{
+			/*{
 				name: 'copy-redirects',
 				buildEnd() {
 				  import('fs').then(fs => {
 					fs.copyFileSync('_redirects', 'dist/_redirects');
 				  });
 				}
-			  }
+			}*/
 			/* viteCompression({
 				algorithm: "gzip", // Use 'brotliCompress' for Brotli, or include both if needed
 				ext: ".gz", // Set the file extension for gzip
