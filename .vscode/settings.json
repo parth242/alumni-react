@@ -63,5 +63,6 @@
 		"eamodio.gitlens",
 		"mgmcdermott.vscode-language-babel",
 		"dsznajder.es7-react-js-snippets"
-	]
+	],
+	"git.ignoreLimitWarning": true
 }

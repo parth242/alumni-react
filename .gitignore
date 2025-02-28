@@ -53,3 +53,6 @@ proj-start.sh
 pnpm-lock.yaml
 
 .history
+node_modules
+node_modules
+node_modules
