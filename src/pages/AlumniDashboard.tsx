@@ -360,6 +360,14 @@ function AlumniDashboard() {
 		await saveProfileImage();
 
 		// Prepare the payload to submit
+		if(data.group_id==""){
+			data.group_id = 0;
+		}
+
+		if(data.category_id==""){
+			data.category_id = 0;
+		}
+
 		const payload: TFeedFormData = {
 			user_id: Number(myuser?.id),
 			status: "active",
