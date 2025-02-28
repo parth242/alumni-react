@@ -144,6 +144,11 @@ function ManageJobPosting() {
 		}
 	}, [searchQuery, selectedFilters]);
 
+	function capitalizeFirstLetter(string: any) {
+		if (!string) return ''; // Handle empty or undefined strings
+		return string.charAt(0).toUpperCase() + string.slice(1);
+	  }
+
 	return (
 		<>
 			<SiteNavbar />
@@ -214,6 +219,11 @@ function ManageJobPosting() {
 												<th
 													scope="col"
 													className="px-6 py-3">
+													Status
+												</th>
+												<th
+													scope="col"
+													className="px-6 py-3">
 													Action
 												</th>
 											</tr>
@@ -241,6 +251,9 @@ function ManageJobPosting() {
 														{new Date(
 															job.posted_date,
 														).toLocaleDateString()}
+													</td>
+													<td className="px-6 py-4">
+														{capitalizeFirstLetter(job.status)}
 													</td>
 													<td className="px-6 py-4">
 														<BtnComponent

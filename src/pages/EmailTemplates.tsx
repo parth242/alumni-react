@@ -144,38 +144,36 @@ function EmailTemplates() {
 							Alumni Register Email For Admin
 						</label>
 				<div className="custom-editor-main min-h-[200px] border-2 border-[#440178] rounded-lg p-2.5 shadow-lg">
-							<CKEditor
-								editor={ClassicEditor as any}
-								data={editorAdminData}
-								config={{
-									extraPlugins: [MyCustomUploadAdapterPlugin],
-									placeholder:
-										"Type here to start your discussion... Feel free to share your thoughts and ideas!", // Placeholder text
-									toolbar: [														
-										"heading",
-										"|",
-										"bold",
-										"italic",
-										"link",
-										"bulletedList",
-										"numberedList",
-										"blockQuote",
-										"|",
-										"insertTable",
-										"mediaEmbed",
-										"undo",
-										"redo",
-										"imageUpload",
-									],
-								}}
-								onChange={async (event, editor) => {
-									const data = editor.getData();
-									const textContent =
-										parseEditorContent(data); // No need to strip out images now
-									setEditorAdminData(data); // Save full HTML content
-									setValue("alumni_register_mail_admin", textContent); // Set description to full content
-								}}
-							/>
+						<CKEditor
+							editor={ClassicEditor as any}
+							data={editorAdminData}
+							config={{
+								extraPlugins: [MyCustomUploadAdapterPlugin],
+								placeholder: "Type here to start your discussion... Feel free to share your thoughts and ideas!", 
+								toolbar: [
+								"heading",
+								"|",
+								"bold",
+								"italic",
+								"link",
+								"bulletedList",
+								"numberedList",
+								"blockQuote",
+								"|",
+								"insertTable",
+								"mediaEmbed",
+								"undo",
+								"redo",
+								"imageUpload",															
+								],
+							}}
+							onChange={async (event, editor) => {
+								const data = editor.getData();
+								const textContent = parseEditorContent(data);
+								setEditorAdminData(data);
+								setValue("alumni_register_mail_admin", textContent);
+							}}
+						/>
 							<input type="hidden" {...register("alumni_register_mail_admin")} />
 
 							{/* Display error message */}

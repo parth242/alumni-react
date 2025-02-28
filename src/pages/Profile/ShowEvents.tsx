@@ -25,7 +25,7 @@ function ShowEvents() {
 	const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 	const [selectedDateFilter, setSelectedDateFilter] = useState<string>("");
 
-	const [activeStatus, setActiveStatus] = useState("");
+	const [activeStatus, setActiveStatus] = useState("active");
 	const [searchText, setSearchText] = useState("");
 
 	const [pageNumber, setPageNumber] = useState(pageStartFrom);
@@ -63,6 +63,7 @@ function ShowEvents() {
 		page_number: pageNumber,
 		page_size: pageSize.value,
 		group_id: 0,
+		user_id: 0
 	}) || [];
 
 	useEffect(() => {
@@ -129,6 +130,14 @@ function ShowEvents() {
 									onClick={() => navigate("/add-events")}
 									size="md">
 									Add Event
+								</Button>
+								<Button
+									style={{ backgroundColor: "#440178" }}
+									className="text-center text-white"
+									outline
+									onClick={() => navigate("/manage-events")}
+									size="md">
+									Manage Events
 								</Button>
 								{/* Category Filters */}
 								<div className="flex flex-wrap gap-4 md:justify-center items-center">

@@ -47,6 +47,7 @@ const useEvents = ({
 	page_size,
 	filter_name,
 	group_id,
+	user_id,
 }: EventsRequest) => {
 	return useQuery<EventsResponse, HTTPError>(
 		["eventList"],
@@ -62,7 +63,7 @@ const useEvents = ({
 							(filter_category ? "&filter_category=" + filter_category : "") +
 							(filter_date ? "&filter_date=" + filter_date : "") +
 						(filter_name ? "&filter_name=" + filter_name : "") +
-						`&group_id=${group_id}&page_number=${page_number}
+						`&group_id=${group_id}&user_id=${user_id}&page_number=${page_number}
 						&page_size=${page_size}&flow_types=0&flow_types=1&flow_types=2`,
 					)
 					.json();
@@ -110,10 +111,19 @@ const updateJoinUser = async (req: TEventJoinUserData) => {
 	}
 };
 
+const statusEvent = async (req: any) => {
+	try {
+		return await authClient.post(`api/v1/event/status/`, { json: req }).json();
+	} catch (error) {
+		return Promise.reject(error);
+	}
+};
+
 export {
 	useEvents,
 	getEvent,
 	createEvent,
 	deleteEvent,	
+	statusEvent,
 	updateJoinUser,
 };

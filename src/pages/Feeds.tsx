@@ -274,16 +274,7 @@ function Feeds() {
 		<div className="">
 			<div className="flex justify-between border-b border-border pb-5 items-center">
 				<span className="text-lg font-semibold">Dashboard Posts</span>
-				{isAddAccess ? (
-					<Link
-						to={"/admin/feed-details"}
-						className={`rounded-md border border-transparent bg-primary p-2 text-sm font-medium text-white shadow-sm hover:bg-primary focus:outline-none focus:ring-0 focus:ring-primary focus:ring-offset-0 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400 disabled:hover:bg-gray-200`}>
-						<Icon icon="plus" className="mr-1 h-5 w-5 text-white" />
-						Add Feed
-					</Link>
-				) : (
-					""
-				)}
+				
 			</div>
 
 			<div className="flex flex-col">

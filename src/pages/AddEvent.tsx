@@ -2,9 +2,10 @@ import SiteNavbar from "components/layout/sitenavbar";
 import { useForm, useFieldArray } from "react-hook-form";
 import React, { useEffect, useState } from "react";
 import { useMutation } from "react-query";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import Loader from "components/layout/loader";
 import { Input } from "components/ui/common/Input";
 import Select from "components/ui/common/Select";
 import SelectMulti from "components/ui/common/SelectMulti";
@@ -24,13 +25,18 @@ import {
 	SuccessToastMessage,
 	useUploadImage,
 } from "api/services/user";
-import { createEvent } from "api/services/eventService";
+import { createEvent, getEvent } from "api/services/eventService";
 import { TEventFormData, IUser, TSelect, IGroup } from "utils/datatypes";
 import { pageStartFrom } from "utils/consts";
 import axios, { AxiosResponse } from "axios";
+import FlexStartEnd from "components/ui/common/FlexStartEnd";
+import BtnLink from "components/ui/common/BtnLink";
 
 function AddEvent() {
 	const navigate = useNavigate();
+	const { id } = useParams() as {
+		id: string;
+	};
 
 	const EmailSchema = yup.object().shape({
 		event_title: yup.string().required("Event Title field is required."),
@@ -64,10 +70,14 @@ function AddEvent() {
 	const [pageNumber, setPageNumber] = useState(pageStartFrom);
 	const [pageSize, setPageSize] = useState({ value: 10 });
 
+	const [loading, setLoading] = useState(false);
+
 	const [groups, setGroups] = useState<TSelect[]>([]);
 	const [selectedValuesGroup, setSelectedValuesGroup] = useState<TSelect[]>(
 		[],
 	);
+
+	const [uploadedImage, setUploadedImage] = useState<string>();
 
 	const getUserData = async () => {
 		const userString = localStorage.getItem("user");
@@ -103,14 +113,58 @@ function AddEvent() {
 	}) || [];
 	useEffect(() => {
 		if (groupList) {
-			const groupsList = groupList.data.map((item: IGroup) => {
-				return { text: item.group?.group_name, value: item.id };
+			
+			const groupsList = groupList.data.map((item: any) => {
+				return { text: item.group?.group_name, value: item.group?.id };
 			}) as TSelect[];
 			setGroups([...groupsList]);
 		} else {
 			setGroups([]);
 		}
 	}, [groupList]);
+
+	let {
+		isLoading,
+		data: eventDetails,
+		refetch: fetchEventDetails,
+		isFetching: isFetchingEventDetails,
+		remove,
+	} = getEvent({
+		enabled: +id > 0,
+		id: +id,
+	}) || [];
+	useEffect(() => {
+		if (id) {
+			fetchEventDetails();
+		} else {
+			eventDetails = undefined;
+			setTimeout(() => {
+				reset();
+			});
+		}
+	}, [id]);
+
+	useEffect(() => {
+		
+	
+		
+		if(eventDetails){
+		reset(eventDetails?.data as any);	
+		
+		const groupjson = JSON.parse(eventDetails?.data?.group_id);
+		
+		console.log('groups',groups);
+			const defaultValues = groups.filter(group => groupjson.includes(group.value));
+			
+			setSelectedValuesGroup(defaultValues as any);
+
+			setUploadedImage(eventDetails?.data?.event_image as string);
+
+		trigger();
+		}
+	}, [eventDetails,groups]);
+
+	
 
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [image, setImage] = useState<File | null>(null);
@@ -183,6 +237,7 @@ function AddEvent() {
 	};
 
 	const handleGroup = (selectedOptions: any) => {
+		console.log('selectedOptions',selectedOptions);
 		setSelectedValuesGroup(selectedOptions);
 
 		const groupNumbers = selectedOptions.map((mn: any) => {
@@ -194,6 +249,7 @@ function AddEvent() {
 
 	const { mutate, isError, error } = useMutation(createEvent, {
 		onSuccess: async (res: any) => {
+			setLoading(false);
 			SuccessToastMessage({
 				title: "Event Added Successfully",
 				id: "event_user_success",
@@ -201,17 +257,21 @@ function AddEvent() {
 			navigate("/show-events");
 		},
 		onError: async (e: HTTPError) => {
+			setLoading(false);
 			ErrorToastMessage({ error: e, id: "event_user" });
 		},
 	});
 
 	const onSubmit = async (data: TEventFormData) => {
+		setLoading(true);
 		await saveProfileImage();
 		data.event_image = getValues("event_image") || "";
 		console.log("data.event_image", data.event_image);
 		data.user_id = Number(myuser?.id);
 		data.event_type = "Free";
+		data.status = "inactive";		
 		data.group_id = JSON.stringify(data.group_id);
+		
 
 		/* const imageFile = (
 			document.querySelector('input[type="file"]') as HTMLInputElement
@@ -250,10 +310,13 @@ function AddEvent() {
 	return (
 		<>
 			<SiteNavbar />
-			<div className="container mx-auto p-4 max-w-7xl">
-				<h1 className="text-2xl font-bold text-center mb-8">
+			<div className="container mx-auto p-6 max-w-7xl">
+			<FlexStartEnd>
+			<h1 className="md:text-3xl text-xl font-bold text-center mb-4">
 					Add Event
 				</h1>
+				<BtnLink onClick={() => navigate(-1)}>Go Back</BtnLink>
+				</FlexStartEnd>
 				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 					<div>
 						<label
@@ -356,7 +419,17 @@ function AddEvent() {
 							accept={`${allowedFiles["image"]}`}
 							onChange={handleImageChange}
 						/>
+						{uploadedImage && (
+								<img
+									src={
+										import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL + uploadedImage
+									}
+									className="mt-4 w-40 h-40 square-full"
+									alt="eventImage"
+								/>
+							)}
 					</div>
+					{loading && <Loader></Loader>}
 					<div className="group flex items-center justify-center">
 						<Button
 							style={{ backgroundColor: "#440178" }}

@@ -701,7 +701,7 @@ const JobReferToFriend: React.FC<RequestType> = ({
 											"focus:ring-primary",
 											"focus:ring-offset-2",
 										)}>
-										Upload Resume
+										Submit
 									</button>
 									{success === false && successMessage && (
 										<span className="mt-8 text-primary">

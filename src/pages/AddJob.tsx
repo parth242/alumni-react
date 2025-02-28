@@ -8,6 +8,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useAppState } from "utils/useAppState";
 import { Input } from "components/ui/common/Input";
 import Select from "components/ui/common/Select";
+import Loader from "components/layout/loader";
 import SelectMulti from "components/ui/common/SelectMulti";
 import Textarea from "components/ui/common/Textarea";
 import {
@@ -46,6 +47,7 @@ function AddJob() {
 	};
 
 	const [myuser, setMyUser] = useState<IUser | null>();
+	const [loading, setLoading] = useState(false);
 
 	const getUserData = async () => {
 		const userString = localStorage.getItem("user");
@@ -112,20 +114,23 @@ function AddJob() {
 		isFetching: isFetchingJobDetails,
 		remove,
 	} = getJob({
-		enabled: +id > 0,
-		id: +id,
+		enabled: Number(id) > 0,
+		id: Number(id),
 	}) || [];
 	useEffect(() => {
 		if (id) {
+			
 			fetchJobDetails();
 		} else {
+			
 			jobDetails = undefined;
 			setTimeout(() => {
 				reset();
 			});
 		}
 	}, [id]);
-
+	
+		
 	const {
 		data: professionalskills,
 		refetch: fetchprofessionalskillListData,
@@ -217,6 +222,7 @@ function AddJob() {
 
 	const { mutate, isError, error } = useMutation(createJob, {
 		onSuccess: async (res: any) => {
+			setLoading(false);
 			SuccessToastMessage({
 				title: "Job Added Successfully",
 				id: "job_user_success",
@@ -224,14 +230,16 @@ function AddJob() {
 			navigate("/jobs");
 		},
 		onError: async (e: HTTPError) => {
+			setLoading(false);
 			ErrorToastMessage({ error: e, id: "job_user" });
 		},
 	});
 
 	const onSubmit = (data: TJobFormData) => {
+		setLoading(true);
 		data.user_id = Number(myuser?.id);
 		data.job_type = "Full-time";
-		data.status = "active";
+		data.status = "inactive";
 		data.is_internship = 0;
 		data.duration = "";
 		const currentDate = new Date();
@@ -439,7 +447,7 @@ function AddJob() {
 							/>
 						</div> */}
 					</div>
-
+					{loading && <Loader></Loader>}
 					<div className="group flex items-center justify-center">
 						<Button
 							style={{ backgroundColor: "#440178" }}

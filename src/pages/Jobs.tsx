@@ -18,7 +18,7 @@ import BtnLink from "components/ui/common/BtnLink";
 
 function Jobs() {
 	const navigate = useNavigate();
-	const [activeStatus, setActiveStatus] = useState("");
+	const [activeStatus, setActiveStatus] = useState("active");
 	const [searchText, setSearchText] = useState("");
 	const [searchTextChanged, setSearchTextChanged] = useState(false);
 	const [pageNumber, setPageNumber] = useState(pageStartFrom);

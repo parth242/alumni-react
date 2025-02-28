@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button } from "flowbite-react";
 import BtnComponent from "./BtnComponent";
-import { IFeed, IComment, TCommentFormData } from "utils/datatypes";
+import { IFeed, IComment, TCommentFormData, TReportFormData } from "utils/datatypes";
 import Textarea from "components/ui/common/Textarea";
 import { endDateWithSuffix, formatDateWithSuffix } from "./NewsItem";
 import { useForm, useFieldArray } from "react-hook-form";
@@ -14,7 +14,7 @@ import {
 	SuccessToastMessage,
 	useUploadImage,
 } from "api/services/user";
-import { createComment, useFeedComments } from "api/services/feedService";
+import { createComment, useFeedComments, CreateReport } from "api/services/feedService";
 import FlexStartEnd from "./common/FlexStartEnd";
 import { Form, Input, Space, Drawer, Card, Avatar, Radio } from "antd";
 import { useNavigate, Link } from "react-router-dom";
@@ -51,11 +51,13 @@ const AlumniDashboardCard: React.FC<AlumniDashboardCardProps> = ({ feed,fetchFee
 
 	const [inputShareValue, setInputShareValue] = useState("");
 
+	const [isReportReason, setIsReportReason] = useState("");	
+
 	const [shareBtnValue, setShareBtnValue] = useState("Copy");
 
 	const [form] = Form.useForm();
 
-	const { mutate, isLoading, isError, isSuccess, error } = useMutation(
+	const { mutate:CommentMutate, isLoading:isPostCommentLoading, isError:isPostCommentError, isSuccess:isPostCommentSuccess, error:postCommentError } = useMutation(
 		createComment,
 		{
 			onSuccess: async (res: any) => {
@@ -86,8 +88,10 @@ const AlumniDashboardCard: React.FC<AlumniDashboardCardProps> = ({ feed,fetchFee
 
 		data.status = "active";
 		data.feed_id = isFeedId;
-		mutate(data);
+		CommentMutate(data);
 	};
+
+	
 
 	const handleReadMore = () => {
 		setIsOpen(true);
@@ -101,9 +105,52 @@ const AlumniDashboardCard: React.FC<AlumniDashboardCardProps> = ({ feed,fetchFee
 		setIsShareOpen(true);
 	};
 
-	const handleReport = () => {
+	const { mutate:ReportMutate, isLoading:isReportLoading, isError:isReportError, isSuccess:isReportSuccess, error:reportError } = useMutation(
+		CreateReport,
+		{
+			onSuccess: async (res: any) => {
+				SuccessToastMessage({
+					title: "Report Submited Successfully",
+					id: "report_user_success",
+				});
+
+				setIsFeedId(0);
+				form.resetFields();
+				setIsReportOpen(false);
+				fetchFeedList();
+				//fetchFeedList();
+				//navigate("/dashboard");
+			},
+			onError: async (e: HTTPError) => {
+				ErrorToastMessage({ error: e, id: "report_user" });
+			},
+		},
+	);
+
+	const handleReport = (feedid: number) => {
+		setIsFeedId(feedid);
 		setIsReportOpen(true);
 	};
+
+	
+	const handleChangeReason = (e: any) => {
+		setIsReportReason(e.target.value);
+	  };
+
+	const ReportSubmit = () =>{
+		const data = {
+			user_id: 0,
+			report_reason: isReportReason, // Assuming `isReportReason` is defined in your component
+			feed_id: isFeedId,             // Assuming `isFeedId` is defined in your component
+		};
+		const userString = localStorage.getItem("user");
+		if (userString !== null) {
+			const items = JSON.parse(userString);
+			data.user_id = Number(items?.id);
+		}
+		
+		ReportMutate(data);
+	}
 
 	const limitWords = (text: string, limit: number) => {
 		const words = text.split(" ");
@@ -285,7 +332,7 @@ const AlumniDashboardCard: React.FC<AlumniDashboardCardProps> = ({ feed,fetchFee
 								<HiFlag
 									color="red"
 									className="cursor-pointer"
-									onClick={() => handleReport()}
+									onClick={() => handleReport(Number(feed.id))}
 								/>
 							</div>
 						</div>
@@ -365,7 +412,7 @@ const AlumniDashboardCard: React.FC<AlumniDashboardCardProps> = ({ feed,fetchFee
 			<Modal show={isReportOpen} onClose={() => setIsReportOpen(false)}>
 				<Modal.Header>Report</Modal.Header>
 				<Modal.Body>
-					<Radio.Group size="large" buttonStyle="solid">
+					<Radio.Group size="large" buttonStyle="solid" name="reason" onChange={handleChangeReason}>
 						<Radio value="spam">Spam</Radio>
 						<Radio value="offensive">Offensive</Radio>
 						<Radio value="other">Other</Radio>
@@ -374,8 +421,8 @@ const AlumniDashboardCard: React.FC<AlumniDashboardCardProps> = ({ feed,fetchFee
 				<Modal.Footer>
 					<BtnComponent
 						justify="justify-start"
-						onClick={() => setIsReportOpen(false)}
-						value="Close"
+						onClick={() => ReportSubmit()}
+						value="Submit"
 					/>
 				</Modal.Footer>
 			</Modal>

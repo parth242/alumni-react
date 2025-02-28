@@ -13,11 +13,11 @@ import { HTTPError } from "ky";
 import { useQuery } from "react-query";
 
 const getJob = ({ enabled, id }: JobRequest) => {
-	console.log("id", id);
+	
 	return useQuery<JobResponse, HTTPError>(
 		["job"],
 		async () => {
-			try {
+			try {				
 				return await apiClient.get(`api/v1/job/` + id).json();
 			} catch (error) {
 				return Promise.reject(error);
@@ -97,4 +97,12 @@ const sendEmail = async (req: TMailFormData) => {
 	}
 };
 
-export { useJobs, getJob, createJob, deleteJob, sendEmail };
+const statusJob = async (req: any) => {
+	try {
+		return await authClient.post(`api/v1/job/status/`, { json: req }).json();
+	} catch (error) {
+		return Promise.reject(error);
+	}
+};
+
+export { useJobs, getJob, createJob, deleteJob, statusJob, sendEmail };

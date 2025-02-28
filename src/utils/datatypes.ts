@@ -478,6 +478,7 @@ export type TEventFormData = {
 	event_image: string;
 	user_id: number;
 	group_id: string;
+	status: string;
 };
 export type IEvent = {
 	id?: number;
@@ -492,7 +493,9 @@ export type IEvent = {
 	join_members: string;
 	maybe_members: string;
 	decline_members: string;
+	group_id: string;
 	user_id: number;
+	status: string;
 	created_on: Date;
 	updated_on: Date;
 };
@@ -517,6 +520,7 @@ export type EventsRequest = {
 	page_number: number;
 	page_size: number;
 	group_id: number;
+	user_id: number;
 };
 
 export type TEventJoinUserData = {
@@ -755,6 +759,13 @@ export type TCommentFormData = {
 	user_id: number;
 	feed_id: number;
 	status: string;
+};
+
+export type TReportFormData = {
+	id?: number;
+	report_reason: string;
+	user_id: number;
+	feed_id: number;	
 };
 
 export type IComment = {
@@ -1202,6 +1213,35 @@ export type CoursesRequest = {
 	page_size: number;
 };
 
+export type INotification = {
+	id?: number;
+	sender_id: number;
+	receiver_id: number;
+	message_desc: string;
+	notify_url: string;
+	is_read: number;
+	created_on: Date;
+	updated_on: Date;
+	createdAt: Date;
+	updatedAt: Date;
+};
+export type NotificationsResponse = {
+	total_records: number;
+	data: INotification[];
+};
+export type NotificationRequest = {
+	enabled: boolean;
+	id: number;
+};
+export type NotificationResponse = {
+	message: string;
+	data: INotification;
+};
+export type NotificationsRequest = {
+	enabled: boolean;	
+	user_id: number;
+};
+
 export type TInstituteFormData = {
 	id?: number;
 	institute_name: string;
@@ -1272,6 +1312,50 @@ export type EducationResponse = {
 export type EducationsRequest = {
 	enabled: boolean;
 	filter_user: number;
+};
+
+export type IMessage = {
+	id?: number;
+	sender_id: number;
+	receiver_id: number;
+	subject: string;
+	message_desc: string;
+	status: string;
+	user?: { first_name: string,  last_name: string};
+	created_on: Date;
+	updated_on: Date;	
+	createdAt: string;
+	updatedAt: Date;
+};
+
+export type MessagesResponse = {
+	total_records: number;
+	data: IMessage[];
+};
+export type MessageRequest = {
+	enabled: boolean;
+	id: number;
+};
+export type MessageResponse = {
+	message: string;
+	data: IMessage;
+};
+export type MessagesRequest = {
+	enabled: boolean;
+	user_id: number;
+	filter_status: string;
+	filter_name: string;
+	page_number: number;
+	page_size: number;
+};
+
+export type MessagesCountRequest = {
+	enabled: boolean;
+	user_id: number;	
+};
+
+export type MessagesCountResponse = {
+	total_records: number;	
 };
 
 export type TCompanyFormData = {

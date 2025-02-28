@@ -68,6 +68,8 @@ function Alumnis() {
 	const [isEditAccess, setIsEditAccess] = useState(false);
 	const [isDeleteAccess, setIsDeleteAccess] = useState(false);
 
+	const [openMenuId, setOpenMenuId] = useState(null);
+
 	useEffect(() => {
 		const fetchData = async () => {
 		 
@@ -273,7 +275,7 @@ function Alumnis() {
 		setOpenMenuId(null);
 	  };
 
-	  const [openMenuId, setOpenMenuId] = useState(null);
+	  
 
   const toggleMenu = (id:any) => {
     setOpenMenuId(openMenuId === id ? null : id);

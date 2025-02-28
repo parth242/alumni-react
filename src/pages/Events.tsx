@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { CUserStatusClass, pageStartFrom, tooltipClass } from "utils/consts";
 import { useMutation } from "react-query";
 import { ErrorToastMessage, SuccessToastMessage } from "api/services/user";
-import { useEvents, deleteEvent } from "api/services/eventService";
+import { useEvents, deleteEvent, statusEvent } from "api/services/eventService";
 import { HTTPError } from "ky";
 import PaginationBar from "components/ui/paginationBar";
 import TableHead from "components/ui/table/tableHead";
@@ -62,6 +62,7 @@ function Events() {
 		page_number: pageNumber,
 		page_size: pageSize.value,
 		group_id: 0,
+		user_id: 0,
 	}) || [];
 	console.log("eventList", eventList);
 	console.log("isLoading", isLoading);
@@ -69,6 +70,7 @@ function Events() {
 	const [isAddAccess, setIsAddAccess] = useState(false);
 	const [isEditAccess, setIsEditAccess] = useState(false);
 	const [isDeleteAccess, setIsDeleteAccess] = useState(false);
+	const [openMenuId, setOpenMenuId] = useState(null);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -161,6 +163,10 @@ function Events() {
 		},
 		{
 			id: 5,
+			name: "Status",
+		},
+		{
+			id: 6,
 			name: "ACTION",
 		},
 	];
@@ -229,6 +235,39 @@ function Events() {
 		setIsDeleteConfirm(true);
 	};
 
+	const { mutate: statusItem, isLoading: statusIsLoading } = useMutation(statusEvent, {
+		onSuccess: async () => {
+			SuccessToastMessage({
+				title: "Status Changed Successfully",
+				id: "status_event_success",
+			});
+			fetchEventList();
+			
+		},
+		onError: async (e: HTTPError) => {
+			// const error = await e.response.text();
+			// console.log("error", error);
+			ErrorToastMessage({ error: e, id: "status_event" });
+		},
+	});
+
+	const changeStatus = (itemId:any,status:string) => {
+		interface dataJoin {
+			id: number;
+			status: string;			
+		}
+		let data: dataJoin = {
+			id: Number(itemId), 			
+			status: status			
+		};
+		statusItem(data as any);
+		setOpenMenuId(null);
+	  };
+
+	const toggleMenu = (id:any) => {
+		setOpenMenuId(openMenuId === id ? null : id);
+	  };
+
 	return (
 		<div className="">
 			<div className="flex justify-between border-b border-border pb-5 items-center">
@@ -249,7 +288,7 @@ function Events() {
 				<table className="w-full border-separate border-spacing-y-2 text-left">
 					<TableHead data={TableHeadData} />
 					<tbody className="">
-						{isLoading || isFetchingEventList ? (
+						{isLoading || isFetchingEventList || statusIsLoading ? (
 							skeletonCards.map((index: number) => (
 								<tr key={index}>
 									<td colSpan={TableHeadData.length}>
@@ -296,7 +335,67 @@ function Events() {
 														<TableData
 															data={item.location}
 														/>
-
+														<TableData data={
+															<>
+															<div className="absolute">
+															
+																	{
+																	item?.status === 'active' ? (
+																		<>
+																		<button
+																	type="button"
+																	className="text-green-600 hover:text-gray-600 focus:outline-none"
+																	onClick={() => toggleMenu(item.id)}>
+																		Active 
+																	</button>																		
+																		</>
+																	) : (
+																		
+																			<>
+																			<button
+																		type="button"
+																		className="hover:text-gray-600 focus:outline-none"
+																		onClick={() => toggleMenu(item.id)}>
+																			Inactive 
+																		</button>																		
+																			</>
+																		
+																		
+																	)
+																	}
+															
+															{openMenuId === item.id && (
+																<div className="absolute right-0 z-10 mt-2 w-48 bg-white divide-y divide-gray-100 rounded-md shadow-lg origin-top-right focus:outline-none">
+																<div className="py-1">
+																{
+																	item?.status === 'active' ? (
+																	<>
+																	<button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" onClick={() => changeStatus(item.id,'inactive')}>
+																	
+																	Inactive
+																	</button>
+																	
+																	</>
+																	) : (
+																		
+																			<>
+																			<button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" onClick={() => changeStatus(item.id,'active')}>
+																			
+																			Active
+																			</button>
+																			
+																			</>
+																		
+																	)
+																	}
+																	
+																</div>
+																</div>
+															)}
+															</div>	
+																
+															</>
+														} />
 														<TableData
 															data={
 																<>

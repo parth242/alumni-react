@@ -2,11 +2,24 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useAppState } from "utils/useAppState";
 import { useMutation } from "react-query";
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import Badge from '@mui/material/Badge';
+import IconButton from '@mui/material/IconButton';
 import { logout } from "api";
 import { Avatar, Dropdown, Navbar } from "flowbite-react";
 import ChangePassword from "pages/ChangePassword";
 import { Divider } from "@mui/material";
-import { IUser } from "utils/datatypes";
+import { INotification, IUser } from "utils/datatypes";
+import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import Popover from '@mui/material/Popover';
+import Typography from '@mui/material/Typography';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import { HTTPError } from "ky";
+import { useNotifications, updateNotification } from "api/services/notificationService";
+import { useUnreadMessagesCount } from "api/services/messageService";
+
 
 export default function SiteNavbar() {
 	const path = useLocation().pathname;
@@ -17,13 +30,18 @@ export default function SiteNavbar() {
 	>();
 	const navigate = useNavigate();
 
-	const [myuser, setMyUser] = useState<IUser | null>();
+	const [myuser, setMyUser] = useState<IUser | null>();	
+	const [notifications, setNotifications] = useState<INotification[]>([]);
+	const [notificationCount, setNotificationCount] = useState(0);
+	const [messageCount, setMessageCount] = useState(0);
+	const [userId, setUserId] = useState(0);
 
 	const getUserData = async () => {
 		const userString = localStorage.getItem("user");
 		if (userString !== null) {
 			const items = JSON.parse(userString);
 			setMyUser(items);
+			setUserId(items.id);
 		}
 	};
 	useEffect(() => {
@@ -57,6 +75,99 @@ export default function SiteNavbar() {
 			}
 		}
 	}, [myuser]);
+
+	const {		
+		data: notificationList,
+		refetch: fetchNotificationList,
+		isFetching: isFetchingNotificationList,
+	} = useNotifications({
+		enabled: false,		
+		user_id: userId		
+	}) || [];
+
+	
+	useEffect(() => {
+		if (userId > 0) {
+		  fetchNotificationList();
+		}
+	  }, [userId, fetchNotificationList]);
+
+	  useEffect(() => {
+		if (notificationList?.data) {
+			setNotificationCount(notificationList?.data.length);
+			setNotifications(notificationList?.data);
+			
+		} else{
+			setNotifications([]);
+		}
+		
+	  }, [notificationList]);
+
+	  const {		
+		data: messageCountList,
+		refetch: fetchMessageCountList,
+		isFetching: isFetchingMessageCountList,
+	} = useUnreadMessagesCount({
+		enabled: false,		
+		user_id: userId		
+	}) || [];
+
+	
+	useEffect(() => {
+		if (userId > 0) {
+			fetchMessageCountList();
+		}
+	  }, [userId, fetchMessageCountList]);
+
+	  useEffect(() => {
+		if (messageCountList?.total_records) {
+			setMessageCount(messageCountList?.total_records);			
+			
+		} 
+		
+	  }, [messageCountList]);
+
+	const [anchorEl, setAnchorEl] = useState(null);
+
+	
+	  // Handle click to open popover
+	  const handleClick = (event: any) => {
+		setAnchorEl(event.currentTarget);
+	  };
+	
+	  // Handle closing of popover
+	  const handleClose = () => {
+		setAnchorEl(null);
+	  };
+
+	  const { mutate: notificationMutate } = useMutation(updateNotification, {
+		onSuccess: async () => {			
+			fetchNotificationList();			
+		},
+		onError: async (err: HTTPError) => {
+			
+		},
+	});
+
+	  const handleNotificationClick = (id: number, link: string) => {
+		// Update notification read status
+		const data = {id: id, is_read:1};
+		notificationMutate(data as any);
+	
+		// Redirect to the notification link
+		navigate("/"+link);
+	
+		// Close the notification popover
+		handleClose();
+	  };
+
+	  const handleIconClick = () => {
+		navigate("/alumni-messages"); // Replace "/messages" with your desired route
+	  };
+	
+	  const open = Boolean(anchorEl);
+	  const id = open ? 'notification-popover' : undefined;
+
 	return (
 		<>
 			<div
@@ -73,6 +184,62 @@ export default function SiteNavbar() {
 						</span>
 					</Navbar.Brand>
 					<div className="flex md:order-2">
+						<div>
+					<IconButton color="inherit" onClick={handleClick}>
+					<Badge
+						badgeContent={notificationCount}
+						color="error"
+						>
+							<NotificationsIcon sx={{ color: 'white' }} />
+						</Badge>
+						</IconButton>
+						<Popover
+							id={id}
+							open={open}
+							anchorEl={anchorEl}
+							onClose={handleClose}
+							anchorOrigin={{
+							vertical: 'bottom',
+							horizontal: 'right',
+							}}
+							transformOrigin={{
+							vertical: 'top',
+							horizontal: 'right',
+							}}
+						>
+							<Typography sx={{ p: 2, fontWeight: 'bold' }}>Notifications</Typography>
+							<Divider />
+							<List sx={{ minWidth: 250 }}>
+							{notifications && notifications.length > 0 ? (
+            					notifications.map((item, i) => (
+										
+										<ListItem key={item.id} component="button" onClick={() => handleNotificationClick(Number(item.id), item.notify_url)}
+                sx={{
+                  backgroundColor: item.is_read ? 'inherit' : '#e3f2fd', // Highlight unread notifications
+                }}>
+										<ListItemText primary={item.message_desc} />
+										</ListItem>
+										
+									)
+									)
+								) : (
+									<>
+									<ListItem>
+										<ListItemText primary="No new notifications" />
+									</ListItem>
+									</>
+								)}
+							</List>
+						</Popover>
+						<IconButton color="inherit" onClick={handleIconClick}>
+						<Badge
+						badgeContent={messageCount}
+						color="error"
+						>
+							<MailOutlineIcon sx={{ color: "white" }} />
+							</Badge>
+						</IconButton>
+						</div>
 						<Dropdown
 							arrowIcon={false}
 							inline

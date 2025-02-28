@@ -2,6 +2,7 @@ import App from "pages/App";
 import AppSite from "pages/AppSite";
 import Dashboard from "pages/Dashboard";
 import ForgotPassword from "pages/ForgotPassword";
+import Home from "pages/Home";
 import Login from "pages/Login";
 import Register from "pages/Register";
 import ResetPassword from "pages/ResetPassword";
@@ -100,6 +101,9 @@ import AlumniEducationDetails from "pages/AlumniEducationDetails";
 import AlumniWorkDetails from "pages/AlumniWorkDetails";
 import AlumniWorkExperience from "pages/AlumniWorkExperience";
 import AlumniWorkCompany from "pages/AlumniWorkCompany";
+import ManageEvents from "pages/ManageEvents";
+import AlumniMessages from "pages/AlumniMessages";
+import AlumniMessageDetail from "pages/AlumniMessageDetail";
 
 const queryClient = new QueryClient();
 
@@ -136,6 +140,14 @@ const createRoutes = () => (
 		<StateProvider initialState={initialState} reducer={reducer}>
 			<QueryClientProvider client={queryClient}>
 				<Routes>
+				<Route
+						path="/"
+						element={
+							<PublicRoute>
+								<Home />
+							</PublicRoute>
+						}
+					/>
 					<Route
 						path="login"
 						element={
@@ -241,6 +253,14 @@ const createRoutes = () => (
 						}
 					/>
 					<Route
+						path="manage-events"
+						element={
+							<ProtectedRoute>
+								<ManageEvents />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
 						path="events/:id"
 						element={
 							<ProtectedRoute>
@@ -250,6 +270,14 @@ const createRoutes = () => (
 					/>
 					<Route
 						path="add-events"
+						element={
+							<ProtectedRoute>
+								<AddEvent />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="edit-event/:id"
 						element={
 							<ProtectedRoute>
 								<AddEvent />
@@ -269,6 +297,22 @@ const createRoutes = () => (
 						element={
 							<ProtectedRoute>
 								<NewsDetail />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="alumni-messages"
+						element={
+							<ProtectedRoute>
+								<AlumniMessages />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="view-message/:id"
+						element={
+							<ProtectedRoute>
+								<AlumniMessageDetail />
 							</ProtectedRoute>
 						}
 					/>

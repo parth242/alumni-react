@@ -8,6 +8,7 @@ import {
 	TCommentFormData,
 	CommentsRequest,
 	CommentsResponse,
+	TReportFormData,
 } from "utils/datatypes";
 
 import { apiClient, authClient } from "../client";
@@ -156,6 +157,16 @@ const statusFeed = async (req: any) => {
 	}
 };
 
+const CreateReport = async (req: TReportFormData) => {
+	try {		
+		return await authClient
+			.post(`api/v1/feed/createreport`, { json: req })
+			.json();
+	} catch (error) {
+		return Promise.reject(error);
+	}
+};
+
 export {
 	useFeeds,
 	getFeed,
@@ -164,4 +175,5 @@ export {
 	createComment,
 	useFeedComments,
 	statusFeed,
+	CreateReport,
 };
