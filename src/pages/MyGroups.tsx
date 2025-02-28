@@ -38,13 +38,19 @@ const MyGroups = () => {
 		refetch: fetchGroupList,
 		isFetching: isFetchingGroupList,
 	} = useGroups({
-		enabled: userId > 0,
+		enabled: false,
 		filter_status: activeStatus,
 		filter_name: searchText,
 		user_id: userId,
 		page_number: pageNumber,
 		page_size: pageSize.value,
 	}) || [];
+
+	useEffect(() => {
+		if (userId > 0) {
+			fetchGroupList();
+		}
+	  }, [userId, fetchGroupList]);
 
 	useEffect(() => {
 		setPageNumber(pageStartFrom);
