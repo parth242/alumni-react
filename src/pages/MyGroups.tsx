@@ -52,16 +52,7 @@ const MyGroups = () => {
 		}
 	  }, [userId, fetchGroupList]);
 
-	useEffect(() => {
-		setPageNumber(pageStartFrom);
-		setTimeout(() => {
-			fetchGroupList();
-		}, 200);
-	}, [activeStatus, pageSize]);
-
-	useEffect(() => {
-		fetchGroupList();
-	}, [pageNumber]);
+	
 
 	useEffect(() => {
 		if (groupList) {
