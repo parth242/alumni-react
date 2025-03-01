@@ -275,7 +275,12 @@ function Register() {
 	const onSubmit = (data: RegisterType) => {
 		// navigate("/course");
 		// navigate("/admin/dashboard");
-
+		if(data.state_id==''){
+			data.state_id = 0;
+		}
+		if(data.country_id==''){
+			data.country_id = 0;
+		}
 		data.is_alumni = 1;
 		data.status = "inactive";
 		data.role_id = 0;
