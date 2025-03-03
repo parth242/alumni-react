@@ -816,7 +816,7 @@ export type TJobFormData = {
 	skill_name: Array<string>;
 	job_type: string;
 	posted_date: string;
-	deadline_date: Date;
+	deadline_date: Date | null;
 	job_description: string;
 	status: string;
 	user_id: number;
