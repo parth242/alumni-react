@@ -251,9 +251,7 @@ function AddJob() {
 		if(data.experience_to==''){
 			data.experience_to = 0;
 		}
-		if(data.deadline_date==''){
-			data.deadline_date = null;
-		}
+		
 		mutate(data);
 	};
 
