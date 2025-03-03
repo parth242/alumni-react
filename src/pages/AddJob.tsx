@@ -245,7 +245,12 @@ function AddJob() {
 		const currentDate = new Date();
 		const formattedDate = currentDate.toISOString().slice(0, 10);
 		data.posted_date = formattedDate;
-
+		if(data.experience_from==''){
+			data.experience_from = 0;
+		}
+		if(data.experience_to==''){
+			data.experience_to = 0;
+		}
 		mutate(data);
 	};
 
