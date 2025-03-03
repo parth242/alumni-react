@@ -270,7 +270,13 @@ function AddEvent() {
 		data.user_id = Number(myuser?.id);
 		data.event_type = "Free";
 		data.status = "inactive";		
-		data.group_id = JSON.stringify(data.group_id);
+		
+		if (data.group_id && (Array.isArray(data.group_id) ? data.group_id.length > 0 : data.group_id.trim() !== '')) {
+			// group_id exists, is not empty, and is either a non-empty array or non-empty string
+			data.group_id = JSON.stringify(data.group_id);
+		  } else {
+			data.group_id = "";
+		  }
 		
 
 		/* const imageFile = (
