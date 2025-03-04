@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Spinner } from "@material-tailwind/react";
+import { useMutation } from "react-query";
 import { Box, FormGroup } from "@mui/material";
 import SiteNavbar from "components/layout/sitenavbar";
 import FilterCheckbox from "components/ui/FilterCheckbox";
@@ -7,14 +8,17 @@ import JobCard from "components/ui/JobCard";
 import { pageStartFrom } from "utils/consts";
 import { useAppState } from "utils/useAppState";
 import SearchBox from "components/ui/SearchBox";
-import { useJobs } from "api/services/jobService";
-import { IJob, IUser } from "utils/datatypes";
+import { useJobs, deleteJob } from "api/services/jobService";
+import { ErrorToastMessage, SuccessToastMessage } from "api/services/user";
+import { IJob, IUser, ConfirmPopupDataType } from "utils/datatypes";
 import { Button } from "flowbite-react";
+import { HTTPError } from "ky";
 import { useNavigate } from "react-router-dom";
 import FlexStartEnd from "components/ui/common/FlexStartEnd";
 import BtnLink from "components/ui/common/BtnLink";
 import { FooterComponent } from "components/layout/Footer";
 import BtnComponent from "components/ui/BtnComponent";
+import ConfirmPopup from "components/ui/ConfirmPopup";
 
 function ManageJobPosting() {
 	const navigate = useNavigate();
@@ -34,6 +38,16 @@ function ManageJobPosting() {
 	const [userId, setUserId] = useState(0);
 
 	const [myuser, setMyUser] = useState<IUser | null>();
+
+	const [itemId, setItemId] = useState(null);
+	const [isDeleteConfirm, setIsDeleteConfirm] = useState(false);
+	const [IsDeleteCancelled, setIsDeleteCancelled] = useState(false);
+	const [ConfirmResult, setConfirmResult] = useState(false);
+	const [cancelBtnTitle, setcancelBtnTitle] =useState("Cancel");
+	const [confirmBtnTitle, setconfirmBtnTitle] =useState("Confirm");
+
+	const ConfirmPopupData : ConfirmPopupDataType =
+		{ title: "Job Delete", text: "Are you sure you want to delete Job?" };
 
 	useEffect(() => {
 		const userString = localStorage.getItem("user");
@@ -144,6 +158,37 @@ function ManageJobPosting() {
 		}
 	}, [searchQuery, selectedFilters]);
 
+	const { mutate: deleteItem, isLoading: uploadIsLoading } = useMutation(deleteJob, {
+		onSuccess: async () => {
+			SuccessToastMessage({
+				title: "Delete Job Successfully",
+				id: "delete_job_success",
+			});
+			fetchJobList();
+		},
+		onError: async (e: HTTPError) => {
+			// const error = await e.response.text();
+			// console.log("error", error);
+			ErrorToastMessage({ error: e, id: "delete_job" });
+		},
+	});
+
+	 // Handle the actual deletion of the item
+	 const submitDelete = (itemId: any) => {
+		deleteItem(itemId);
+		setIsDeleteConfirm(false);
+	  };
+	// Handle the displaying of the modal based on type and id
+	const showDeleteModal = (itemId: any) => {
+		setItemId(itemId);
+		console.log(itemId);
+		
+		  //setDeleteMessage(`Are you sure you want to delete the vegetable '${vegetables.find((x) => x.id === id).name}'?`);
+		
+	 
+		  setIsDeleteConfirm(true);
+	  };
+
 	function capitalizeFirstLetter(string: any) {
 		if (!string) return ''; // Handle empty or undefined strings
 		return string.charAt(0).toUpperCase() + string.slice(1);
@@ -157,7 +202,7 @@ function ManageJobPosting() {
 					<h1 className="md:text-3xl text-xl font-bold text-center mb-4">
 						Jobs
 					</h1>
-					<BtnLink onClick={() => navigate(-1)}>Go Back</BtnLink>
+					
 				</FlexStartEnd>
 				{/* <h1 className="text-2xl font-bold text-center mb-8">Jobs</h1> */}
 
@@ -265,6 +310,11 @@ function ManageJobPosting() {
 															}
 															justify="flex-end"
 														/>
+														<BtnComponent
+															value="Delete"
+															onClick={() => showDeleteModal(job.id)}
+															justify="flex-end"
+														/>
 													</td>
 												</tr>
 											))}
@@ -288,6 +338,7 @@ function ManageJobPosting() {
 										{isLoading ? "Loading..." : "Load More"}
 									</Button>
 								)}
+								<ConfirmPopup isDeleteConfirm={isDeleteConfirm} setIsDeleteConfirm={setIsDeleteConfirm} setIsDeleteCancelled={setIsDeleteCancelled} data={ConfirmPopupData} setConfirmResult={setConfirmResult} cancelBtnTitle={cancelBtnTitle} confirmBtnTitle={confirmBtnTitle} ConfirmModal={submitDelete} itemId={Number(itemId)}  />
 							</div>
 						</div>
 					</div>
