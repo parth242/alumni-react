@@ -194,7 +194,6 @@ function AlumniDashboard() {
 	}, [pageNumber]);
 
 	useEffect(() => {
-		fetchGroupList();
 		fetchFeedList();
 	}, [userId]);
 
