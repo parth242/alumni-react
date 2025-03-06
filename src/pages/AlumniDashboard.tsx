@@ -117,8 +117,8 @@ function AlumniDashboard() {
 		filter_status: activeStatus,
 		filter_name: searchText,
 		user_id: userId,
-		page_number: pageNumber,
-		page_size: pageSize.value,
+		page_number: 0,
+		page_size: 0,
 	}) || [];
 
 	useEffect(() => {
