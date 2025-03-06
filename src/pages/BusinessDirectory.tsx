@@ -779,7 +779,7 @@ const BusinessDirectory = () => {
 						<div className="lg:col-span-3 h-[600px] lg:h-auto overflow-y-auto">
 							<div className="bg-gray-100 rounded-xl p-4 mb-4">
 								<Input
-									placeholder="Search for a business by location"
+									placeholder="Search for a business by name"
 									className="w-full focus:outline-none border-1 border-gray-300 rounded-md"
 									value={searchTerm}
 									onChange={e =>
@@ -1077,32 +1077,7 @@ const BusinessDirectory = () => {
 								/>
 							</Form.Item>
 						</Col>
-						<Col xs={24} sm={12}>
-							<Form.Item
-								name="is_member_association"
-								label={
-									<span className="text-l font-semibold">
-										Are you a member of the Alumni
-										Association?
-									</span>
-								}
-								rules={[
-									{
-										required: true,
-										message: "Please select an option",
-									},
-								]}>
-								<Radio.Group
-									value={
-										(selectedCard &&
-											selectedCard.is_member_association) ||
-										0
-									}>
-									<Radio value={1}>Yes</Radio>
-									<Radio value={0}>No</Radio>
-								</Radio.Group>
-							</Form.Item>
-						</Col>
+						
 						<Col xs={24} sm={12}>
 							<Form.Item
 								name="business_logo"

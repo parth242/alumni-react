@@ -113,7 +113,7 @@ function AlumniDashboard() {
 		refetch: fetchGroupList,
 		isFetching: isFetchingGroupList,
 	} = useGroups({
-		enabled: userId > 0,
+		enabled: false,
 		filter_status: activeStatus,
 		filter_name: searchText,
 		user_id: userId,
@@ -121,6 +121,11 @@ function AlumniDashboard() {
 		page_size: pageSize.value,
 	}) || [];
 
+	useEffect(() => {
+		if(userId>0){
+		fetchGroupList();
+		}
+	}, [userId, fetchGroupList]);
 	
 	useEffect(() => {
 		if (groupList) {
@@ -135,6 +140,8 @@ function AlumniDashboard() {
 			setGroups([{ text: "Visible to All Members", value: 0 }]);
 		}
 	}, [groupList]);
+
+	
 
 	const {
 		data: categoryList,
