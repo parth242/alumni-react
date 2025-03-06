@@ -67,6 +67,8 @@ function AlumniDashboard() {
 
 	const [myuser, setMyUser] = useState<IUser | null>();
 	const [userId, setUserId] = useState(0);
+	const [userIdGroup, setUserIdGroup] = useState(0);
+	
 
 	const [activeStatus, setActiveStatus] = useState("");
 	const [searchText, setSearchText] = useState("");
@@ -102,6 +104,7 @@ function AlumniDashboard() {
 		if (userString !== null) {
 			const items = JSON.parse(userString);
 			setMyUser(items);
+			setUserIdGroup(Number(myuser?.id));
 		}
 	};
 	useEffect(() => {
@@ -116,16 +119,16 @@ function AlumniDashboard() {
 		enabled: false,
 		filter_status: activeStatus,
 		filter_name: searchText,
-		user_id: userId,
+		user_id: userIdGroup,
 		page_number: 0,
 		page_size: 0,
 	}) || [];
 
 	useEffect(() => {
-		if(userId>0){
+		if(userIdGroup>0){
 		fetchGroupList();
 		}
-	}, [userId, fetchGroupList]);
+	}, [userIdGroup, fetchGroupList]);
 	
 	useEffect(() => {
 		if (groupList) {
