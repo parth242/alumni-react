@@ -104,7 +104,7 @@ function AlumniDashboard() {
 		if (userString !== null) {
 			const items = JSON.parse(userString);
 			setMyUser(items);
-			setUserIdGroup(Number(myuser?.id));
+			setUserIdGroup(Number(items?.id));
 		}
 	};
 	useEffect(() => {
@@ -116,7 +116,7 @@ function AlumniDashboard() {
 		refetch: fetchGroupList,
 		isFetching: isFetchingGroupList,
 	} = useGroups({
-		enabled: false,
+		enabled: userIdGroup > 0,
 		filter_status: activeStatus,
 		filter_name: searchText,
 		user_id: userIdGroup,
@@ -128,7 +128,7 @@ function AlumniDashboard() {
 		if(userIdGroup>0){
 		fetchGroupList();
 		}
-	}, [userIdGroup, fetchGroupList]);
+	}, [userIdGroup]);
 	
 	useEffect(() => {
 		if (groupList) {
