@@ -197,7 +197,7 @@ function AddEvent() {
 			if (selectedFile) {
 				const response = await axios.get(
 					import.meta.env.VITE_BASE_URL +
-						"/api/v1/upload?type=events&filename=" +
+						"api/v1/upload?type=events&filename=" +
 						selectedFile.name,
 				);
 				if (response.status === 200) {
