@@ -217,8 +217,7 @@ function ShowEvents() {
 												className="m-0 w-full h-[14rem] overflow-hidden">
 												<img
 													src={
-														import.meta.env
-															.VITE_BASE_URL +
+														import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL +
 														"upload/event/" +
 														event.event_image
 													}

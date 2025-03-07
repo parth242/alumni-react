@@ -12,6 +12,7 @@ import Collapse from "@mui/material/Collapse";
 import FactoryIcon from "@mui/icons-material/Factory";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import axios, { AxiosResponse } from "axios";
 import VideoSettingsIcon from "@mui/icons-material/VideoSettings";
 import BtnComponent from "components/ui/BtnComponent";
 import { pageStartFrom } from "utils/consts";
@@ -110,6 +111,8 @@ const BusinessDirectory = () => {
 	const [pageNumber, setPageNumber] = useState(pageStartFrom);
 	const [pageSize, setPageSize] = useState({ value: 10 });
 
+	const [image, setImage] = useState<File | null>(null);
+
 	const [totalRecords, setTotalRecords] = useState(0);
 	const [currentRecords, setCurrentRecords] = useState(0);
 
@@ -125,6 +128,8 @@ const BusinessDirectory = () => {
 	const [selectedProduct, setSelectedProduct] = useState<string[]>([]);
 	const [selectedService, setSelectedService] = useState<string[]>([]);
 	const [selectedLocation, setSelectedLocation] = useState<string[]>([]);
+	const [loading, setLoading] = useState(false);
+	const [logoImage, setLogoImage] = useState("");
 
 	const {
 		isLoading,
@@ -351,6 +356,7 @@ const BusinessDirectory = () => {
 			navigate("/business-directory");
 			fetchBusinessdirectoryList();
 			setOpen(false);
+			setLogoImage("");
 			setSelectedCard(null); // Reset selected card on close
 			addBusinessForm.resetFields(); // Reset form if adding a new business
 		},
@@ -359,7 +365,56 @@ const BusinessDirectory = () => {
 		},
 	});
 
-	const submitAddBusiness = (data: TBusinessDirectoryFormData) => {
+	const saveProfileImage = async () => {
+		try {
+			let uploadConfig: AxiosResponse | null = null;
+			const selectedFile = (image as File) || "";
+			console.log("selectedFile", selectedFile);
+			if (selectedFile) {
+				const response = await axios.get(
+					import.meta.env.VITE_BASE_URL +
+						"/api/v1/upload?type=business_directory&filename=" +
+						selectedFile.name,
+				);
+				if (response.status === 200) {
+					console.log("response", response);
+					uploadConfig = response.data;
+					console.log(
+						"uploadConfig?.data?.url",
+						uploadConfig?.data?.url,
+					);
+					const upload = await axios.put(
+						uploadConfig?.data?.url,
+						selectedFile,
+						{
+							headers: {
+								"Content-Type": selectedFile?.type || "",
+							},
+							onUploadProgress: progressEvent => {
+								const percentCompleted = Math.round(
+									(progressEvent.loaded * 100) /
+										(progressEvent.total || 1),
+								);
+								// onProgress(percentCompleted);
+								console.log(
+									"percentCompleted",
+									percentCompleted,
+								);
+							},
+						},
+					);
+					console.log("uploadConfig", uploadConfig);
+					setLogoImage(uploadConfig?.data?.key);
+				}
+			}
+		} catch (error) {
+			return;
+		}
+	};
+
+	const submitAddBusiness = async (data: TBusinessDirectoryFormData) => {
+		setLoading(true);
+		await saveProfileImage();
 		const userString = localStorage.getItem("user");
 
 		if (userString !== null) {
@@ -372,38 +427,10 @@ const BusinessDirectory = () => {
 
 		data.status = "active";
 
-		const imageFile = (
-			document.querySelector('input[type="file"]') as HTMLInputElement
-		)?.files?.[0];
+		data.business_logo = logoImage;
 
-		if (imageFile) {
-			const formdata = new FormData();
-			formdata.append("type", "business_directory");
-			formdata.append("file", imageFile);
-
-			useUploadImage({ data: formdata })
-				.then((response: any) => {
-					//setValue("image", data.files[0].filename);
-					if (response.message == "Upload Success") {
-						// Update data with the uploaded image file name
-						data.business_logo = response.files[0].filename;
-					} else {
-						console.error("File upload failed:", response.error);
-						return; // Stop further processing if upload fails
-					}
-
-					// Call mutate once the file has been uploaded
-
-					mutate(data);
-				})
-				.catch(error => {
-					console.error("Error during file upload:", error);
-				});
-		} else {
-			// If no image is uploaded, just call mutate
-
-			mutate(data);
-		}
+		mutate(data);
+		
 	};
 
 	const showDrawer = (card = null) => {
@@ -443,6 +470,7 @@ const BusinessDirectory = () => {
 			const ext: string | null = (
 				file.name.split(".").pop() || ""
 			).toLowerCase();
+			setImage(null);
 			if (filesExt["image"].indexOf(ext) < 0) {
 				setErrorMessage(fileInvalid["image"]);
 
@@ -453,6 +481,9 @@ const BusinessDirectory = () => {
 				setErrorMessage(
 					`File size limit: The image you tried uploading exceeds the maximum file size (${filesLimit["image"]}) `,
 				);
+			}
+			else {
+				setImage(file);
 			}
 		}
 	};
@@ -1101,6 +1132,7 @@ const BusinessDirectory = () => {
 									)}
 									&nbsp;
 								</span>
+								
 							</Form.Item>
 						</Col>
 						<Col xs={24} sm={12}>

@@ -120,7 +120,7 @@ function Photo() {
 			if (selectedFile) {
 				const response = await axios.get(
 					import.meta.env.VITE_BASE_URL +
-						"api/v1/upload?type=profile&filename=" +
+						"/api/v1/upload?type=profile&filename=" +
 						selectedFile.name,
 				);
 				if (response.status === 200) {
