@@ -218,7 +218,6 @@ function ShowEvents() {
 												<img
 													src={
 														import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL +
-														"upload/event/" +
 														event.event_image
 													}
 													alt={`${event.event_title} image`}

@@ -436,6 +436,7 @@ const BusinessDirectory = () => {
 	const showDrawer = (card = null) => {
 		setSelectedCard(card); // Set selected card data
 		setOpen(true);
+		console.log('card',card);
 		if (card) {
 			addBusinessForm.setFieldsValue(card); // Populate form with card data for editing
 		} else {
