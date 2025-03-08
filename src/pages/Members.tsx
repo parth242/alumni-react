@@ -143,6 +143,13 @@ function Members() {
 	}, [userList]);
 
 	console.log("userList", userList);
+
+	const clearFilter = (key: string) => {
+		if(key=='searchText'){
+			setSearchText("");
+		}
+		fetchUserList();
+	  };
 	const {
 		data: courses,
 		refetch: fetchcourseListData,
@@ -293,7 +300,7 @@ function Members() {
 				<div className="md:w-10/12 w-full mx-auto py-6 px-4 relative">
 					<div className="flex flex-col md:flex-row justify-between  mb-8">
 						<h2 className="md:text-2xl text-lg mb-2 md:mb-0 text-black md:font-extrabold font-semibold">
-							
+						{searchText && <button onClick={() => clearFilter("searchText")}>X</button>}
 						</h2>
 						<span className="font-semibold md:text-lg text-sm">
 							{totalRecords} Member(s) Found
