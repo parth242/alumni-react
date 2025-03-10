@@ -57,6 +57,9 @@ function Members() {
 	const [isSearch, setIsSearch] = useState<number>(0);
 
 	const [searchClearText, setSearchClearText] = useState("");
+	const [selectedCourseText, setSelectedCourseText] = useState("");
+	const [selectedDepartmentText, setSelectedDepartmentText] = useState("");
+	const [selectedClearEndYear, setSelectedClearEndYear] = useState<number>(0);
 
 	const handleSearchClick = () => {
 		//console.log("Name Search:", searchInput);
@@ -72,12 +75,14 @@ function Members() {
 	const handleCourseChange = (selectedCourse: any) => {
 		//setSelectedState(''); // Reset state selection when country changes
 		setSelectedCourse(selectedCourse.target.value);
+		setSelectedCourseText(selectedCourse.target.text);
 		//fetchstateListData();
 	};
 
 	const handleDepartmentChange = (selectedDepartment: any) => {
 		//setSelectedState(''); // Reset state selection when country changes
 		setSelectedDepartment(selectedDepartment.target.value);
+		setSelectedDepartmentText(selectedDepartment.target.text);
 		//fetchstateListData();
 	};
 
@@ -88,9 +93,10 @@ function Members() {
 	};
 
 	const searchmembers = () => {
-		if(searchText!=''){
-			setSearchClearText(searchText);
-		}
+		
+		setSearchClearText(searchText);
+		setSelectedClearEndYear(selectedEndYear);		
+		
 		fetchUserList();
 	};
 
@@ -134,7 +140,7 @@ function Members() {
 
 	useEffect(() => {
 		fetchUserList();
-	}, [searchText]);
+	}, [searchClearText,selectedClearEndYear]);
 
 	useEffect(() => {
 		if (userList) {
@@ -311,6 +317,8 @@ function Members() {
 					<div className="flex flex-col md:flex-row justify-between  mb-8">
 						<h2 className="md:text-2xl text-lg mb-2 md:mb-0 text-black md:font-extrabold font-semibold">
 						{searchClearText && <button onClick={() => { setSearchClearText(""); setSearchText("");}}>{searchClearText} X</button>}
+						{selectedClearEndYear && <button onClick={() => { setSelectedClearEndYear(0); setSelectedEndYear(0);}}>{selectedClearEndYear} X</button>}
+						
 						</h2>
 						<span className="font-semibold md:text-lg text-sm">
 							{totalRecords} Member(s) Found
