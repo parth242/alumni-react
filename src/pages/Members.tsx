@@ -56,6 +56,8 @@ function Members() {
 	const [selectedEndYear, setSelectedEndYear] = useState<number>(0);
 	const [isSearch, setIsSearch] = useState<number>(0);
 
+	const [searchClearText, setSearchClearText] = useState("");
+
 	const handleSearchClick = () => {
 		//console.log("Name Search:", searchInput);
 		setPageNumber(pageStartFrom);
@@ -83,6 +85,13 @@ function Members() {
 		//setSelectedState(''); // Reset state selection when country changes
 		setSelectedEndYear(selectedEndYear.target.value);
 		//fetchstateListData();
+	};
+
+	const searchmembers = () => {
+		if(searchText!=''){
+			setSearchClearText(searchText);
+		}
+		fetchUserList();
 	};
 
 	const years = Array.from(
@@ -287,7 +296,7 @@ function Members() {
 										size="md"
 										outline
 										onClick={() => 
-											fetchUserList()  // First, set search to 1											
+											searchmembers()  // First, set search to 1											
 										  }>
 										Search
 									</Button>
@@ -301,7 +310,7 @@ function Members() {
 				<div className="md:w-10/12 w-full mx-auto py-6 px-4 relative">
 					<div className="flex flex-col md:flex-row justify-between  mb-8">
 						<h2 className="md:text-2xl text-lg mb-2 md:mb-0 text-black md:font-extrabold font-semibold">
-						{searchText && <button onClick={() => setSearchText("")}>{searchText} X</button>}
+						{searchClearText && <button onClick={() => { setSearchClearText(""); setSearchText("");}}>{searchClearText} X</button>}
 						</h2>
 						<span className="font-semibold md:text-lg text-sm">
 							{totalRecords} Member(s) Found
