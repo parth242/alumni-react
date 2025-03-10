@@ -291,7 +291,7 @@ function Members() {
 										name={"end_year"}
 										items={yearListEnd}
 										register={register}
-										onChange={handleYearChange}
+										onChange={(e) => handleYearChange(e)}										
 										className="bg-transparent w-full border-0 focus:ring-0 outline-none"
 									/>
 								</div>
