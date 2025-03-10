@@ -1,7 +1,7 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import { useNavigate, useLocation } from "react-router-dom";
 import SiteNavbar from "components/layout/sitenavbar";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useUserData } from "api/services/user";
 import { IUser, TSelect, ICourse, IDepartment } from "utils/datatypes";
 import NotFound from "components/ui/common/NotFound";
@@ -86,9 +86,9 @@ function Members() {
 		//fetchstateListData();
 	};
 
-	const handleYearChange = (selectedEndYear: any) => {
+	const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		//setSelectedState(''); // Reset state selection when country changes
-		setSelectedEndYear(selectedEndYear.target.value);
+		setSelectedEndYear(e.target.value);
 		//fetchstateListData();
 	};
 
@@ -287,6 +287,7 @@ function Members() {
 
 								<div className="flex items-center rounded-md w-full max-w-xs p-2 ">
 									<Select
+									   value={selectedEndYear}
 										name={"end_year"}
 										items={yearListEnd}
 										register={register}
@@ -317,7 +318,7 @@ function Members() {
 					<div className="flex flex-col md:flex-row justify-between  mb-8">
 						<h2 className="md:text-2xl text-lg mb-2 md:mb-0 text-black md:font-extrabold font-semibold">
 						{searchClearText && <button onClick={() => { setSearchClearText(""); setSearchText("");}}>{searchClearText} X</button>}
-						{selectedClearEndYear && <button onClick={() => { setSelectedClearEndYear(0); setSelectedEndYear(0);}}>{selectedClearEndYear} X</button>}
+						{selectedClearEndYear > 0 && <button onClick={() => { setSelectedClearEndYear(0); setSelectedEndYear(0);}}>{selectedClearEndYear} X</button>}
 						
 						</h2>
 						<span className="font-semibold md:text-lg text-sm">
