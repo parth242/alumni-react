@@ -18,12 +18,12 @@ import LinkCommon from "components/ui/common/LinkCommon";
 import { formatDateWithSuffix } from "components/ui/NewsItem";
 
 const categories = ["Reunions", "Meetups", "Conferences", "Symposiums"];
-const dateFilters = ["Future", "Present", "Past"];
+const dateFilters = ["Upcoming", "Past"];
 
 function ShowEvents() {
 	const navigate = useNavigate();
 	const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-	const [selectedDateFilter, setSelectedDateFilter] = useState<string>("");
+	const [selectedDateFilter, setSelectedDateFilter] = useState<string>("Upcoming");
 
 	const [activeStatus, setActiveStatus] = useState("active");
 	const [searchText, setSearchText] = useState("");
