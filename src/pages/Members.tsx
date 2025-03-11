@@ -343,7 +343,7 @@ function Members() {
 						{searchClearText && <button onClick={() => { setSearchClearText(""); setSearchText("");}}>{searchClearText} X</button>}						
 						{selectedCourseClearText && <button onClick={() => { setSelectedCourseClearText(""); setSelectedCourseText(""); setSelectedCourse(0);}}>{selectedCourseClearText} x</button>}
 						{selectedDepartmentClearText && <button onClick={() => { setSelectedDepartmentClearText(""); setSelectedDepartmentText(""); setSelectedDepartment(0);}}>{selectedDepartmentClearText} x</button>}
-						{selectedClearEndYear > 0 && <button onClick={() => { setSelectedClearEndYear(0); setSelectedEndYear(0);}}>{selectedClearEndYear} x</button>
+						{selectedClearEndYear > 0 && <button onClick={() => { setSelectedClearEndYear(0); setSelectedEndYear(0);}}>{selectedClearEndYear} x</button>}
 						{isAnyFilterCleared && (
 								<button onClick={clearAllFilters}>Clear All x</button>
 							)}
