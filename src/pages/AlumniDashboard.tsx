@@ -133,7 +133,7 @@ function AlumniDashboard() {
 	useEffect(() => {
 		if (groupList) {
 			const groupsList = groupList.data.map((item: IUserGroup) => {
-				return { text: item.group?.group_name, value: item.id };
+				return { text: item.group?.group_name, value: item.group_id };
 			}) as TSelect[];
 			setGroups([
 				{ text: "Visible to All Members", value: 0 },

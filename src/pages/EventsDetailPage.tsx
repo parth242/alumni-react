@@ -332,11 +332,10 @@ const EventsDetailPage: React.FC = () => {
 							</h2>
 							{/* Event Image */}
 							<img
-								src={
+								src={									
 									eventDetails?.data?.event_image
-										? import.meta.env.VITE_BASE_URL +
-										  "upload/event/" +
-										  eventDetails.data.event_image
+										? import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL +
+										   eventDetails.data.event_image
 										: "https://via.placeholder.com/1200x400"
 								}
 								alt="Event"
