@@ -348,18 +348,67 @@ function Members() {
 			<div className="w-full mt-10">
 				<div className="md:w-10/12 w-full mx-auto py-6 px-4 relative">
 					<div className="flex flex-col md:flex-row justify-between  mb-8">
-						<h2 className="md:text-2xl text-lg mb-2 md:mb-0 text-black md:font-extrabold font-semibold">
-						{searchClearText && <button onClick={() => { setSearchClearText(""); setSearchText("");}}>{searchClearText} X</button>}						
-						{selectedCourseClearText && <button onClick={() => { setSelectedCourseClearText(""); setSelectedCourseText(""); setSelectedCourse(0);}}>{selectedCourseClearText} x</button>}
-						{selectedDepartmentClearText && <button onClick={() => { setSelectedDepartmentClearText(""); setSelectedDepartmentText(""); setSelectedDepartment(0);}}>{selectedDepartmentClearText} x</button>}
-						{selectedClearEndYear > 0 && <button onClick={() => { setSelectedClearEndYear(0); setSelectedEndYear(0);}}>{selectedClearEndYear} x</button>}
-						{isAnyFilterCleared && (
-								<button onClick={clearAllFilters}>Clear All x</button>
+						<div className="flex flex-wrap items-center space-x-2">
+						{searchClearText && (
+							<button
+								onClick={() => {
+								setSearchClearText("");
+								setSearchText("");
+								}}
+								className="text-sm text-gray-600 hover:text-gray-800"
+							>
+								{searchClearText} <span className="text-xs">✕</span>
+							</button>
 							)}
-						</h2>
+							{selectedCourseClearText && (
+							<button
+								onClick={() => {
+								setSelectedCourseClearText("");
+								setSelectedCourseText("");
+								setSelectedCourse(0);
+								}}
+								className="text-sm text-gray-600 hover:text-gray-800"
+							>
+								{selectedCourseClearText} <span className="text-xs">✕</span>
+							</button>
+							)}
+							{selectedDepartmentClearText && (
+							<button
+								onClick={() => {
+								setSelectedDepartmentClearText("");
+								setSelectedDepartmentText("");
+								setSelectedDepartment(0);
+								}}
+								className="text-sm text-gray-600 hover:text-gray-800"
+							>
+								{selectedDepartmentClearText} <span className="text-xs">✕</span>
+							</button>
+							)}
+							{selectedClearEndYear > 0 && (
+							<button
+								onClick={() => {
+								setSelectedClearEndYear(0);
+								setSelectedEndYear(0);
+								}}
+								className="text-sm text-gray-600 hover:text-gray-800"
+							>
+								{selectedClearEndYear} <span className="text-xs">✕</span>
+							</button>
+							)}
+						</div>
 						<span className="font-semibold md:text-lg text-sm">
 							{totalRecords} Member(s) Found
 						</span>
+						{isAnyFilterCleared && (
+							<div className="mt-2">
+							<button
+								onClick={clearAllFilters}
+								className="text-sm text-red-600 hover:text-red-800 font-semibold"
+							>
+								Clear All <span className="text-xs">✕</span>
+							</button>
+							</div>
+						)}
 					</div>
 
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
