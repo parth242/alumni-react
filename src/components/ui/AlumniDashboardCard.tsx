@@ -298,9 +298,9 @@ const AlumniDashboardCard: React.FC<AlumniDashboardCardProps> = ({ feed,fetchFee
 							<p className="text-sm text-gray-500">
 								{endDateWithSuffix(feed.createdAt)}
 							</p>
-							{feed.groups?.group_name && (
+							{feed.group?.group_name && (
 							<p className="text-sm text-gray-500">
-								Posted From {feed.groups?.group_name}
+								Posted From {feed.group?.group_name}
 							</p>
 							)}
 						</div>
