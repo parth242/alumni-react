@@ -4,14 +4,17 @@ import ArchiveSidebar from "../components/ui/ArchiveSidebar";
 import NewsItem from "../components/ui/NewsItem";
 import SiteNavbar from "components/layout/sitenavbar";
 import { Spinner } from "flowbite-react";
+import { useNavigate } from "react-router-dom";
 import { pageStartFrom } from "utils/consts";
 import PaginationBar from "components/ui/paginationBar";
 import { useNewss } from "api/services/newsService";
 import { INews } from "utils/datatypes";
 import ReactTooltip from "react-tooltip";
 import { Button } from "flowbite-react";
+import BtnLink from "components/ui/common/BtnLink";
 
 function NewsRoom() {
+	const navigate = useNavigate();
 	const [archive, setArchive] = useState<ArchiveType>({});
 	const [activeMonth, setActiveMonth] = useState<string>("");
 
@@ -126,7 +129,7 @@ function NewsRoom() {
 					<h1 className="md:text-3xl text-xl text-black font-bold mb-2 text-center mb-4">
 						News Room {activeMonth}
 					</h1>
-
+					<BtnLink onClick={() => navigate("/newsroom")}>Back to All News</BtnLink>
 					{/* Loader */}
 					{isLoading ? (
 						<div className="flex justify-center items-center h-64">

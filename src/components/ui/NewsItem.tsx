@@ -31,7 +31,7 @@ export const formatDateWithSuffix = (dateString: string) => {
 		}
 	};
 
-	return `Posted on ${day}${suffix(day)} ${month}, ${year}`;
+	return `on ${day}${suffix(day)} ${month}, ${year}`;
 };
 
 export const endDateWithSuffix = (dateString: string) => {
@@ -84,7 +84,7 @@ const NewsItem: React.FC<NewsItemProps> = ({ news }) => (
 						fontWeight: "semibold",
 					}}
 					to={`/newsroom/${news.id}`}>
-					{formatDateWithSuffix(news.posted_date)}
+					Posted {formatDateWithSuffix(news.posted_date)}
 				</BtnLink>
 			</div>
 		</div>

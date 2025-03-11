@@ -251,7 +251,7 @@ function ShowEvents() {
 														color="gray"
 														className="mb-4 font-normal">
 														{event.event_date
-															? formatDateWithSuffix(
+															? 'Event '+formatDateWithSuffix(
 																	event.event_date as string,
 															  )
 															: "No Answer"}{" "}

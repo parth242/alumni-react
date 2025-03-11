@@ -326,7 +326,7 @@ function AlumniDashboard() {
 			if (selectedFile) {
 				const response = await axios.get(
 					import.meta.env.VITE_BASE_URL +
-						"api/v1/upload?type=feed-image&filename=" +
+						"/api/v1/upload?type=feed-image&filename=" +
 						selectedFile.name,
 				);
 				if (response.status === 200) {

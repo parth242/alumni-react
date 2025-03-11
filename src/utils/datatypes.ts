@@ -727,6 +727,7 @@ export type IFeed = {
 	user_id: number;
 	user?: { first_name: string; last_name: string; image: string };
 	dashboard_category?: { category_name: string };
+	groups?: { group_name: string };
 	feed_comments?: { id: number };
 	createdAt: string;
 	updated_on: Date;

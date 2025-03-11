@@ -298,6 +298,11 @@ const AlumniDashboardCard: React.FC<AlumniDashboardCardProps> = ({ feed,fetchFee
 							<p className="text-sm text-gray-500">
 								{endDateWithSuffix(feed.createdAt)}
 							</p>
+							{feed.groups?.group_name && (
+							<p className="text-sm text-gray-500">
+								Posted From {feed.groups?.group_name}
+							</p>
+							)}
 						</div>
 					</div>
 					<div className="bg-gray-100 p-4 rounded-md">
@@ -306,8 +311,7 @@ const AlumniDashboardCard: React.FC<AlumniDashboardCardProps> = ({ feed,fetchFee
 							<div className="flex flex-wrap gap-2 mb-2 sm:mb-0">
 								{feed.dashboard_category?.category_name && (
 									<span className="text-sm text-white bg-custom-purple px-2 py-1 rounded-md">
-										{feed.dashboard_category?.category_name}
-										ss
+										{feed.dashboard_category?.category_name}										
 									</span>
 								)}
 								<span
