@@ -136,7 +136,7 @@ function NewsRoom() {
 						}}
 						className="text-center text-white ml-auto"
 						onClick={() =>
-							{ fetchNewsList(); setActiveMonth(""); ReactTooltip.rebuild();
+							{ fetchNewsList(); setActiveMonth(""); handleFilterChange("");
 							}
 						}
 							outline>
