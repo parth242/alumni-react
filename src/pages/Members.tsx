@@ -88,7 +88,7 @@ function Members() {
 
 	const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		//setSelectedState(''); // Reset state selection when country changes
-		setSelectedEndYear(e.target.value);
+		setSelectedEndYear(Number(e.target.value));
 		//fetchstateListData();
 	};
 
@@ -287,7 +287,7 @@ function Members() {
 
 								<div className="flex items-center rounded-md w-full max-w-xs p-2 ">
 									<Select
-									   value={selectedEndYear}
+									   defaultValue={selectedEndYear}
 										name={"end_year"}
 										items={yearListEnd}
 										register={register}
