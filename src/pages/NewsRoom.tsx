@@ -127,11 +127,13 @@ function NewsRoom() {
 			<div className="w-full ">
 				<div className="w-full md:w-10/12 mx-auto py-6 px-4 relative">
 				<div className="flex justify-between items-center mb-4">
-					<h1 className="md:text-3xl text-xl text-black font-bold mb-2 text-center mb-4">
-						News Room {activeMonth}
+					<h1 className="md:text-3xl text-xl text-black font-bold mb-2">
+					News Room {activeMonth}
 					</h1>
-					</div>
-					<BtnLink onClick={() => navigate("/newsroom")}>Back to All News</BtnLink>
+					<BtnLink onClick={() => navigate("/newsroom")} className="ml-auto">
+					Back to All News
+					</BtnLink>
+				</div>
 					{/* Loader */}
 					{isLoading ? (
 						<div className="flex justify-center items-center h-64">
