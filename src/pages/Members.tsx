@@ -74,18 +74,18 @@ function Members() {
 		setSearchText(event.target.value);
 	};
 
-	const handleCourseChange = (selectedCoursenew: any) => {
+	const handleCourseChange = (e: any) => {
 		//setSelectedState(''); // Reset state selection when country changes
-		setSelectedCourse(selectedCoursenew.target.value);
-		console.log('selectedCoursenew',selectedCoursenew.target);
-		setSelectedCourseText(selectedCoursenew.target.text);
+		setSelectedCourse(e.target.value);
+		console.log('selectedCoursenew',e.target.options[e.target.selectedIndex].text);		
+		setSelectedCourseText(e.target.options[e.target.selectedIndex].text);
 		//fetchstateListData();
 	};
 
-	const handleDepartmentChange = (selectedDepartment: any) => {
+	const handleDepartmentChange = (e: any) => {
 		//setSelectedState(''); // Reset state selection when country changes
-		setSelectedDepartment(selectedDepartment.target.value);
-		setSelectedDepartmentText(selectedDepartment.target.text);
+		setSelectedDepartment(e.target.value);
+		setSelectedDepartmentText(e.target.options[e.target.selectedIndex].text);
 		//fetchstateListData();
 	};
 
