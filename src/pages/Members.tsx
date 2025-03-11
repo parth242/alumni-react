@@ -74,10 +74,11 @@ function Members() {
 		setSearchText(event.target.value);
 	};
 
-	const handleCourseChange = (selectedCourse: any) => {
+	const handleCourseChange = (selectedCoursenew: any) => {
 		//setSelectedState(''); // Reset state selection when country changes
-		setSelectedCourse(selectedCourse.target.value);
-		setSelectedCourseText(selectedCourse.target.text);
+		setSelectedCourse(selectedCoursenew.target.value);
+		console.log('selectedCoursenew',selectedCoursenew.target);
+		setSelectedCourseText(selectedCoursenew.target.text);
 		//fetchstateListData();
 	};
 
