@@ -130,9 +130,18 @@ function NewsRoom() {
 					<h1 className="md:text-3xl text-xl text-black font-bold mb-2 text-center mb-4">
 					News Room {activeMonth}
 					</h1>
-					<BtnLink onClick={() => fetchNewsList()} className="ml-auto">
-					Back to All News
-					</BtnLink>
+					<Button
+						style={{
+							backgroundColor: "#440178",
+						}}
+						className="text-center text-white ml-auto"
+						onClick={() =>
+							fetchNewsList()
+						}
+							outline>
+							Back to All News
+						</Button>
+					
 				</div>
 					{/* Loader */}
 					{isLoading ? (
