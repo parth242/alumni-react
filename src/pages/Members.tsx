@@ -60,6 +60,8 @@ function Members() {
 	const [selectedCourseText, setSelectedCourseText] = useState("");
 	const [selectedDepartmentText, setSelectedDepartmentText] = useState("");
 	const [selectedClearEndYear, setSelectedClearEndYear] = useState<number>(0);
+	const [selectedCourseClearText, setSelectedCourseClearText] = useState("");
+	const [selectedDepartmentClearText, setSelectedDepartmentClearText] = useState("");
 
 	const handleSearchClick = () => {
 		//console.log("Name Search:", searchInput);
@@ -96,7 +98,8 @@ function Members() {
 		
 		setSearchClearText(searchText);
 		setSelectedClearEndYear(selectedEndYear);		
-		
+		setSelectedCourseClearText(selectedCourseText);
+		setSelectedDepartmentClearText(selectedDepartmentText);
 		fetchUserList();
 	};
 
@@ -140,7 +143,27 @@ function Members() {
 
 	useEffect(() => {
 		fetchUserList();
-	}, [searchClearText,selectedClearEndYear]);
+	}, [searchClearText,selectedClearEndYear,selectedCourseText]);
+
+	const isAnyFilterCleared =
+    searchClearText ||
+    selectedCourseClearText ||
+    selectedDepartmentClearText ||
+    selectedClearEndYear > 0;
+
+	const clearAllFilters = () => {
+		setSearchClearText("");
+		setSearchText("");
+		setSelectedCourseClearText("");
+		setSelectedCourseText("");
+		setSelectedCourse(0);
+		setSelectedDepartmentClearText("");
+		setSelectedDepartmentText("");
+		setSelectedDepartment(0);
+		setSelectedClearEndYear(0);
+		setSelectedEndYear(0);
+	  };
+	
 
 	useEffect(() => {
 		if (userList) {
@@ -317,9 +340,13 @@ function Members() {
 				<div className="md:w-10/12 w-full mx-auto py-6 px-4 relative">
 					<div className="flex flex-col md:flex-row justify-between  mb-8">
 						<h2 className="md:text-2xl text-lg mb-2 md:mb-0 text-black md:font-extrabold font-semibold">
-						{searchClearText && <button onClick={() => { setSearchClearText(""); setSearchText("");}}>{searchClearText} X</button>}
-						{selectedClearEndYear > 0 && <button onClick={() => { setSelectedClearEndYear(0); setSelectedEndYear(0);}}>{selectedClearEndYear} X</button>}
-						
+						{searchClearText && <button onClick={() => { setSearchClearText(""); setSearchText("");}}>{searchClearText} X</button>}						
+						{selectedCourseClearText && <button onClick={() => { setSelectedCourseClearText(""); setSelectedCourseText(""); setSelectedCourse(0);}}>{selectedCourseClearText} x</button>}
+						{selectedDepartmentClearText && <button onClick={() => { setSelectedDepartmentClearText(""); setSelectedDepartmentText(""); setSelectedDepartment(0);}}>{selectedDepartmentClearText} x</button>}
+						{selectedClearEndYear > 0 && <button onClick={() => { setSelectedClearEndYear(0); setSelectedEndYear(0);}}>{selectedClearEndYear} x</button>
+						{isAnyFilterCleared && (
+								<button onClick={clearAllFilters}>Clear All x</button>
+							)}
 						</h2>
 						<span className="font-semibold md:text-lg text-sm">
 							{totalRecords} Member(s) Found
