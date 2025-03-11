@@ -136,7 +136,8 @@ function NewsRoom() {
 						}}
 						className="text-center text-white ml-auto"
 						onClick={() =>
-							fetchNewsList()
+							{ fetchNewsList(); setActiveMonth(""); ReactTooltip.rebuild();
+							}
 						}
 							outline>
 							Back to All News
