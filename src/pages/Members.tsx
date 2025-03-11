@@ -143,7 +143,7 @@ function Members() {
 
 	useEffect(() => {
 		fetchUserList();
-	}, [searchClearText,selectedClearEndYear,selectedCourseText]);
+	}, [searchClearText,selectedClearEndYear,selectedCourseClearText,selectedDepartmentClearText]);
 
 	const isAnyFilterCleared =
     searchClearText ||
