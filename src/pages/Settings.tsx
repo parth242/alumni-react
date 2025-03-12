@@ -252,7 +252,7 @@ function Settings() {
 										import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL +
 											settingDetails?.data.collage_logo
 									}
-									className="w-100 h-100"
+									className="w-32 h-32 rounded-full"
 									alt="userImage"
 								/>
 						</>

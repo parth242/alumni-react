@@ -381,12 +381,18 @@ function AlumniDetails() {
 	useEffect(() => {
 		if(userDetails?.data.country_id>0){
 			setValue('country_id',Number(userDetails?.data.country_id));
+		} else{
+			setValue('country_id',"");
 		}
 		if(userDetails?.data.country_mobileno_code>0){
 		setValue('country_mobileno_code',Number(userDetails?.data.country_mobileno_code));
+		} else{
+			setValue('country_mobileno_code',"");
 		}
 		if(userDetails?.data.state_id > 0){
 			setValue('state_id',Number(userDetails?.data.state_id));
+		} else{
+			setValue('state_id',"");
 		}
 		
 		
@@ -532,6 +538,9 @@ function AlumniDetails() {
 		}
 		if(data.department_id==''){
 			data.department_id = 0;
+		}
+		if(data.role_id==''){
+			data.role_id = 0;
 		}
 		console.log('alumnidata',data);
 		mutate(data);

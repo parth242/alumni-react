@@ -51,6 +51,7 @@ function UserDetails() {
 	const [departmentList, setDepartmentList] = useState<TSelect[]>([]);
 	const [countryList, setCountryList] = useState<TSelect[]>([]);
 	const [stateList, setStateList] = useState<TSelect[]>([]);
+	const [countryPhoneCode, setCountryPhoneCode] = useState<TSelect[]>([]);
 
 	const schema = yup.object().shape({
 		id: yup
@@ -89,6 +90,15 @@ function UserDetails() {
 			.required("Address1 is required")
 			.min(3, "Must be more then 3 character")
 			.matches(/^[A-Za-z ]+$/, "Address1 is valid only A to Z character"),
+
+		country_mobileno_code: yup.string().required("Country Code is required"),
+		
+		mobileno: yup
+				.string()
+				.required("Mobile number is required")
+				.matches(/^[0-9]+$/, "Mobile number must contain only digits")
+				.min(10, "Mobile number must be at least 10 digits")
+				.max(12, "Mobile number can't be more than 12 digits"),
 
 		password: yup
 			.string()
@@ -191,10 +201,34 @@ function UserDetails() {
 	}) || [];
 	useEffect(() => {
 		if (countrys) {
-			const countrysList = countrys.data.map((item: ICountry) => { return { text: item.country_name, value: item.id } }) as TSelect[];
-			setCountryList([...countrysList]);
+			const countryList = countrys.data.map((item: ICountry) => {
+				return { text: item.country_name, value: item.id };
+			}) as TSelect[];
+			setCountryList([...countryList]);
+
+			const countryPhoneCode = countrys.data
+				.map((item: ICountry) => {
+					if (item?.country_phone_code > 0) {
+						return {
+							text:
+								item.country_name +
+								" (+" +
+								item.country_phone_code +
+								")",
+							value: item.country_phone_code,
+						};
+					}
+				})
+				.filter(Boolean) as TSelect[];
+			if (countryPhoneCode.length > 0) {
+				setCountryPhoneCode([...countryPhoneCode]);
+			} else {
+				// Return empty text and value
+				setCountryPhoneCode([]);
+			}
 		} else {
 			setCountryList([]);
+			setCountryPhoneCode([]);
 		}
 	}, [countrys]);
 
@@ -242,6 +276,27 @@ function UserDetails() {
 		reset(userDetails?.data);
 		trigger();
 	}, [userDetails]);
+
+	useEffect(() => {
+		if(userDetails?.data.country_id>0){
+			setValue('country_id',Number(userDetails?.data.country_id));
+		} else{
+			setValue('country_id',"");
+		}
+		if(userDetails?.data.country_mobileno_code>0){
+		setValue('country_mobileno_code',Number(userDetails?.data.country_mobileno_code));
+		} else{
+			setValue('country_mobileno_code',"");
+		}
+		if(userDetails?.data.state_id > 0){
+			setValue('state_id',Number(userDetails?.data.state_id));
+		} else{
+			setValue('state_id',"");
+		}
+		
+		
+	}, [stateList]);
+
 
 	console.log("userDetails", errors);
 
@@ -446,12 +501,22 @@ function UserDetails() {
 								register={register}
 							/>
 						</div>
+						<div className="col-span-1">
+							<Select
+								name="country_mobileno_code"
+								label="Country Code"
+								items={countryPhoneCode}
+								error={errors?.country_mobileno_code?.message}
+								register={register}
+							/>
+					</div>
 							<div className="col-span-1">
 								<Input
 									placeholder="Enter Mobile Number"
 									name={"mobileno"}
 									label={" Mobile Number"}
 									type={"number"}
+									error={errors?.mobileno?.message}
 									register={register}
 								/>
 							</div>
@@ -468,19 +533,19 @@ function UserDetails() {
 					
 					<div className="col-span-1">
 						<Select
-							name={"country"}
+							name={"country_id"}
 							label={"Country"}
 							items={countryList}
-							error={errors?.country?.message}
+							error={errors?.country_id?.message}
 							register={register}
 						/>
 					</div>
 					<div className="col-span-1">
 						<Select
-							name={"state"}
+							name={"state_id"}
 							label={"State"}
 							items={stateList}
-							error={errors?.state?.message}
+							error={errors?.state_id?.message}
 							register={register}
 						/>
 					</div>
