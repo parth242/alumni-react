@@ -92,7 +92,7 @@ function UserDetails() {
 			.matches(/^[A-Za-z ]+$/, "Address1 is valid only A to Z character"),
 
 		country_mobileno_code: yup.string().required("Country Code is required"),
-		
+
 		mobileno: yup
 				.string()
 				.required("Mobile number is required")
@@ -319,6 +319,8 @@ function UserDetails() {
 		data.department_id = 0;
 		data.batch_start = 0;
 		data.batch_end = 0;
+		data.image = "";
+		data.course_id = 0;
 		if(data.state_id==''){
 			data.state_id = 0;
 		}
