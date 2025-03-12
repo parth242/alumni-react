@@ -74,6 +74,43 @@ const useGroups = ({
 	);
 };
 
+const useNewsGroups = ({
+	enabled,
+	filter_status,
+	filter_name,	
+	user_id,
+	page_number,
+	page_size,	
+}: GroupsRequest) => {
+	return useQuery<GroupsResponse, HTTPError>(
+		["groupList"],
+		async () => {
+			try {
+				return await apiClient
+					.get(
+						`api/v1/group/newsgroup/
+						?` +
+						(filter_status != ""
+							? "&filter_status=" + filter_status
+							: "") +							
+						(filter_name ? "&filter_name=" + filter_name : "") +
+						`user_id=${user_id}&page_number=${page_number}
+						&page_size=${page_size}&flow_types=0&flow_types=1&flow_types=2`,
+					)
+					.json();
+			} catch (error) {
+				return Promise.reject(error);
+			}
+		},
+		{
+			enabled: enabled,
+			refetchOnWindowFocus: false,
+			retry: false,
+			refetchOnMount: false,
+		},
+	);
+};
+
 const createGroup = async (req: TGroupFormData) => {
 	try {		
 		return await authClient
@@ -99,5 +136,6 @@ export {
 	useGroups,
 	getGroup,
 	createGroup,
-	deleteGroup,	
+	deleteGroup,
+	useNewsGroups,	
 };

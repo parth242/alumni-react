@@ -13,7 +13,7 @@ import { getNews,createNews } from "api/services/newsService";
 import { useNavigate, useParams } from "react-router-dom";
 import { HTTPError } from "ky";
 import { TNewsFormData,INews, TSelect,IGroup} from "utils/datatypes";
-import { useGroups } from "api/services/groupService";
+import { useNewsGroups } from "api/services/groupService";
 import SelectMulti from "components/ui/common/SelectMulti";
 
 
@@ -57,11 +57,11 @@ function AdminNewsDetails() {
 		data: groupList,
 		refetch: fetchGroupList,
 		isFetching: isFetchingGroupList,
-	} = useGroups({
-		enabled: userId>0,
+	} = useNewsGroups({
+		enabled: true,
 		filter_status: activeStatus,
 		filter_name: searchText,	
-		user_id: userId,
+		user_id: 0,
 		page_number: pageNumber,
 		page_size: pageSize.value,
 	}) || [];
@@ -69,7 +69,7 @@ function AdminNewsDetails() {
 		if (groupList) {
 			const groupsList = groupList.data.map(
 				(item: IGroup) => {
-					return { text: item.group?.group_name, value: item.id };
+					return { text: item.group_name, value: item.id };
 				},
 			) as TSelect[];
 			setGroups([...groupsList]);
@@ -91,7 +91,7 @@ function AdminNewsDetails() {
 
 		posted_date: yup
 			.string()
-			.required("Posted Date is required"),
+			.required("Event Date is required"),
 
 		status: yup
 			.string()
@@ -211,7 +211,7 @@ function AdminNewsDetails() {
 						<Input
 								type="date"
 								name={"posted_date"}
-								label={"Posted Date"}
+								label={"Event Date"}
 								register={register}
 								error={errors?.posted_date?.message}
 								className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"

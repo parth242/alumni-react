@@ -61,17 +61,9 @@ function EventDetails() {
 			.string()
 			.optional(),
 
-		event_title: yup
-			.string()
-			.required("Event Title is required")
-			.min(3, "Must be more then 3 character")
-			.matches(/^[A-Za-z ]+$/, "First Name is valid only A to Z character"),
+		event_title: yup.string().required("Event Title field is required."),
 
-		event_category: yup
-			.string()
-			.required("Event Category is required")
-			.min(3, "Must be more then 3 character")
-			.matches(/^[A-Za-z ]+$/, "First Name is valid only A to Z character"),
+		event_category: yup.string().required("Event Category is required."),
 
 		event_date: yup
 			.string()
