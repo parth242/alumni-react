@@ -13,7 +13,9 @@ import { getEvent,createEvent } from "api/services/eventService";
 import { useNavigate, useParams } from "react-router-dom";
 import { HTTPError } from "ky";
 import { TEventFormData,IEvent, TSelect} from "utils/datatypes";
+import axios, { AxiosResponse } from "axios";
 import { allowedFiles, fileInvalid, filesExt, filesLimit, filesSize } from "utils/consts";
+import Loader from "components/layout/loader";
 
 
 
@@ -22,6 +24,13 @@ function EventDetails() {
 	const { id } = useParams() as {
 		id: string;
 	};
+
+	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const [fileChanged, setFileChanged] = useState<boolean>(false);
+	const [fileControl, setFileControl] = useState<FileList | null>(null);
+	const [selectedImage, setSelectedImage] = useState<string>();
+	const [image, setImage] = useState<File | null>(null);
+	const [loading, setLoading] = useState(false);
 
 	const [eventCategory] = useState([
 		{ text: "Reunions", value: "Reunions" },
@@ -119,6 +128,7 @@ function EventDetails() {
 
 	const { mutate } = useMutation(createEvent, {
 		onSuccess: async () => {
+			setLoading(false);
 			SuccessToastMessage({
 				title: "Event Created Successfully",
 				id: "create_event_success",
@@ -126,12 +136,86 @@ function EventDetails() {
 			navigate("/admin/events");
 		},
 		onError: async (e: HTTPError) => {
+			setLoading(false);
 			// const error = await e.response.text();
 			// console.log("error", error);
 			ErrorToastMessage({ error: e, id: "create_event" });
 		},
 	});
-	const onSubmit = (data: TEventFormData) => {
+
+	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (file) {
+			const ext: string | null = (
+				file.name.split(".").pop() || ""
+			).toLowerCase();
+			setImage(null);
+			if (filesExt["image"].indexOf(ext) < 0) {
+				setErrorMessage(fileInvalid["image"]);
+				return true;
+			} else if (file?.size > filesSize["image"]) {
+				setErrorMessage(
+					`File size limit: The image you tried uploading exceeds the maximum file size (${filesLimit["image"]}) `,
+				);
+			} else {
+				setImage(file);
+			}
+		}
+	};
+
+	const saveProfileImage = async () => {
+		try {
+			let uploadConfig: AxiosResponse | null = null;
+			const selectedFile = (image as File) || "";
+			console.log("selectedFile", selectedFile);
+			if (selectedFile) {
+				const response = await axios.get(
+					import.meta.env.VITE_BASE_URL +
+						"/api/v1/upload?type=events&filename=" +
+						selectedFile.name,
+				);
+				if (response.status === 200) {
+					console.log("response", response);
+					uploadConfig = response.data;
+					console.log(
+						"uploadConfig?.data?.url",
+						uploadConfig?.data?.url,
+					);
+					const upload = await axios.put(
+						uploadConfig?.data?.url,
+						selectedFile,
+						{
+							headers: {
+								"Content-Type": selectedFile?.type || "",
+							},
+							onUploadProgress: progressEvent => {
+								const percentCompleted = Math.round(
+									(progressEvent.loaded * 100) /
+										(progressEvent.total || 1),
+								);
+								// onProgress(percentCompleted);
+								console.log(
+									"percentCompleted",
+									percentCompleted,
+								);
+							},
+						},
+					);
+					console.log("uploadConfig", uploadConfig);
+					setValue("event_image", uploadConfig?.data?.key);
+				}
+			}
+		} catch (error) {
+			return;
+		}
+	};
+
+	const onSubmit = async (data: TEventFormData) => {
+		setLoading(true);
+		await saveProfileImage();
+
+		data.event_image = getValues("event_image") || "";
+
 		const storedUserData = localStorage.getItem('user');
 
 		if (storedUserData) {
@@ -140,69 +224,20 @@ function EventDetails() {
 		}
 		data.user_id = userId;
 		data.event_type = "Free";
-		const imageFile = (
-			document.querySelector('input[type="file"]') as HTMLInputElement
-		)?.files?.[0];
-
-		if (imageFile) {
-			const formdata = new FormData();
-			formdata.append("type", "event");
-			formdata.append("file", imageFile);
-
-			useUploadImage({ data: formdata })
-				.then((response: any) => {
-					//setValue("image", data.files[0].filename);
-					if (response.message == "Upload Success") {
-						// Update data with the uploaded image file name
-						data.event_image = response.files[0].filename;
-					} else {
-						console.error("File upload failed:", response.error);
-						return; // Stop further processing if upload fails
-					}
-
-					// Call mutate once the file has been uploaded
-					mutate(data);
-				})
-				.catch(error => {
-					console.error("Error during file upload:", error);
-				});
-		} else {
-			// If no image is uploaded, just call mutate
-			mutate(data);
-		}
+		
+		mutate(data);
+		
 		
 	};
 
-	const [errorMessage, setErrorMessage] = useState<string | null>(null);
-	const [fileChanged, setFileChanged] = useState<boolean>(false);
-	const [fileControl, setFileControl] = useState<FileList | null>(null);
-	const [selectedImage, setSelectedImage] = useState<string>();
+	
 
 	const handleCancel = () => {
 		reset(); // Resets the form fields to their initial values
 		navigate("/admin/events");
 	  };
 
-	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0];
-		if (file) {
-			const ext: string | null = (
-				file.name.split(".").pop() || ""
-			).toLowerCase();
-			if (filesExt["image"].indexOf(ext) < 0) {
-				setErrorMessage(fileInvalid["image"]);
-
-				return true;
-			}
-
-			if (file?.size > filesSize["image"]) {
-				setErrorMessage(
-					`File size limit: The image you tried uploading exceeds the maximum file size (${filesLimit["image"]}) `,
-				);
-			}
-		}
-	};
-
+	  
 	
 	
 	return (
@@ -277,8 +312,7 @@ function EventDetails() {
 					<div className="col-span-1">
 					<img
 									src={
-										import.meta.env.VITE_BASE_URL +
-											"upload/event/" +
+										import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL +
 											eventDetails?.data.event_image
 									}
 									className="w-32 h-32 rounded-full"
@@ -301,7 +335,7 @@ function EventDetails() {
 				</div>
 				</div>
 				
-				
+				{loading && <Loader></Loader>}
 				<div className="mt-6">
 					<Button className="!transition-colors !duration-700 text-lg font-medium text-white shadow-sm hover:!bg-blue-700 focus:outline-none focus:ring-0 focus:ring-primary focus:ring-offset-0 py-3 px-10">
 						Save

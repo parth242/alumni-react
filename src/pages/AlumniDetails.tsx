@@ -179,7 +179,10 @@ function AlumniDetails() {
 			.number()
 			.typeError("Course is required")
 			.nullable()
-			.required("Course is required."),
+			.when('id', {
+			is: (id) => !id,  // Apply this validation if `id` is not present
+			then: yup.number().required("Course is required.")
+			}),
 		end_year: yup
 			.number()
 			.typeError("End Year is required")
@@ -379,17 +382,17 @@ function AlumniDetails() {
 	}, [states]);
 
 	useEffect(() => {
-		if(userDetails?.data.country_id>0){
+		if(Number(userDetails?.data.country_id) > 0){
 			setValue('country_id',Number(userDetails?.data.country_id));
 		} else{
 			setValue('country_id',"");
 		}
-		if(userDetails?.data.country_mobileno_code>0){
+		if(Number(userDetails?.data.country_mobileno_code) >0){
 		setValue('country_mobileno_code',Number(userDetails?.data.country_mobileno_code));
 		} else{
 			setValue('country_mobileno_code',"");
 		}
-		if(userDetails?.data.state_id > 0){
+		if(Number(userDetails?.data.state_id) > 0){
 			setValue('state_id',Number(userDetails?.data.state_id));
 		} else{
 			setValue('state_id',"");
