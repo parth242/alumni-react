@@ -264,6 +264,13 @@ function UserDetails() {
 		data.department_id = 0;
 		data.batch_start = 0;
 		data.batch_end = 0;
+		if(data.state_id==''){
+			data.state_id = 0;
+		}
+		if(data.country_id==''){
+			data.country_id = 0;
+		}
+		
 		mutate(data);
 	};
 

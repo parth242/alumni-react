@@ -405,6 +405,15 @@ function AlumniDetails() {
 	});
 	const onSubmit = (data: FormDataType) => {
 		data.is_alumni = 1;
+		if(data.state_id==''){
+			data.state_id = 0;
+		}
+		if(data.country_id==''){
+			data.country_id = 0;
+		}
+		if(data.department_id==''){
+			data.department_id = 0;
+		}
 		mutate(data);
 	};
 
