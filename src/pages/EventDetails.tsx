@@ -2,7 +2,7 @@ import Button from "components/ui/common/Button";
 import { Input } from "components/ui/common/Input";
 import Select from "components/ui/common/Select";
 import Textarea from "components/ui/common/Textarea";
-import { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";

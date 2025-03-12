@@ -2,7 +2,7 @@ import Button from "components/ui/common/Button";
 import { Input } from "components/ui/common/Input";
 import Select from "components/ui/common/Select";
 import Textarea from "components/ui/common/Textarea";
-import { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -17,6 +17,7 @@ import {
 } from "api/services/user";
 import { useNavigate, useParams } from "react-router-dom";
 import { HTTPError } from "ky";
+import axios, { AxiosResponse } from "axios";
 import {
 	FormDataType,
 	IRole,
@@ -39,6 +40,7 @@ import { useCountrys } from "api/services/countryService";
 import { useStates } from "api/services/stateService";
 import TabsComponent from "components/ui/common/TabsComponent";
 import { useCourses } from "api/services/courseService";
+import Loader from "components/layout/loader";
 
 function AlumniDetails() {
 	const navigate = useNavigate();
@@ -96,6 +98,8 @@ function AlumniDetails() {
 
 	const [selectedCountry, setSelectedCountry] = useState<number>(0);
 	const [selectedState, setSelectedState] = useState("");
+	const [image, setImage] = useState<File | null>(null);
+	const [loading, setLoading] = useState(false);
 
 	const handleDateChange = (event: any) => {
 		setSelectedDate(event.target.value);
@@ -389,33 +393,10 @@ function AlumniDetails() {
 
 	console.log("alumniID", id);
 
-	const { mutate } = useMutation(registerUser, {
-		onSuccess: async () => {
-			SuccessToastMessage({
-				title: "User Created Successfully",
-				id: "create_user_success",
-			});
-			navigate("/admin/alumnis");
-		},
-		onError: async (e: HTTPError) => {
-			// const error = await e.response.text();
-			// console.log("error", error);
-			ErrorToastMessage({ error: e, id: "create_user" });
-		},
-	});
-	const onSubmit = (data: FormDataType) => {
-		data.is_alumni = 1;
-		if(data.state_id==''){
-			data.state_id = 0;
-		}
-		if(data.country_id==''){
-			data.country_id = 0;
-		}
-		if(data.department_id==''){
-			data.department_id = 0;
-		}
-		mutate(data);
-	};
+	
+
+	
+	
 
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [fileChanged, setFileChanged] = useState<boolean>(false);
@@ -441,72 +422,117 @@ function AlumniDetails() {
 		setSelectedState(e.target.value);
 	};
 
-	const uploadImage = async (e: ChangeEvent) => {
-		const target = e.target as HTMLInputElement;
-		const files: FileList | null = target.files;
-		setErrorMessage("");
+	const { mutate } = useMutation(registerUser, {
+		onSuccess: async () => {
+			setLoading(false);
+			SuccessToastMessage({
+				title: "User Created Successfully",
+				id: "create_user_success",
+			});
+			navigate("/admin/alumnis");
+		},
+		onError: async (e: HTTPError) => {
+			setLoading(false);
+			// const error = await e.response.text();
+			// console.log("error", error);
+			ErrorToastMessage({ error: e, id: "create_user" });
+		},
+	});
+
+	const saveProfileImage = async () => {
+		try {
+			let uploadConfig: AxiosResponse | null = null;
+			const selectedFile = (image as File) || "";
+			console.log("selectedFile", selectedFile);
+			if (selectedFile) {
+				const response = await axios.get(
+					import.meta.env.VITE_BASE_URL +
+						"/api/v1/upload?type=profile&filename=" +
+						selectedFile.name,
+				);
+				if (response.status === 200) {
+					console.log("response", response);
+					uploadConfig = response.data;
+					console.log(
+						"uploadConfig?.data?.url",
+						uploadConfig?.data?.url,
+					);
+					const upload = await axios.put(
+						uploadConfig?.data?.url,
+						selectedFile,
+						{
+							headers: {
+								"Content-Type": selectedFile?.type || "",
+							},
+							onUploadProgress: progressEvent => {
+								const percentCompleted = Math.round(
+									(progressEvent.loaded * 100) /
+										(progressEvent.total || 1),
+								);
+								// onProgress(percentCompleted);
+								console.log(
+									"percentCompleted",
+									percentCompleted,
+								);
+							},
+						},
+					);
+					console.log("uploadConfig", uploadConfig);
+					setValue("image", uploadConfig?.data?.key);
+				}
+			}
+		} catch (error) {
+			return;
+		}
+	};
+
+	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (file) {
+			const ext: string | null = (
+				file.name.split(".").pop() || ""
+			).toLowerCase();
+			setImage(null);
+			setErrorMessage("");
 		setValue("image", "");
 		setSelectedImage("");
 
-		if (files && files[0]) {
-			setFileChanged(true);
-			const ext: string | null = (
-				files[0].name.split(".").pop() || ""
-			).toLowerCase();
 			if (filesExt["image"].indexOf(ext) < 0) {
-				setFileControl(null);
 				setErrorMessage(fileInvalid["image"]);
-				setFileChanged(true);
-				setValue("image", "");
 				return true;
-			}
-
-			if (files[0]?.size < filesSize["image"]) {
-				const data = new FormData();
-				data.append("type", "profile");
-				data.append("file", files[0]);
-				setFileControl(files);
+			} else if (file?.size > filesSize["image"]) {
+				setErrorMessage(
+					`File size limit: The image you tried uploading exceeds the maximum file size (${filesLimit["image"]}) `,
+				);
+			} else {
+				setImage(file);
 				const reader = new FileReader();
 				reader.onload = () => {
 					console.log("reader.result", reader.result);
 					setSelectedImage(reader.result as string);
 				};
-				reader.readAsDataURL(files[0]);
-				uploadFile({ data: data });
-			} else {
-				setFileControl(null);
-				setFileChanged(true);
-				setValue("image", "");
-				setErrorMessage(
-					`File size limit: The image you tried uploading exceeds the maximum file size (${filesLimit["image"]}) `,
-				);
+				reader.readAsDataURL(file);
 			}
-		} else {
-			setValue(`image`, "");
-			setFileControl(null);
 		}
 	};
 
-	const { mutate: uploadFile, isLoading: uploadIsLoading } = useMutation(
-		useUploadImage,
-		{
-			onSuccess: async (data: any) => {
-				console.log("data.files", data);
-				setValue("image", data.files[0].filename);
-				trigger("image");
-				setFileChanged(true);
-				setErrorMessage("");
-			},
-			onError: async (e: HTTPError) => {
-				setFileControl(null);
-				setFileChanged(true);
-				setValue("image", "");
-				setErrorMessage(
-					"File upload failed. Please check your internet connection and try again.",
-				);
-			},
-		},
-	);
+	const onSubmit = async (data: FormDataType) => {
+		setLoading(true);
+		await saveProfileImage();
+		data.image = getValues("image") || "";
+		data.is_alumni = 1;
+		if(data.state_id==''){
+			data.state_id = 0;
+		}
+		if(data.country_id==''){
+			data.country_id = 0;
+		}
+		if(data.department_id==''){
+			data.department_id = 0;
+		}
+		console.log('alumnidata',data);
+		mutate(data);
+	};
 	console.log("getValues()", getValues("image"));
 	return (
 		<div className="">
@@ -520,8 +546,7 @@ function AlumniDetails() {
 						<img
 							src={
 								selectedImage ||
-								import.meta.env.VITE_BASE_URL +
-									"upload/profile/" +
+								import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL +
 									getValues("image")
 							}
 							className="w-32 h-32 rounded-full"
@@ -545,7 +570,7 @@ function AlumniDetails() {
 						type="file"
 						className="sr-only"
 						accept={`${allowedFiles["image"]}`}
-						onChange={(e: ChangeEvent) => uploadImage(e)}
+						onChange={handleImageChange}
 					/>
 				</div>
 
@@ -812,7 +837,7 @@ function AlumniDetails() {
 								<Input
 									placeholder="Enter Confirm Password"
 									name={"confirm_password"}
-									label={" Confirm Password"}
+									label={"Confirm Password"}
 									type={"password"}
 									error={errors?.confirm_password?.message}
 									register={register}
@@ -821,6 +846,7 @@ function AlumniDetails() {
 						</div>
 					</>
 				)}
+				{loading && <Loader></Loader>}
 				<div className="mt-6">
 					<Button className="!transition-colors !duration-700 text-lg font-medium text-white shadow-sm hover:!bg-blue-700 focus:outline-none focus:ring-0 focus:ring-primary focus:ring-offset-0 py-3 px-10">
 						Save
