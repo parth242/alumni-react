@@ -12,6 +12,7 @@ import { INews } from "utils/datatypes";
 import ReactTooltip from "react-tooltip";
 import { Button } from "flowbite-react";
 import BtnLink from "components/ui/common/BtnLink";
+import FlexStartEnd from "components/ui/common/FlexStartEnd";
 
 function NewsRoom() {
 	const navigate = useNavigate();
@@ -115,6 +116,12 @@ function NewsRoom() {
 		}
 	};
 
+	const clearfilter = () => {
+		setActiveMonth("");
+		setNewss(totalNewss);
+		
+	};
+
 	useEffect(() => {
 		ReactTooltip.rebuild();
 	}, []);
@@ -126,24 +133,24 @@ function NewsRoom() {
 			</div>
 			<div className="w-full ">
 				<div className="w-full md:w-10/12 mx-auto py-6 px-4 relative">
-				<div className="flex justify-between items-center mb-4">
-					<h1 className="md:text-3xl text-xl text-black font-bold mb-2 text-center mb-4">
+				<FlexStartEnd>
+					<h1 className="md:text-3xl text-xl text-black font-bold mb-2 text-center">
 					News Room {activeMonth}
 					</h1>
 					<Button
 						style={{
 							backgroundColor: "#440178",
 						}}
-						className="text-center text-white ml-auto"
+						className="text-center text-white ml-auto mb-4"
 						onClick={() =>
-							{ fetchNewsList(); setActiveMonth(""); handleFilterChange("");
+							{ clearfilter(); setActiveMonth("");
 							}
 						}
 							outline>
 							Back to All News
 						</Button>
-					
-				</div>
+					</FlexStartEnd>
+				
 					{/* Loader */}
 					{isLoading ? (
 						<div className="flex justify-center items-center h-64">
