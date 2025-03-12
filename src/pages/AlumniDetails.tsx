@@ -379,10 +379,13 @@ function AlumniDetails() {
 	}, [states]);
 
 	useEffect(() => {
-		setValue('country_id',Number(userDetails?.data.country_id));
+		if(userDetails?.data.country_id>0){
+			setValue('country_id',Number(userDetails?.data.country_id));
+		}
+		if(userDetails?.data.country_mobileno_code>0){
 		setValue('country_mobileno_code',Number(userDetails?.data.country_mobileno_code));
-		
-		if(stateList.length>1){
+		}
+		if(userDetails?.data.state_id > 0){
 			setValue('state_id',Number(userDetails?.data.state_id));
 		}
 		
