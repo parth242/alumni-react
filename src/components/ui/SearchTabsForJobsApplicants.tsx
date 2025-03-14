@@ -3,6 +3,7 @@ import SelectForJobApplicants from "./SelectForJobApplicants";
 import { Input, Select, Tabs, TimeRangePickerProps } from "antd";
 import dayjs from "dayjs";
 import { DatePicker } from "antd";
+import { useProfessionalskills } from "api/services/professionalskillService";
 const { RangePicker } = DatePicker;
 
 const extraContent = {
@@ -48,16 +49,39 @@ const SearchTabsForJobsApplicants: React.FC<SearchTabsForJobsApplicantsProps> = 
 		{ label: "Last 90 Days", value: [dayjs().add(-90, "d"), dayjs()] },
 	];
 
+	const { data: jobSkillsData, refetch: fetchJobSkillsData } =
+		useProfessionalskills({
+			enabled: false,
+			filter_status: "",
+			page_number: 1,
+			page_size: 10,
+			filter_name: "",
+		});
+
 	// Define tabs as an array of items
 	const SearchTabs = [
 		{
 			key: "1",
 			label: "Skills",
 			children: (
-				<SelectForJobApplicants
-					placeholder="Type skills and press enter"
+				<Select
+					size="large"
+					className="rounded-md border-1 border-gray-500"
+					placeholder={placeholder}
+					mode="tags"
+					style={{
+						width: "100%",
+					}}					
+					tokenSeparators={[","]}
+					options={jobSkillsData?.data?.map(
+						(skill: any) => ({
+							value: skill.id,
+							label: skill.skill_name,
+						}),
+					)}
 					onChange={value => handleChange("skills", value)}
 				/>
+				
 			),
 		},
 		{
@@ -105,26 +129,7 @@ const SearchTabsForJobsApplicants: React.FC<SearchTabsForJobsApplicantsProps> = 
 				/>
 			),
 		},
-		{
-			key: "4",
-			label: "Company Name",
-			children: (
-				<SelectForJobApplicants
-					placeholder="Type company name and press enter"
-					onChange={value => handleChange("company", value)}
-				/>
-			),
-		},
-		{
-			key: "5",
-			label: "Job Location",
-			children: (
-				<SelectForJobApplicants
-					placeholder="Type job location and press enter"
-					onChange={value => handleChange("job_location", value)}
-				/>
-			),
-		},
+		
 		{
 			key: "6",
 			label: "Name / Email",
@@ -166,44 +171,7 @@ const SearchTabsForJobsApplicants: React.FC<SearchTabsForJobsApplicantsProps> = 
 						},
 						...rangePresets,
 					]}
-				/>
-				<Select
-					size="large"
-					style={{ width: "100%" }}
-					defaultValue="All Applicants"
-					optionFilterProp="label"
-					onChange={value => handleChange("all_applicants", value)}
-					options={[
-						{
-							value: "All Applicants",
-							label: "All Applicants",
-						},
-						{
-							value: "Applied + Referred",
-							label: "Applied + Referred",
-						},
-						{
-							value: "Applied",
-							label: "Applied",
-						},
-						{
-							value: "Referred",
-							label: "Referred",
-						},
-						{
-							value: "Redirect to careers portal",
-							label: "Redirect to careers portal",
-						},
-						{
-							value: "Rejected",
-							label: "Rejected",
-						},
-						{
-							value: "Shortlisted",
-							label: "Shortlisted",
-						},
-					]}
-				/>
+				/>				
 				<Select
 					placeholder="Select Status"
 					size="large"
