@@ -49,14 +49,22 @@ const SearchTabsForJobsApplicants: React.FC<SearchTabsForJobsApplicantsProps> = 
 		{ label: "Last 90 Days", value: [dayjs().add(-90, "d"), dayjs()] },
 	];
 
-	const { data: jobSkillsData, refetch: fetchJobSkillsData } =
+	const { data: jobSkillsData,refetch: fetchJobSkillsData,
+		isFetching: isFetchJobSkillsData } =
 		useProfessionalskills({
-			enabled: false,
+			enabled: true,
 			filter_status: "",
 			page_number: 1,
 			page_size: 10,
 			filter_name: "",
 		});
+
+		useEffect(() => {		
+			
+			fetchJobSkillsData();
+					
+	}, []);
+
 
 	// Define tabs as an array of items
 	const SearchTabs = [
