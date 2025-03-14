@@ -67,7 +67,7 @@ const SearchTabsForJobsApplicants: React.FC<SearchTabsForJobsApplicantsProps> = 
 				<Select
 					size="large"
 					className="rounded-md border-1 border-gray-500"
-					placeholder={placeholder}
+					placeholder="Choose Skills"
 					mode="tags"
 					style={{
 						width: "100%",
