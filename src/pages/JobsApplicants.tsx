@@ -82,18 +82,13 @@ const JobsApplicants: React.FC = () => {
 	});
 	
 	  const handleSearchChange = (key: keyof typeof searchCriteria, value: string) => {
-		console.log('keysearch',key);
-		console.log('valuesearch',value);
-		setSearchCriteria((prevCriteria) => {
-		  const updatedKeyValues = prevCriteria[key].includes(value)
-			? prevCriteria[key].filter((item) => item !== value) // Remove value if it exists
-			: [...prevCriteria[key], value]; // Add value if it doesn't exist
-	
-		  return {
-			...prevCriteria,
-			[key]: updatedKeyValues,
-		  };
-		});
+		setSearchCriteria(prev => ({
+			...prev,
+			[key]: prev[key].includes(value)
+				? prev[key].filter(item => item !== value)
+				: [...prev[key], value],
+		}));
+		
 	  };
 
 	const {
@@ -167,13 +162,14 @@ const JobsApplicants: React.FC = () => {
 			);
 		}
 
+		
 		if (searchCriteria.skills.length > 0) {
-			filteredApplications = filteredApplications.filter(jobapplication =>
-				searchCriteria.skills.includes(jobapplication.relevant_skills),
-				
+			filteredApplications = filteredApplications.filter(job =>
+				job.relevant_skills.some(skill =>
+					searchCriteria.skills.includes(skill),
+				),
 			);
 		}
-		
 
 		if (searchCriteria.application_status.length > 0) {
 			filteredApplications = filteredApplications.filter(jobapplication =>
