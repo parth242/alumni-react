@@ -186,6 +186,13 @@ const JobsApplicants: React.FC = () => {
 			);
 		}
 
+		if (searchCriteria.application_status.length > 0) {
+			filteredApplications = filteredApplications.filter(jobapplication =>
+				searchCriteria.application_status.includes(jobapplication.status),
+				
+			);
+		}
+
 		console.log('filteredApplications',filteredApplications);		
 
 		if (filteredApplications.length > 0) {
@@ -285,7 +292,7 @@ const JobsApplicants: React.FC = () => {
 					}}						
 					options={jobSkillsData?.data?.map(
 						(skill: any) => ({
-							value: skill.id,
+							value: skill.skill_name,
 							label: skill.skill_name,
 						}),
 					)}
