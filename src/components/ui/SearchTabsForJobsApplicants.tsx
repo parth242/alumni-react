@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import SelectForJobApplicants from "./SelectForJobApplicants";
-import { Input, Select, Tabs, TimeRangePickerProps } from "antd";
+import { Input, Select, Tabs, TimeRangePickerProps, Button, DatePicker } from "antd";
 import dayjs from "dayjs";
-import { DatePicker } from "antd";
 import { useProfessionalskills } from "api/services/professionalskillService";
 const { RangePicker } = DatePicker;
 
@@ -79,8 +78,7 @@ const SearchTabsForJobsApplicants: React.FC<SearchTabsForJobsApplicantsProps> = 
 					mode="tags"
 					style={{
 						width: "100%",
-					}}					
-					tokenSeparators={[","]}
+					}}						
 					options={jobSkillsData?.data?.map(
 						(skill: any) => ({
 							value: skill.id,
@@ -297,6 +295,18 @@ const SearchTabsForJobsApplicants: React.FC<SearchTabsForJobsApplicantsProps> = 
 						},
 					]}
 				/>
+				
+									<Button
+										style={{ backgroundColor: "#440178" }}
+										className="text-center text-white w-full"
+										size="md"
+										outline
+										onClick={() => 
+											searchmembers()  // First, set search to 1											
+										  }>
+										Search
+									</Button>
+								
 			</div>
 		</>
 	);
