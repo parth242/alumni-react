@@ -191,6 +191,29 @@ const JobsApplicants: React.FC = () => {
 		}
 	}, [searchCriteria]);
 
+	const rangePresets: TimeRangePickerProps["presets"] = [
+		{ label: "Last 7 Days", value: [dayjs().add(-7, "d"), dayjs()] },
+		{ label: "Last 14 Days", value: [dayjs().add(-14, "d"), dayjs()] },
+		{ label: "Last 30 Days", value: [dayjs().add(-30, "d"), dayjs()] },
+		{ label: "Last 90 Days", value: [dayjs().add(-90, "d"), dayjs()] },
+	];
+
+	const { data: jobSkillsData,refetch: fetchJobSkillsData,
+		isFetching: isFetchJobSkillsData } =
+		useProfessionalskills({
+			enabled: true,
+			filter_status: "",
+			page_number: 1,
+			page_size: 10,
+			filter_name: "",
+		});
+
+		useEffect(() => {		
+			
+			fetchJobSkillsData();
+					
+	}, []);
+
 	// Apply search and filters
 	
 	console.log('searchCriteria',searchCriteria);
@@ -332,28 +355,7 @@ const JobsApplicants: React.FC = () => {
 	  };
 	
 
-	const rangePresets: TimeRangePickerProps["presets"] = [
-		{ label: "Last 7 Days", value: [dayjs().add(-7, "d"), dayjs()] },
-		{ label: "Last 14 Days", value: [dayjs().add(-14, "d"), dayjs()] },
-		{ label: "Last 30 Days", value: [dayjs().add(-30, "d"), dayjs()] },
-		{ label: "Last 90 Days", value: [dayjs().add(-90, "d"), dayjs()] },
-	];
-
-	const { data: jobSkillsData,refetch: fetchJobSkillsData,
-		isFetching: isFetchJobSkillsData } =
-		useProfessionalskills({
-			enabled: true,
-			filter_status: "",
-			page_number: 1,
-			page_size: 10,
-			filter_name: "",
-		});
-
-		useEffect(() => {		
-			
-			fetchJobSkillsData();
-					
-	}, []);
+	
 
 	return (
 		<>
@@ -515,14 +517,7 @@ const JobsApplicants: React.FC = () => {
 					]}
 				/>
 				
-									<Button
-										style={{ backgroundColor: "#440178" }}
-										className="text-center text-white w-full"
-										size="md"
-										outline
-										>
-										Search
-									</Button>
+									
 								
 			</div>
 						<h2 className="flex justify-end text-xl text-black font-semibold mb-2">
