@@ -94,6 +94,8 @@ const JobsApplicants: React.FC = () => {
 	  });
 	
 	  const handleSearchChange = (key: keyof SearchCriteria, value: string) => {
+		console.log('keysearch',key);
+		console.log('valuesearch',value);
 		setSearchCriteria((prevCriteria) => {
 		  const updatedKeyValues = prevCriteria[key].includes(value)
 			? prevCriteria[key].filter((item) => item !== value) // Remove value if it exists
@@ -190,6 +192,7 @@ const JobsApplicants: React.FC = () => {
 			setJobApplications(filteredApplications);
 		}
 	}, [searchCriteria]);
+	console.log('searchCriteriaupdate',searchCriteria);
 
 	const rangePresets: TimeRangePickerProps["presets"] = [
 		{ label: "Last 7 Days", value: [dayjs().add(-7, "d"), dayjs()] },
