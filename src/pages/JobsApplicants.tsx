@@ -140,12 +140,12 @@ const JobsApplicants: React.FC = () => {
 	const [filteredApplications, setFilteredApplications] = useState(jobApplications); // To store filtered jobs
 	console.log('jobApplicationsnew',jobApplications);
 	useEffect(() => {
-		let filteredApplications = jobApplications;
+		let filtered = jobApplications;
 
 			// Apply each selected filter
 
 		if (searchCriteria.job.length > 0) {
-			filteredApplications = filteredApplications.filter(jobapplication =>
+			filtered = filtered.filter(jobapplication =>
 				searchCriteria.job.map(jobtitle => 
 					jobapplication.job?.job_title.toLowerCase().includes(jobtitle)
 					)
@@ -156,14 +156,14 @@ const JobsApplicants: React.FC = () => {
 
 		
 		if (searchCriteria.company.length > 0) {
-			filteredApplications = filteredApplications.filter(jobapplication =>
+			filtered = filtered.filter(jobapplication =>
 				searchCriteria.company.includes(jobapplication.current_company),
 				
 			);
 		}
 
 		if (searchCriteria.skills.length > 0) {
-			filteredApplications = filteredApplications.filter(jobapplication =>
+			filtered = filtered.filter(jobapplication =>
 				searchCriteria.skills.includes(jobapplication.relevant_skills),
 				
 			);
@@ -171,22 +171,22 @@ const JobsApplicants: React.FC = () => {
 		
 
 		if (searchCriteria.application_status.length > 0) {
-			filteredApplications = filteredApplications.filter(jobapplication =>
+			filtered = filtered.filter(jobapplication =>
 				searchCriteria.application_status.includes(jobapplication.status),
 				
 			);
 		}
 
 		if (searchCriteria.name_email.length > 0) {
-			filteredApplications = filteredApplications.filter(jobapplication =>
+			filtered = filtered.filter(jobapplication =>
 				searchCriteria.name_email.includes(jobapplication.email_address),				
 			);			
 		}
 
-		console.log('filteredApplications',filteredApplications);		
+		console.log('filteredApplications',filtered);		
 
-		if (filteredApplications.length > 0) {
-			setJobApplications(filteredApplications);
+		if (filtered.length > 0) {
+			setJobApplications(filtered);
 		}
 	}, [searchCriteria]);
 	console.log('searchCriteriaupdate',searchCriteria);
