@@ -66,23 +66,22 @@ const JobsApplicants: React.FC = () => {
 			</div>
 		),
 	};
+	
 
-	type SearchCriteria = {
-		job: string[];
-		company: string[];
-		skills: string[];
-		job_location: string[];
-		name_email: string[];
-		all_applicants: string[];
-		application_status: string[];
-		minExperience: string[];
-		maxExperience: string[];
-		rangedate: string[];
-	  };
+	  const [searchCriteria, setSearchCriteria] = useState({
+		job: [] as string[],
+		company: [] as string[],
+		skills: [] as string[],
+		job_location: [] as string[],
+		name_email: [] as string[],
+		all_applicants: [] as string[],
+		application_status: [] as string[],
+		minExperience: [] as string[],
+		maxExperience: [] as string[],
+		rangedate: [] as string[],
+	});
 	
-	  const [searchCriteria, setSearchCriteria] = useState<SearchCriteria>();
-	
-	  const handleSearchChange = (key: keyof SearchCriteria, value: string) => {
+	  const handleSearchChange = (key: keyof typeof searchCriteria, value: string) => {
 		console.log('keysearch',key);
 		console.log('valuesearch',value);
 		setSearchCriteria((prevCriteria) => {
@@ -186,10 +185,7 @@ const JobsApplicants: React.FC = () => {
 		if (searchCriteria.name_email.length > 0) {
 			filteredApplications = filteredApplications.filter(jobapplication =>
 				searchCriteria.name_email.includes(jobapplication.email_address),				
-			);
-			filteredApplications = filteredApplications.filter(jobapplication =>
-				searchCriteria.name_email.includes(jobapplication.full_name),
-			);
+			);			
 		}
 
 		console.log('filteredApplications',filteredApplications);		
@@ -295,7 +291,7 @@ const JobsApplicants: React.FC = () => {
 							label: skill.skill_name,
 						}),
 					)}
-					onChange={value => handleChange("skills", value)}
+					onChange={value => handleSearchChange("skills", value)}
 				/>
 				
 			),
@@ -314,7 +310,7 @@ const JobsApplicants: React.FC = () => {
 							placeholder="0"
 							className="border-1 border-gray-300 rounded-md"
 							onChange={e =>
-								handleChange("minExperience", e.target.value)
+								handleSearchChange("minExperience", e.target.value)
 							}
 						/>
 					</div>
@@ -328,7 +324,7 @@ const JobsApplicants: React.FC = () => {
 							placeholder="0"
 							className="border-1 border-gray-300 rounded-md"
 							onChange={e =>
-								handleChange("maxExperience", e.target.value)
+								handleSearchChange("maxExperience", e.target.value)
 							}
 						/>
 					</div>
@@ -341,7 +337,7 @@ const JobsApplicants: React.FC = () => {
 			children: (
 				<SelectForJobApplicants
 					placeholder="Type job title and press enter"
-					onChange={value => handleChange("job", value)}
+					onChange={value => handleSearchChange("job", value)}
 				/>
 			),
 		},
@@ -352,17 +348,11 @@ const JobsApplicants: React.FC = () => {
 			children: (
 				<SelectForJobApplicants
 					placeholder="Type name or email and press enter"
-					onChange={value => handleChange("name_email", value)}
+					onChange={value => handleSearchChange("name_email", value)}
 				/>
 			),
 		},
 	];
-
-	const handleChange = (key: keyof SearchCriteria, value: string) => {
-		console.log(`Tab: ${key}, selected: ${value}`);
-		handleSearchChange(key, value);
-	  };
-	
 
 	
 
@@ -394,7 +384,7 @@ const JobsApplicants: React.FC = () => {
 					className="border-1 border-gray-300 rounded-md"
 					format="YYYY/MM/DD"
 					onChange={(value: any) =>
-						handleChange("rangedate", value ? value : null)
+						handleSearchChange("rangedate", value ? value : null)
 					}
 					presets={[
 						{
@@ -413,7 +403,7 @@ const JobsApplicants: React.FC = () => {
 					size="large"
 					style={{ width: "100%" }}
 					onChange={value =>
-						handleChange("application_status", value)
+						handleSearchChange("application_status", value)
 					}
 					options={[
 						{
