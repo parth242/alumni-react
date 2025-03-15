@@ -162,14 +162,13 @@ const JobsApplicants: React.FC = () => {
 			);
 		}
 
-		
 		if (searchCriteria.skills.length > 0) {
-			filteredApplications = filteredApplications.filter(job =>
-				job.relevant_skills.some(skill =>
-					searchCriteria.skills.includes(skill),
-				),
+			filteredApplications = filteredApplications.filter(jobapplication =>
+				searchCriteria.skills.includes(jobapplication.relevant_skills),
+				
 			);
 		}
+		
 
 		if (searchCriteria.application_status.length > 0) {
 			filteredApplications = filteredApplications.filter(jobapplication =>
