@@ -155,7 +155,7 @@ const JobsApplicants: React.FC = () => {
 	}, [jobApplicationList]);
 
 	const [filteredApplications, setFilteredApplications] = useState(jobApplications); // To store filtered jobs
-
+	console.log('jobApplicationsnew',jobApplications);
 	useEffect(() => {
 		let filteredApplications = jobApplications;
 
