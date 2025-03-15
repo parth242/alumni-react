@@ -80,18 +80,7 @@ const JobsApplicants: React.FC = () => {
 		rangedate: string[];
 	  };
 	
-	  const [searchCriteria, setSearchCriteria] = useState<SearchCriteria>({
-		job: [],
-		company: [],
-		skills: [],
-		job_location: [],
-		name_email: [],
-		all_applicants: [],
-		application_status: [],
-		minExperience: [],
-		maxExperience: [],
-		rangedate: [],
-	  });
+	  const [searchCriteria, setSearchCriteria] = useState<SearchCriteria>();
 	
 	  const handleSearchChange = (key: keyof SearchCriteria, value: string) => {
 		console.log('keysearch',key);
@@ -185,11 +174,21 @@ const JobsApplicants: React.FC = () => {
 				
 			);
 		}
+		
 
 		if (searchCriteria.application_status.length > 0) {
 			filteredApplications = filteredApplications.filter(jobapplication =>
 				searchCriteria.application_status.includes(jobapplication.status),
 				
+			);
+		}
+
+		if (searchCriteria.name_email.length > 0) {
+			filteredApplications = filteredApplications.filter(jobapplication =>
+				searchCriteria.name_email.includes(jobapplication.email_address),				
+			);
+			filteredApplications = filteredApplications.filter(jobapplication =>
+				searchCriteria.name_email.includes(jobapplication.full_name),
 			);
 		}
 
