@@ -188,14 +188,15 @@ const JobsApplicants: React.FC = () => {
 		  );
 		}
 	  
-		console.log('filteredApplications', filtered);
+		
 	  
 		if (filtered.length > 0) {
-		  setFilteredApplications(filtered); // Use setFilteredApplications to store the filtered results
+		  setJobApplications(filtered); // Use setFilteredApplications to store the filtered results
 		} else {
-		  setFilteredApplications([]); // Clear the results if no match
+			setJobApplications([]); // Clear the results if no match
 		}
-	  }, [searchCriteria, jobApplications]);
+	  }, [searchCriteria]);
+	  console.log('filteredApplications', filteredApplications);
 	console.log('searchCriteriaupdate',searchCriteria);
 
 	const rangePresets: TimeRangePickerProps["presets"] = [
