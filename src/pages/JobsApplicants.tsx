@@ -162,10 +162,12 @@ const JobsApplicants: React.FC = () => {
 			);
 		}
 
+		
 		if (searchCriteria.skills.length > 0) {
 			filtered = filtered.filter(jobapplication =>
-				searchCriteria.skills.includes(jobapplication.relevant_skills),
-				
+				jobapplication.relevant_skills.split(',').some(skill =>
+					searchCriteria.skills.includes(skill.trim()) // Use trim to remove any extra spaces
+				),
 			);
 		}
 		
@@ -286,6 +288,9 @@ const JobsApplicants: React.FC = () => {
 							label: skill.skill_name,
 						}),
 					)}
+					searchCriteria={
+						searchCriteria.skills
+					}
 					onChange={value => handleSearchChange("skills", value)}
 				/>
 				
