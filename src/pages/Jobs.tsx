@@ -127,7 +127,7 @@ function Jobs() {
 	const [searchQuery, setSearchQuery] = useState<string>(""); // Search query state
 
 	const [filteredJobs, setFilteredJobs] = useState(allJobs); // To store filtered jobs
-
+	console.log('selectedFilters',selectedFilters);
 	// Apply search and filters
 	useEffect(() => {
 		let filtered = allJobs;
