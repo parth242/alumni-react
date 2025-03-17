@@ -75,20 +75,21 @@ const JobsApplicants: React.FC = () => {
 		job_location: [] as string[],
 		name_email: [] as string[],
 		all_applicants: [] as string[],
-		application_status: [] as string[],
+		application_status: "" as string,
 		minExperience: [] as string[],
 		maxExperience: [] as string[],
 		rangedate: [] as string[],
 	});
 	
-	  const handleSearchChange = (key: keyof typeof searchCriteria, value: string) => {
+	const handleSearchChange = (key: keyof typeof searchCriteria, value: string | string[]) => {
 		setSearchCriteria(prev => ({
-			...prev,
-			[key]: prev[key].includes(value)
-				? prev[key].filter(item => item !== value)
-				: [...prev[key], value],
+		  ...prev,
+		  [key]: Array.isArray(value)
+			? value // In case of multi-select (like skills), just use the array
+			: prev[key].includes(value)
+			? prev[key].filter(item => item !== value) // Toggle single value if already present
+			: [...prev[key], value], // Add new value if it's not already in the list
 		}));
-		
 	  };
 
 	const {
@@ -141,56 +142,52 @@ const JobsApplicants: React.FC = () => {
 	console.log('jobApplicationsnew',jobApplications);
 	useEffect(() => {
 		let filtered = jobApplications;
-
-			// Apply each selected filter
-
+	  
+		// Apply each selected filter
 		if (searchCriteria.job.length > 0) {
-			filtered = filtered.filter(jobapplication =>
-				searchCriteria.job.map(jobtitle => 
-					jobapplication.job?.job_title.toLowerCase().includes(jobtitle)
-					)
-				
-				
-			);
+		  filtered = filtered.filter(jobapplication =>
+			searchCriteria.job.some(jobtitle => 
+			  jobapplication.job?.job_title.toLowerCase().includes(jobtitle.toLowerCase())
+			)
+		  );
 		}
-
-		
+	  
 		if (searchCriteria.company.length > 0) {
-			filtered = filtered.filter(jobapplication =>
-				searchCriteria.company.includes(jobapplication.current_company),
-				
-			);
+		  filtered = filtered.filter(jobapplication =>
+			searchCriteria.company.includes(jobapplication.current_company),
+		  );
 		}
-
-		
+	  
 		if (searchCriteria.skills.length > 0) {
-			filtered = filtered.filter(jobapplication =>
-				jobapplication.relevant_skills.split(',').some(skill =>
-					searchCriteria.skills.includes(skill.trim()) // Use trim to remove any extra spaces
-				),
-			);
+		  filtered = filtered.filter(jobapplication =>
+			jobapplication.relevant_skills.split(',').some(skill =>
+			  searchCriteria.skills.includes(skill.trim())
+			),
+		  );
 		}
-		
-
+	  
 		if (searchCriteria.application_status.length > 0) {
-			filtered = filtered.filter(jobapplication =>
-				searchCriteria.application_status.includes(jobapplication.status),
-				
-			);
+		  filtered = filtered.filter(jobapplication =>
+			searchCriteria.application_status.includes(jobapplication.status),
+		  );
 		}
-
+	  
 		if (searchCriteria.name_email.length > 0) {
-			filtered = filtered.filter(jobapplication =>
-				searchCriteria.name_email.includes(jobapplication.email_address),				
-			);			
+		  filtered = filtered.filter(jobapplication =>
+			searchCriteria.name_email.some(value =>
+			  jobapplication.email_address.includes(value) || jobapplication.name.includes(value)
+			)
+		  );
 		}
-
-		console.log('filteredApplications',filtered);		
-
+	  
+		console.log('filteredApplications', filtered);
+	  
 		if (filtered.length > 0) {
-			setJobApplications(filtered);
+		  setFilteredApplications(filtered); // Use setFilteredApplications to store the filtered results
+		} else {
+		  setFilteredApplications([]); // Clear the results if no match
 		}
-	}, [searchCriteria]);
+	  }, [searchCriteria, jobApplications]);
 	console.log('searchCriteriaupdate',searchCriteria);
 
 	const rangePresets: TimeRangePickerProps["presets"] = [
@@ -281,18 +278,14 @@ const JobsApplicants: React.FC = () => {
 					mode="tags"
 					style={{
 						width: "100%",
-					}}						
-					options={jobSkillsData?.data?.map(
-						(skill: any) => ({
-							value: skill.skill_name,
-							label: skill.skill_name,
-						}),
-					)}
-					searchCriteria={
-						searchCriteria.skills
-					}
-					onChange={value => handleSearchChange("skills", value)}
-				/>
+					}}
+					options={jobSkillsData?.data?.map((skill: any) => ({
+						value: skill.skill_name,
+						label: skill.skill_name,
+					}))}
+					value={searchCriteria.skills} // Bind the value correctly to the state
+					onChange={value => handleSearchChange("skills", value)} // Pass value as an array
+					/>
 				
 			),
 		},
