@@ -15,6 +15,7 @@ import LinkCommon from "components/ui/common/LinkCommon";
 import { HiPencil, HiPlus } from "react-icons/hi";
 import { FooterComponent } from "components/layout/Footer";
 import BtnLink from "components/ui/common/BtnLink";
+import Icon from "utils/icon";
 
 function Jobs() {
 	const navigate = useNavigate();
@@ -124,10 +125,35 @@ function Jobs() {
 		}));
 	};
 
+	// Clear All Filters
+	const clearAllFilters = () => {
+		setSelectedFilters({
+			areas: [],
+			companies: [],
+			skills: [],
+			jobTypes: [],
+			locations: [],
+		});
+	};
+
+	// Only one filter
+	const clearFilter = (filterKey: keyof typeof selectedFilters) => {
+		setSelectedFilters(prev => {
+			return {
+				...prev,
+				[filterKey]: [],
+			};
+		});
+	};
+
+	const hasActiveFilters = Object.values(selectedFilters).some(
+		filterArray => filterArray.length > 0,
+	);
+
 	const [searchQuery, setSearchQuery] = useState<string>(""); // Search query state
 
 	const [filteredJobs, setFilteredJobs] = useState(allJobs); // To store filtered jobs
-	console.log('selectedFilters',selectedFilters);
+
 	// Apply search and filters
 	useEffect(() => {
 		let filtered = allJobs;
@@ -295,6 +321,20 @@ function Jobs() {
 										</p>
 										<Divider />
 									</div>
+									{hasActiveFilters && (
+										<div className="mt-4 ">
+											<button
+												onClick={clearAllFilters}
+												className="bg-gray-200 rounded-full px-3 py-1 text-[14px] font-semibold text-gray-700 transition-all hover:bg-gray-300 ">
+												Clear All
+												<Icon
+													icon={"x-mark"}
+													className="bg-secondary-blue ml-2 rounded-full cursor-pointer"
+													size={20}
+												/>
+											</button>
+										</div>
+									)}
 									<FormGroup className="mt-4">
 										<FilterCheckbox
 											label="Area"
@@ -321,6 +361,9 @@ function Jobs() {
 													value,
 												)
 											}
+											clearFilter={() =>
+												clearFilter("areas")
+											}
 										/>
 
 										<FilterCheckbox
@@ -336,6 +379,9 @@ function Jobs() {
 													"companies",
 													value,
 												)
+											}
+											clearFilter={() =>
+												clearFilter("companies")
 											}
 										/>
 
@@ -364,6 +410,9 @@ function Jobs() {
 													value,
 												)
 											}
+											clearFilter={() =>
+												clearFilter("skills")
+											}
 										/>
 
 										<FilterCheckbox
@@ -380,6 +429,9 @@ function Jobs() {
 													value,
 												)
 											}
+											clearFilter={() =>
+												clearFilter("jobTypes")
+											}
 										/>
 
 										<FilterCheckbox
@@ -395,6 +447,9 @@ function Jobs() {
 													"locations",
 													value,
 												)
+											}
+											clearFilter={() =>
+												clearFilter("locations")
 											}
 										/>
 									</FormGroup>

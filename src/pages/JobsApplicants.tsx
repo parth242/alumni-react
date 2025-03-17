@@ -522,7 +522,7 @@ const JobsApplicants: React.FC = () => {
 								
 			</div>
 						<h2 className="flex justify-end text-xl text-black font-semibold mb-2">
-							<span className="mr-2">{currentRecords}</span>{" "}
+							<span className="mr-2">{jobApplications.length}</span>{" "}
 							Applications Found
 						</h2>
 						<Divider />
