@@ -47,6 +47,10 @@ const JobsApplicants: React.FC = () => {
 	const [jobApplications, setJobApplications] = useState<IJobApplication[]>(
 		[],
 	);
+	const [allJobApplications, setAllJobApplications] = useState<IJobApplication[]>(
+		[],
+	);
+	
 
 	const [currentApplication, setCurrentApplication] =
 		useState<IJobApplication>();
@@ -68,29 +72,7 @@ const JobsApplicants: React.FC = () => {
 	};
 	
 
-	  const [searchCriteria, setSearchCriteria] = useState({
-		job: [] as string[],
-		company: [] as string[],
-		skills: [] as string[],
-		job_location: [] as string[],
-		name_email: [] as string[],
-		all_applicants: [] as string[],
-		application_status: "" as string,
-		minExperience: [] as string[],
-		maxExperience: [] as string[],
-		rangedate: [] as string[],
-	});
-	
-	const handleSearchChange = (key: keyof typeof searchCriteria, value: string | string[]) => {
-		setSearchCriteria(prev => ({
-		  ...prev,
-		  [key]: Array.isArray(value)
-			? value // In case of multi-select (like skills), just use the array
-			: prev[key].includes(value)
-			? prev[key].filter(item => item !== value) // Toggle single value if already present
-			: [...prev[key], value], // Add new value if it's not already in the list
-		}));
-	  };
+	  
 
 	const {
 		data: jobApplicationList,
@@ -126,6 +108,7 @@ const JobsApplicants: React.FC = () => {
 				...prevUsers,
 				...jobApplicationList.data,
 			]);
+			setAllJobApplications(jobApplicationList.total_data);
 			setTotalRecords(jobApplicationList.total_records);
 			setCurrentRecords(
 				prevCurrentRecords =>
@@ -133,15 +116,40 @@ const JobsApplicants: React.FC = () => {
 			);
 		} else {
 			setJobApplications([]);
+			setAllJobApplications([]);
 			setTotalRecords(0);
 			setCurrentRecords(0);
 		}
 	}, [jobApplicationList]);
 
-	const [filteredApplications, setFilteredApplications] = useState(jobApplications); // To store filtered jobs
-	console.log('jobApplicationsnew',jobApplications);
+	const [searchCriteria, setSearchCriteria] = useState({
+		job: [] as string[],
+		company: [] as string[],
+		skills: [] as string[],
+		job_location: [] as string[],
+		name_email: [] as string[],
+		all_applicants: [] as string[],
+		application_status: "" as string,
+		minExperience: [] as string[],
+		maxExperience: [] as string[],
+		rangedate: [] as string[],
+	});
+	
+	const handleSearchChange = (key: keyof typeof searchCriteria, value: string | string[]) => {
+		setSearchCriteria(prev => ({
+		  ...prev,
+		  [key]: Array.isArray(value)
+			? value // In case of multi-select (like skills), just use the array
+			: prev[key].includes(value)
+			? prev[key].filter(item => item !== value) // Toggle single value if already present
+			: [...prev[key], value], // Add new value if it's not already in the list
+		}));
+	  };
+
+	const [filteredApplications, setFilteredApplications] = useState(allJobApplications); // To store filtered jobs
+	console.log('jobApplicationsnew',allJobApplications);
 	useEffect(() => {
-		let filtered = jobApplications;
+		let filtered = allJobApplications;
 	  
 		// Apply each selected filter
 		if (searchCriteria.job.length > 0) {
