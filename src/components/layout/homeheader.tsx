@@ -90,8 +90,8 @@ export default function HomeHeader() {
 
             <div className="contact-info d-flex align-items-center">
               <a href="#" className="btn btn-link">Contact Us</a>
-              <a href="#" className="btn btn-link">Create an Account</a>
-              <a href="#" className="btn btn-link btn-log">Log In</a>
+              <a href="/register" className="btn btn-link">Create an Account</a>
+              <a href="/login" className="btn btn-link btn-log">Log In</a>
             </div>
           </div>
         </div>

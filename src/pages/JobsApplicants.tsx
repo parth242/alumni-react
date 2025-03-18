@@ -363,6 +363,7 @@ const JobsApplicants: React.FC = () => {
 							type="number"
 							placeholder="0"
 							className="border-1 border-gray-300 rounded-md"
+							value={searchCriteria.minExperience}
 							onChange={e =>
 								handleSearchChange("minExperience", e.target.value)
 							}
@@ -377,6 +378,7 @@ const JobsApplicants: React.FC = () => {
 							type="number"
 							placeholder="0"
 							className="border-1 border-gray-300 rounded-md"
+							value={searchCriteria.maxExperience}							
 							onChange={e =>
 								handleSearchChange("maxExperience", e.target.value)
 							}
@@ -391,6 +393,7 @@ const JobsApplicants: React.FC = () => {
 			children: (
 				<SelectForJobApplicants
 					placeholder="Type job title and press enter"
+					value={searchCriteria.jobtitle}
 					onChange={value => handleSearchChange("jobtitle", value)}
 				/>
 			),
@@ -402,6 +405,7 @@ const JobsApplicants: React.FC = () => {
 			children: (
 				<SelectForJobApplicants
 					placeholder="Type name or email and press enter"
+					value={searchCriteria.name_email}
 					onChange={value => handleSearchChange("name_email", value)}
 				/>
 			),
@@ -437,6 +441,7 @@ const JobsApplicants: React.FC = () => {
 					style={{ width: "100%" }}
 					className="border-1 border-gray-300 rounded-md"
 					format="YYYY/MM/DD"
+					value={searchCriteria.rangedate}
 					onChange={(value: any) =>
 						handleSearchChange("rangedate", value ? value : null)
 					}
