@@ -124,12 +124,9 @@ const JobsApplicants: React.FC = () => {
 	}, [jobApplicationList]);
 
 	const [searchCriteria, setSearchCriteria] = useState({
-		jobtitle: "" as string,
-		company: [] as string[],
+		jobtitle: [] as string[],		
 		skills: [] as string[],
-		job_location: [] as string[],
 		name_email: [] as string[],
-		all_applicants: [] as string[],
 		application_status: "" as string,
 		minExperience: "" as string,
 		maxExperience: "" as string,
@@ -139,7 +136,7 @@ const JobsApplicants: React.FC = () => {
 	const handleSearchChange = (key: keyof typeof searchCriteria, value: string | string[]) => {
 		setSearchCriteria(prev => ({
 			...prev,
-			[key]: key === "application_status" || key === "minExperience" || key === "maxExperience" || key === "jobtitle"
+			[key]: key === "application_status" || key === "minExperience" || key === "maxExperience"
 			  ? value // Directly set the string value for application_status
 			  : Array.isArray(value) 
 				? value // Set array values directly (for multi-select fields)
@@ -156,19 +153,19 @@ const JobsApplicants: React.FC = () => {
 	  
 		// Apply each selected filter
 		
-	  
-		if (searchCriteria.company.length > 0) {
-		  filtered = filtered.filter(jobapplication =>
-			searchCriteria.company.includes(jobapplication.current_company),
-		  );
-		}
-	  
+	    
 		if (searchCriteria.skills.length > 0) {
 		  filtered = filtered.filter(jobapplication =>
 			jobapplication.relevant_skills.split(',').some(skill =>
 			  searchCriteria.skills.includes(skill.trim())
 			),
 		  );
+		}
+
+		if (searchCriteria.jobtitle.length > 0) {
+			filtered = filtered.filter(jobapplication =>			 
+				searchCriteria.jobtitle.includes(jobapplication.job.job_title.trim())			 
+			);
 		}
 	  
 		if (searchCriteria.application_status) {
@@ -177,19 +174,13 @@ const JobsApplicants: React.FC = () => {
 			);
 		}
 
-		if (searchCriteria.jobtitle) {
-			filtered = filtered.filter(jobapplication =>
-			  jobapplication.job.job_title === searchCriteria.jobtitle
-			);
-		}
-	  
 		if (searchCriteria.name_email.length > 0) {
-		  filtered = filtered.filter(jobapplication =>
-			searchCriteria.name_email.some(value =>
-			  jobapplication.email_address.includes(value) || jobapplication.name.includes(value)
-			)
-		  );
-		}
+			filtered = filtered.filter(jobapplication =>			 
+				searchCriteria.name_email.includes(jobapplication.email_address.trim() || jobapplication.full_name.trim()
+				)			 
+			);
+		}		  
+		
 	  
 		if (searchCriteria.rangedate.length === 2) {
 			const [startDate, endDate] = searchCriteria.rangedate;
