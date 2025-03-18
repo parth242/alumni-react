@@ -191,14 +191,22 @@ const JobsApplicants: React.FC = () => {
 		  );
 		}
 	  
-		
+		if (searchCriteria.rangedate.length === 2) {
+			const [startDate, endDate] = searchCriteria.rangedate;
+		  
+			filtered = filtered.filter(jobapplication => {
+			  const createdAt = dayjs(jobapplication.createdAt); // Convert created_at to Dayjs object
+		  
+			  return createdAt.isAfter(startDate, "day") && createdAt.isBefore(endDate, "day");
+			});
+		  }
 	  
 		if (filtered.length > 0) {
 		  setJobApplications(filtered); // Use setFilteredApplications to store the filtered results
 		} else {
 			setJobApplications([]); // Clear the results if no match
 		}
-	  }, [searchCriteria]);
+	  }, [searchCriteria,allJobApplications]);
 	  console.log('filteredApplications', filteredApplications);
 	console.log('searchCriteriaupdate',searchCriteria);
 
@@ -413,6 +421,10 @@ const JobsApplicants: React.FC = () => {
 					}
 					options={[
 						{
+							value: "",
+							label: "Select Status",
+						},
+						{
 							value: "Status to be Updated",
 							label: "Status to be Updated",
 						},
@@ -587,7 +599,7 @@ const JobsApplicants: React.FC = () => {
 															jobApplication.createdAt || "",
 														),
 													"Experience":
-														jobApplication.total_years_of_experience ||
+														jobApplication.total_years_of_experience+" Years" ||
 														"N/A",
 													"Key Skills":
 														jobApplication.relevant_skills ||
