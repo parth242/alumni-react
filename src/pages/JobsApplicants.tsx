@@ -124,22 +124,22 @@ const JobsApplicants: React.FC = () => {
 	}, [jobApplicationList]);
 
 	const [searchCriteria, setSearchCriteria] = useState({
-		job: [] as string[],
+		jobtitle: "" as string,
 		company: [] as string[],
 		skills: [] as string[],
 		job_location: [] as string[],
 		name_email: [] as string[],
 		all_applicants: [] as string[],
 		application_status: "" as string,
-		minExperience: [] as string[],
-		maxExperience: [] as string[],
+		minExperience: "" as string,
+		maxExperience: "" as string,
 		rangedate: [] as string[],
 	});
 	
 	const handleSearchChange = (key: keyof typeof searchCriteria, value: string | string[]) => {
 		setSearchCriteria(prev => ({
 			...prev,
-			[key]: key === "application_status" 
+			[key]: key === "application_status" || key === "minExperience" || key === "maxExperience" || key === "jobtitle"
 			  ? value // Directly set the string value for application_status
 			  : Array.isArray(value) 
 				? value // Set array values directly (for multi-select fields)
@@ -155,13 +155,7 @@ const JobsApplicants: React.FC = () => {
 		let filtered = allJobApplications;
 	  
 		// Apply each selected filter
-		if (searchCriteria.job.length > 0) {
-		  filtered = filtered.filter(jobapplication =>
-			searchCriteria.job.some(jobtitle => 
-			  jobapplication.job?.job_title.toLowerCase().includes(jobtitle.toLowerCase())
-			)
-		  );
-		}
+		
 	  
 		if (searchCriteria.company.length > 0) {
 		  filtered = filtered.filter(jobapplication =>
@@ -182,6 +176,12 @@ const JobsApplicants: React.FC = () => {
 			  jobapplication.status === searchCriteria.application_status
 			);
 		}
+
+		if (searchCriteria.jobtitle) {
+			filtered = filtered.filter(jobapplication =>
+			  jobapplication.job.job_title === searchCriteria.jobtitle
+			);
+		}
 	  
 		if (searchCriteria.name_email.length > 0) {
 		  filtered = filtered.filter(jobapplication =>
@@ -199,7 +199,23 @@ const JobsApplicants: React.FC = () => {
 		  
 			  return createdAt.isAfter(startDate, "day") && createdAt.isBefore(endDate, "day");
 			});
-		  }
+		}
+
+		if (searchCriteria.minExperience.length > 0 || searchCriteria.maxExperience.length > 0) {
+			filtered = filtered.filter(jobapplication => {
+			  const experience = parseFloat(jobapplication.total_years_of_experience) || 0; // Convert experience to number
+		  
+			  const minExp = searchCriteria.minExperience.length > 0 
+				? parseFloat(searchCriteria.minExperience) 
+				: 0;
+		  
+			  const maxExp = searchCriteria.maxExperience.length > 0 
+				? parseFloat(searchCriteria.maxExperience) 
+				: Infinity;
+		  
+			  return experience >= minExp && experience <= maxExp;
+			});
+		}
 	  
 		if (filtered.length > 0) {
 		  setJobApplications(filtered); // Use setFilteredApplications to store the filtered results
@@ -350,7 +366,7 @@ const JobsApplicants: React.FC = () => {
 			children: (
 				<SelectForJobApplicants
 					placeholder="Type job title and press enter"
-					onChange={value => handleSearchChange("job", value)}
+					onChange={value => handleSearchChange("jobtitle", value)}
 				/>
 			),
 		},
