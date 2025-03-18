@@ -163,8 +163,10 @@ const JobsApplicants: React.FC = () => {
 		}
 
 		if (searchCriteria.jobtitle.length > 0) {
-			filtered = filtered.filter(jobapplication =>			 
-				searchCriteria.jobtitle.includes(jobapplication.job.job_title.trim())			 
+			filtered = filtered.filter(jobapplication =>
+			  searchCriteria.jobtitle.some(title =>
+				jobapplication.job?.job_title?.toLowerCase().includes(title.toLowerCase())
+			  )
 			);
 		}
 	  
@@ -174,12 +176,15 @@ const JobsApplicants: React.FC = () => {
 			);
 		}
 
+		
 		if (searchCriteria.name_email.length > 0) {
-			filtered = filtered.filter(jobapplication =>			 
-				searchCriteria.name_email.includes(jobapplication.email_address.trim() || jobapplication.full_name.trim()
-				)			 
+			filtered = filtered.filter(jobapplication =>
+			  searchCriteria.name_email.some(nameemail =>
+				jobapplication.email_address?.toLowerCase().includes(nameemail.toLowerCase()) ||
+				jobapplication.full_name?.toLowerCase().includes(nameemail.toLowerCase())
+			  )
 			);
-		}		  
+		  }
 		
 	  
 		if (searchCriteria.rangedate.length === 2) {
