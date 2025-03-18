@@ -33,6 +33,7 @@ import {
 } from "api/services/jobApplicationService";
 import { IJobApplication, TSelect } from "utils/datatypes";
 import { FooterComponent } from "components/layout/Footer";
+import { endDateWithSuffix } from "components/ui/NewsItem";
 
 
 const JobsApplicants: React.FC = () => {
@@ -137,14 +138,16 @@ const JobsApplicants: React.FC = () => {
 	
 	const handleSearchChange = (key: keyof typeof searchCriteria, value: string | string[]) => {
 		setSearchCriteria(prev => ({
-		  ...prev,
-		  [key]: Array.isArray(value)
-			? value // In case of multi-select (like skills), just use the array
-			: prev[key].includes(value)
-			? prev[key].filter(item => item !== value) // Toggle single value if already present
-			: [...prev[key], value], // Add new value if it's not already in the list
-		}));
-	  };
+			...prev,
+			[key]: key === "application_status" 
+			  ? value // Directly set the string value for application_status
+			  : Array.isArray(value) 
+				? value // Set array values directly (for multi-select fields)
+				: prev[key].includes(value)
+				  ? prev[key].filter(item => item !== value) // Remove if exists (toggle)
+				  : [...prev[key], value], // Append new value
+		  }));
+		};
 
 	const [filteredApplications, setFilteredApplications] = useState(allJobApplications); // To store filtered jobs
 	console.log('jobApplicationsnew',allJobApplications);
@@ -174,10 +177,10 @@ const JobsApplicants: React.FC = () => {
 		  );
 		}
 	  
-		if (searchCriteria.application_status.length > 0) {
-		  filtered = filtered.filter(jobapplication =>
-			searchCriteria.application_status.includes(jobapplication.status),
-		  );
+		if (searchCriteria.application_status) {
+			filtered = filtered.filter(jobapplication =>
+			  jobapplication.status === searchCriteria.application_status
+			);
 		}
 	  
 		if (searchCriteria.name_email.length > 0) {
@@ -404,6 +407,7 @@ const JobsApplicants: React.FC = () => {
 					placeholder="Select Status"
 					size="large"
 					style={{ width: "100%" }}
+					value={searchCriteria.application_status}
 					onChange={value =>
 						handleSearchChange("application_status", value)
 					}
@@ -577,6 +581,13 @@ const JobsApplicants: React.FC = () => {
 														"N/A",
 													"Email":
 														jobApplication.email_address ||
+														"N/A",
+													"Applied On":
+														endDateWithSuffix(
+															jobApplication.createdAt || "",
+														),
+													"Experience":
+														jobApplication.total_years_of_experience ||
 														"N/A",
 													"Key Skills":
 														jobApplication.relevant_skills ||
