@@ -34,6 +34,7 @@ import {
 import { IJobApplication, TSelect } from "utils/datatypes";
 import { FooterComponent } from "components/layout/Footer";
 import { endDateWithSuffix } from "components/ui/NewsItem";
+import Icon from "utils/icon";
 
 
 const JobsApplicants: React.FC = () => {
@@ -268,6 +269,34 @@ const JobsApplicants: React.FC = () => {
 		setCurrentApplication(undefined);
 		setShowModal(false);
 	};
+
+	// Clear All Filters
+	const clearAllFilters = () => {
+		setSearchCriteria({
+			jobtitle: [],
+			skills: [],
+			name_email: [],
+			application_status: "",
+			minExperience: "",
+			maxExperience: "",
+			rangedate: []
+		});
+		
+	};
+
+	// Only one filter
+	const clearFilter = (filterKey: keyof typeof searchCriteria) => {
+		setSearchCriteria(prev => {
+			return {
+				...prev,
+				[filterKey]: [],
+			};
+		});
+	};
+
+	const hasActiveFilters = Object.values(searchCriteria).some(
+		filterArray => filterArray.length > 0,
+	);
 
 	const { mutate, isLoading, isError, isSuccess, error } = useMutation(
 		updateApplicationStatus,
@@ -549,6 +578,20 @@ const JobsApplicants: React.FC = () => {
 									
 								
 			</div>
+			{hasActiveFilters && (
+										<div className="mt-4 ">
+											<button
+												onClick={clearAllFilters}
+												className="bg-gray-200 rounded-full px-3 py-1 text-[14px] font-semibold text-gray-700 transition-all hover:bg-gray-300 ">
+												Clear All
+												<Icon
+													icon={"x-mark"}
+													className="bg-secondary-blue ml-2 rounded-full cursor-pointer"
+													size={20}
+												/>
+											</button>
+										</div>
+									)}
 						<h2 className="flex justify-end text-xl text-black font-semibold mb-2">
 							<span className="mr-2">{jobApplications.length}</span>{" "}
 							Applications Found

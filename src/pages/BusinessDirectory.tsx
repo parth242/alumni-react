@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import SiteNavbar from "components/layout/sitenavbar";
-import { Divider } from "@mui/material";
+import { Divider, FormControlLabel, FormGroup, ListItem } from "@mui/material";
 import List from "@mui/material/List";
 import { useMutation } from "react-query";
 import { HTTPError } from "ky";
@@ -44,6 +44,7 @@ import {
 } from "utils/datatypes";
 import {
 	Button,
+	Checkbox,
 	Col,
 	Drawer,
 	Form,
@@ -64,6 +65,7 @@ import { useAppState } from "utils/useAppState";
 import { getProducts } from "api/services/productsService ";
 import { getServices } from "api/services/servicesService ";
 import BtnLink from "components/ui/common/BtnLink";
+import Icon from "utils/icon";
 
 const { TextArea } = Input;
 
@@ -124,7 +126,6 @@ const BusinessDirectory = () => {
 	>([]);
 
 	const [selectedIndustry, setSelectedIndustry] = useState<string[]>([]);
-	console.log("selectedIndustry", selectedIndustry);
 	const [selectedProduct, setSelectedProduct] = useState<string[]>([]);
 	const [selectedService, setSelectedService] = useState<string[]>([]);
 	const [selectedLocation, setSelectedLocation] = useState<string[]>([]);
@@ -143,7 +144,6 @@ const BusinessDirectory = () => {
 		page_number: pageNumber,
 		page_size: pageSize.value,
 	}) || [];
-	console.log("businessdirectoryList", businessdirectoryList);
 	useEffect(() => {
 		setPageNumber(pageStartFrom);
 		setTimeout(() => {
@@ -275,9 +275,9 @@ const BusinessDirectory = () => {
 
 	const [openSections, setOpenSections] = useState({
 		industries: true,
-		products: true,
-		services: true,
-		locations: true,
+		products: false,
+		services: false,
+		locations: false,
 	});
 
 	const handleToggle = (id: keyof typeof openSections) => {
@@ -369,7 +369,6 @@ const BusinessDirectory = () => {
 		try {
 			let uploadConfig: AxiosResponse | null = null;
 			const selectedFile = (image as File) || "";
-			console.log("selectedFile", selectedFile);
 			if (selectedFile) {
 				const response = await axios.get(
 					import.meta.env.VITE_BASE_URL +
@@ -377,12 +376,7 @@ const BusinessDirectory = () => {
 						selectedFile.name,
 				);
 				if (response.status === 200) {
-					console.log("response", response);
 					uploadConfig = response.data;
-					console.log(
-						"uploadConfig?.data?.url",
-						uploadConfig?.data?.url,
-					);
 					const upload = await axios.put(
 						uploadConfig?.data?.url,
 						selectedFile,
@@ -396,14 +390,9 @@ const BusinessDirectory = () => {
 										(progressEvent.total || 1),
 								);
 								// onProgress(percentCompleted);
-								console.log(
-									"percentCompleted",
-									percentCompleted,
-								);
 							},
 						},
 					);
-					console.log("uploadConfig", uploadConfig);
 					setLogoImage(uploadConfig?.data?.key);
 				}
 			}
@@ -430,13 +419,11 @@ const BusinessDirectory = () => {
 		data.business_logo = logoImage;
 
 		mutate(data);
-		
 	};
 
 	const showDrawer = (card = null) => {
 		setSelectedCard(card); // Set selected card data
 		setOpen(true);
-		console.log('card',card);
 		if (card) {
 			addBusinessForm.setFieldsValue(card); // Populate form with card data for editing
 		} else {
@@ -482,8 +469,7 @@ const BusinessDirectory = () => {
 				setErrorMessage(
 					`File size limit: The image you tried uploading exceeds the maximum file size (${filesLimit["image"]}) `,
 				);
-			}
-			else {
+			} else {
 				setImage(file);
 			}
 		}
@@ -500,8 +486,6 @@ const BusinessDirectory = () => {
 	// 				.toLowerCase()
 	// 				.includes(searchTerm.toLowerCase())),
 	// );
-	console.log("selectedProduct", selectedProduct);
-	console.log("selectedService", selectedService);
 	// const filteredCards = businessdirectorys.filter(card => {
 	// 	const isIndustryMatch = card.industry?.industry_name
 	// 		.toLowerCase()
@@ -597,16 +581,59 @@ const BusinessDirectory = () => {
 		);
 	});
 
-	console.log("filteredCards", filteredCards);
 	/* const currentUserData = JSON.parse(localStorage.getItem("user"));
 	const currentUserId = currentUserData ? currentUserData.id : null;
 	 */
+
+	const handleSearch = () => {
+		setSearchTerm(searchText);
+	};
+
+	const handleClear = () => {
+		setSearchText("");
+		setSearchTerm("");
+	};
+
+	// Clear All Filters
+	const clearAllFilters = () => {
+		setSelectedIndustry([]);
+		setSelectedProduct([]);
+		setSelectedService([]);
+		setSelectedLocation([]);
+	};
+
+	// Only one filter
+	const handleClearSection = (sectionId: any) => {
+		switch (sectionId) {
+			case "industries":
+				setSelectedIndustry([]);
+				break;
+			case "products":
+				setSelectedProduct([]);
+				break;
+			case "services":
+				setSelectedService([]);
+				break;
+			case "locations":
+				setSelectedLocation([]);
+				break;
+			default:
+				break;
+		}
+	};
+
+	const hasSelectedItems =
+		selectedIndustry.length > 0 ||
+		selectedProduct.length > 0 ||
+		selectedService.length > 0 ||
+		selectedLocation.length > 0;
+
 	return (
 		<>
 			<div className="w-full mx-auto bg-gray-100">
 				<SiteNavbar />
 			</div>
-			<div className="w-full">
+			<div className="w-full min-h-[calc(100vh-194px)]">
 				<div className="w-full md:w-10/12 mx-auto py-6 px-4 relative">
 					<div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
 						{/* Heading */}
@@ -625,17 +652,31 @@ const BusinessDirectory = () => {
 
 					<div className="grid grid-cols-1 lg:grid-cols-4 mt-6 gap-6">
 						{/* Sidebar Section */}
-						<div className="lg:col-span-1 shadow-md hover:animate-jump rounded-xl">
-							<List
-								sx={{
-									width: "100%",
-									bgcolor: "background.paper",
-									position: "sticky",
-									top: 0,
-								}}
-								component="nav"
-								aria-labelledby="nested-list-subheader">
-								{/* {menuData.map(section => (
+						<div className="lg:col-span-1">
+							{hasSelectedItems && (
+								<Button
+									onClick={clearAllFilters}
+									className="mb-1 text-[16px] font-semibold
+										">
+									Clear All
+									<Icon
+										icon={"x-mark"}
+										className=" rounded-full cursor-pointer"
+										size={20}
+									/>
+								</Button>
+							)}
+							<div className=" shadow-md rounded-xl">
+								<List
+									sx={{
+										width: "100%",
+										bgcolor: "background.paper",
+										position: "sticky",
+										top: 0,
+									}}
+									component="nav"
+									aria-labelledby="nested-list-subheader">
+									{/* {menuData.map(section => (
 									<React.Fragment key={section.id}>
 										<ListItemButton
 											onClick={() =>
@@ -718,33 +759,70 @@ const BusinessDirectory = () => {
 									</React.Fragment>
 								))} */}
 
-								{menuData.map(section => (
-									<React.Fragment key={section.id}>
-										<ListItemButton
-											onClick={() =>
-												handleToggle(section.id)
-											}>
-											<ListItemIcon>
-												{iconComponents[section.icon]}
-											</ListItemIcon>
-											<ListItemText
-												primary={section.title}
-											/>
-											{openSections[section.id] ? (
-												<ExpandLess />
-											) : (
-												<ExpandMore />
-											)}
-										</ListItemButton>
-										<Divider />
-										<Collapse
-											style={{
-												backgroundColor: "#f4f4f4",
-											}}
-											in={openSections[section.id]}
-											timeout="auto"
-											unmountOnExit>
-											<List
+									{menuData.map(section => {
+										const isAnyItemSelected =
+											section.id === "industries"
+												? selectedIndustry.length > 0
+												: section.id === "products"
+												? selectedProduct.length > 0
+												: section.id === "services"
+												? selectedService.length > 0
+												: section.id === "locations"
+												? selectedLocation.length > 0
+												: false;
+										return (
+											<React.Fragment key={section.id}>
+												<ListItemButton
+													onClick={() =>
+														handleToggle(section.id)
+													}>
+													<ListItemIcon>
+														{
+															iconComponents[
+																section.icon
+															]
+														}
+													</ListItemIcon>
+													<ListItemText
+														primary={section.title}
+													/>
+													{isAnyItemSelected && (
+														<Button
+															className="text-[13px] font-semibold h-7"
+															onClick={e => {
+																e.stopPropagation();
+																handleClearSection(
+																	section.id,
+																);
+															}}>
+															Clear
+															<Icon
+																icon={"x-mark"}
+																className="rounded-full cursor-pointer"
+																size={16}
+															/>
+														</Button>
+													)}
+													{openSections[
+														section.id
+													] ? (
+														<ExpandLess />
+													) : (
+														<ExpandMore />
+													)}
+												</ListItemButton>
+												<Divider />
+												<Collapse
+													style={{
+														backgroundColor:
+															"#f4f4f4",
+													}}
+													in={
+														openSections[section.id]
+													}
+													timeout="auto"
+													unmountOnExit>
+													{/* <List
 												component="div"
 												disablePadding>
 												{section.items.map(
@@ -800,24 +878,108 @@ const BusinessDirectory = () => {
 														</ListItemButton>
 													),
 												)}
-											</List>
-										</Collapse>
-									</React.Fragment>
-								))}
-							</List>
+											</List> */}
+													<div>
+														<List
+															component="div"
+															disablePadding>
+															<FormGroup>
+																{section.items.map(
+																	(
+																		item,
+																		idx,
+																	) => (
+																		<ListItem
+																			key={
+																				idx
+																			}
+																			sx={{
+																				pl: 4,
+																			}}>
+																			<FormControlLabel
+																				control={
+																					<Checkbox
+																						className="mr-3"
+																						checked={
+																							section.id ===
+																							"industries"
+																								? selectedIndustry.includes(
+																										item.name,
+																								  )
+																								: section.id ===
+																								  "products"
+																								? selectedProduct.includes(
+																										item.name,
+																								  )
+																								: section.id ===
+																								  "services"
+																								? selectedService.includes(
+																										item.name,
+																								  )
+																								: section.id ===
+																								  "locations"
+																								? selectedLocation.includes(
+																										item.name,
+																								  )
+																								: false
+																						}
+																						onChange={() =>
+																							handleItemToggle(
+																								section.id,
+																								item.name,
+																							)
+																						}
+																					/>
+																				}
+																				label={
+																					item.count
+																						? `${item.name} (${item.count})`
+																						: item.name
+																				}
+																			/>
+																		</ListItem>
+																	),
+																)}
+															</FormGroup>
+														</List>
+													</div>
+												</Collapse>
+											</React.Fragment>
+										);
+									})}
+								</List>
+							</div>
 						</div>
 
 						{/* Scrollable Business Card Section */}
 						<div className="lg:col-span-3 h-[600px] lg:h-auto overflow-y-auto">
-							<div className="bg-gray-100 rounded-xl p-4 mb-4">
-								<Input
-									placeholder="Search for a business by name"
-									className="w-full focus:outline-none border-1 border-gray-300 rounded-md"
-									value={searchTerm}
-									onChange={e =>
-										setSearchTerm(e.target.value)
-									}
-								/>
+							<div className="bg-gray-100 rounded-xl p-4 mb-4 flex items-center space-x-2">
+								<div className="relative w-full">
+									<Input
+										placeholder="Search for a business by name"
+										className="w-full focus:outline-none border border-gray-300 rounded-md pr-20"
+										value={searchText}
+										onChange={e => {
+											setSearchText(e.target.value);
+
+											if (e.target.value === "") {
+												setSearchTerm("");
+											}
+										}}
+									/>
+									{searchText && (
+										<button
+											className="absolute right-14 top-1/2 transform -translate-y-[52%] hover:text-[#4096ff] "
+											onClick={handleClear}>
+											<Icon icon="x-mark" size={19} />
+										</button>
+									)}
+								</div>
+								<Button
+									onClick={handleSearch}
+									className="px-3 py-5 !ml-[-46px] !rounded-l-none">
+									<Icon icon="magnifying-glass" size={20} />
+								</Button>
 							</div>
 							<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 								{filteredCards.map(card => (
@@ -884,7 +1046,6 @@ const BusinessDirectory = () => {
 				extra={
 					<Space>
 						<BtnLink onClick={onClose}>Cancel</BtnLink>
-						
 					</Space>
 				}>
 				<Form
@@ -1109,7 +1270,7 @@ const BusinessDirectory = () => {
 								/>
 							</Form.Item>
 						</Col>
-						
+
 						<Col xs={24} sm={12}>
 							<Form.Item
 								name="business_logo"
@@ -1133,7 +1294,6 @@ const BusinessDirectory = () => {
 									)}
 									&nbsp;
 								</span>
-								
 							</Form.Item>
 						</Col>
 						<Col xs={24} sm={12}>
