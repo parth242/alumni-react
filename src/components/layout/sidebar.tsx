@@ -30,6 +30,8 @@ export default function Navbar() {
 	
 	const [submenunew,setSubMenuNew] = useState([]);
 
+	const supportRef = useRef<HTMLDivElement | null>(null);
+
 	/*const getSubmenuData = async () => {
 		const userDataResponse = (await useSubmenus());
 		console.log('userDataResponse',userDataResponse.data);
@@ -163,6 +165,16 @@ export default function Navbar() {
 	  console.log('sidemenu',menu);
 
 	  const menusupport : Menu[] = menunewSupport;
+
+	  const toggleSupportMenu = () => {
+		setIsSupportOpen(!isSupportOpen);
+	  
+		if (!isSupportOpen && supportRef.current) {
+		  setTimeout(() => {
+			supportRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+		  }, 100);
+		}
+	  };
 	  
 	useEffect(() => {
 		
@@ -328,13 +340,13 @@ export default function Navbar() {
 							),
 					)}
 					{/* Support Menu (Collapsible) */}
-					<div className="w-full mt-4">
+					<div ref={supportRef} className="w-full mt-4">
         <button
-          onClick={() => setIsSupportOpen(!isSupportOpen)}
+          onClick={toggleSupportMenu}
           className="flex w-full items-center justify-between rounded px-2 py-3 hover:text-primary">
           <div className="flex items-center">
             <Icon icon="life-buoy" className="h-6 w-6" />
-            {showSidebar && <span className="ml-2 text-sm font-medium">Support</span>}
+            {showSidebar && <span className="ml-2 text-sm font-medium">Support Tables</span>}
           </div>
           <Icon icon={isSupportOpen ? "chevron-down" : "chevron-right"} className="h-5 w-5" />
         </button>
