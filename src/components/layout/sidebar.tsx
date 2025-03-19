@@ -103,7 +103,7 @@ export default function Navbar() {
 		  };
 		 
 		  //const submenulData = submenu?.data;
-		  //console.log('submenuallab',submenuall);
+		  console.log('submenuallab',submenuall);
 		const originalData = await Promise.all(submenuall.map((mn: any) => {
 			if(mn.is_support_menu==0){
 			if(checkIfIncludes(mn.id)==true){
