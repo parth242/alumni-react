@@ -439,6 +439,7 @@ export type ISubmenu = {
 	icon: string;
 	menu: number;
 	ordering: number;
+	is_support_menu: number;
 };
 
 export type SubmenusResponse = {

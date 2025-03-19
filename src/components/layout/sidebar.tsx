@@ -64,6 +64,8 @@ export default function Navbar() {
 		))
 	);*/
 	const [menunew,setMenuNew] = useState([]);
+	const [menunewSupport,setMenuNewSupport] = useState([]);
+	const [isSupportOpen, setIsSupportOpen] = useState(false);
 	
 	useEffect(() => {
 		const fetchData = async () => {
@@ -103,6 +105,7 @@ export default function Navbar() {
 		  //const submenulData = submenu?.data;
 		  //console.log('submenuallab',submenuall);
 		const originalData = await Promise.all(submenuall.map((mn: any) => {
+			if(mn.is_support_menu==0){
 			if(checkIfIncludes(mn.id)==true){
 				var isaccess = true;
 			} else{
@@ -121,9 +124,35 @@ export default function Navbar() {
 					
 				}
 			;
+			}
 		}));
 
 		setMenuNew(originalData);
+
+		const originalSupportData = await Promise.all(submenuall.map((mn: any) => {
+			if(mn.is_support_menu==1){
+			if(checkIfIncludes(mn.id)==true){
+				var isaccess = true;
+			} else{
+				var isaccess = false;
+			}
+			return { 
+					id: mn.id, 
+					path: mn.page_url,
+					forRole: true,
+					title: mn.moduleshortname,
+					name: mn.module_alias,
+					component: mn.moduleshortname,
+					is_visible: isaccess,
+					is_locked: true,					
+					icon: mn.icon,
+					
+				}
+			;
+			}
+		}));
+
+		setMenuNewSupport(originalSupportData);
 		 		 
 		};
 		
@@ -132,6 +161,8 @@ export default function Navbar() {
 
 	  const menu : Menu[] = menunew;
 	  console.log('sidemenu',menu);
+
+	  const menusupport : Menu[] = menunewSupport;
 	  
 	useEffect(() => {
 		
@@ -280,11 +311,7 @@ export default function Navbar() {
 										`}>
 
 									<div className="flex min-w-[calc(200px)] flex-row">
-										<Icon
-											icon={item.icon}
-											className="h-6 w-6"
-											aria-hidden="true"
-										/>
+										
 										{showSidebar && (
 											<span
 												className="ml-2 text-sm font-medium leading-6"
@@ -300,6 +327,51 @@ export default function Navbar() {
 								</Link>
 							),
 					)}
+					{/* Support Menu (Collapsible) */}
+					<div className="w-full mt-4">
+        <button
+          onClick={() => setIsSupportOpen(!isSupportOpen)}
+          className="flex w-full items-center justify-between rounded px-2 py-3 hover:text-primary">
+          <div className="flex items-center">
+            <Icon icon="life-buoy" className="h-6 w-6" />
+            {showSidebar && <span className="ml-2 text-sm font-medium">Support</span>}
+          </div>
+          <Icon icon={isSupportOpen ? "chevron-down" : "chevron-right"} className="h-5 w-5" />
+        </button>
+
+        {isSupportOpen && (
+          <div className="pl-6">
+			{menusupport.map(
+						(item: Menu, index: number) =>
+							(item?.is_visible==true) && (
+								<Link
+								key={index}
+								to={`/admin/${item.path}`}
+								className={`mt-2 flex h-12 w-full flex-row items-center justify-between rounded px-2 
+							${pageName == item.path ? "text-primary" : ""}
+							 "hover:text-primary"
+									`}>
+
+								<div className="flex min-w-[calc(200px)] flex-row">
+									
+									{showSidebar && (
+										<span
+											className="ml-2 text-sm font-medium leading-6"
+											dangerouslySetInnerHTML={{
+												__html: item.title,
+											}}></span>
+									)}
+								</div>
+
+								<div>
+									<Icon icon={item.icon_exp || ""} className="-ml-2 h-6 w-6" />
+								</div>
+							</Link>
+						),
+				)}
+          </div>
+        )}
+      </div>
 				</div>
 			</div>
 			)}
