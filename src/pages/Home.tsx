@@ -7,6 +7,7 @@ import HomeHeader from "components/layout/homeheader";
 import HomeFooter from "components/layout/homefooter";
 import { useNewss } from "api/services/newsService";
 import { INews } from "utils/datatypes";
+import { endDateWithSuffix } from "../components/ui/NewsItem";
 import { Autoplay, Pagination, Navigation } from "swiper/modules"; // ✅ Correct import
 
 // Import Swiper styles
@@ -37,29 +38,7 @@ function Home() {
     group_id: 0,		
 	}) || [];
 
-  export const endDateWithSuffix = (dateString: string) => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.toLocaleString("default", { month: "short" });
-    const year = date.getFullYear();
   
-    // Add ordinal suffix to day
-    const suffix = (day: number) => {
-      if (day > 3 && day < 21) return "th"; // covers 11th, 12th, 13th, etc.
-      switch (day % 10) {
-        case 1:
-          return "st";
-        case 2:
-          return "nd";
-        case 3:
-          return "rd";
-        default:
-          return "th";
-      }
-    };
-  
-    return `${day}${suffix(day)} ${month}, ${year}`;
-  };
 
   useEffect(() => {
     AOS.init({
@@ -193,67 +172,55 @@ function Home() {
 
               <div className="latest-news-area">
                 <div className="container" data-aos="fade-up">
-                  <div className="row">
-                    {/* Single News Item */}
-                    {newsList &&
-                      newsList?.data &&
-                      newsList?.data?.length ? (
-                      newsList?.data?.slice(0, 2).map((item: INews, i: number) => {
-                        <>
-                    <div
-                      key={item.id}
-                      className="col-lg-6 col-12"
-                      data-aos="fade-up"
-                      data-aos-delay="100"
-                    >
-                      <div className="single-news custom-shadow-hover">
-                        <div className="image">
-                          <a href="#">
-                            <img
-                              className="thumb"
-                              src="assets/img/news/blog-grid1.jpg"
-                              alt="#"
-                            />
-                          </a>
-                        </div>
-                        <div className="content-body">
-                          <div className="meta-data">
-                            <ul>
-                              <li>
-                                <i className="bi bi-calendar2-week"></i>
-                                <a href="javascript:void(0)">
-                                {endDateWithSuffix(item.posted_date)}
-                                  
-                                </a>
-                              </li>
-                            </ul>
-                          </div>
-                          <h4 className="title">
-                            <a href="#">{item.title}</a>
-                          </h4>
-                          <p>
-                          {item.description}
-                          </p>
-                          <div className="button">
-                          <Link
-													to={`/newsroom/${item.id}`}
-													className="btn">
-													Read More <i className="bi bi-arrow-right"></i>
-												</Link>
-                           
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    </>
-                    ))
-                    ) : ("")
-                    )}
-
-					
-
-                    {/* Add more news items similarly */}
-                  </div>
+                <div className="row">
+  {/* Single News Item */}
+  {newsList &&
+    newsList?.data &&
+    newsList?.data?.length ? (
+      newsList?.data?.slice(0, 2).map((item: INews, i: number) => (
+        <div
+          key={item.id}
+          className="col-lg-6 col-12"
+          data-aos="fade-up"
+          data-aos-delay="100"
+        >
+          <div className="single-news custom-shadow-hover">
+            <div className="image">
+              <a href="#">
+                <img
+                  className="thumb"
+                  src="assets/img/news/blog-grid1.jpg"
+                  alt="#"
+                />
+              </a>
+            </div>
+            <div className="content-body">
+              <div className="meta-data">
+                <ul>
+                  <li>
+                    <i className="bi bi-calendar2-week"></i>
+                    <a href="javascript:void(0)">
+                      {endDateWithSuffix(item.posted_date)}
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <h4 className="title">
+                <a href="#">{item.title}</a>
+              </h4>
+              <p>{item.description}</p>
+              <div className="button">
+                <Link to={`/newsroom/${item.id}`} className="btn">
+                  Read More <i className="bi bi-arrow-right"></i>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))
+    ) : null
+    }
+</div>
                 </div>
               </div>
             </div>
