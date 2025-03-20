@@ -8,6 +8,7 @@ import HomeFooter from "components/layout/homefooter";
 import { useNewss } from "api/services/newsService";
 import { INews } from "utils/datatypes";
 import { endDateWithSuffix } from "../components/ui/NewsItem";
+import { pageStartFrom } from "utils/consts";
 import { Autoplay, Pagination, Navigation } from "swiper/modules"; // ✅ Correct import
 
 // Import Swiper styles
@@ -24,6 +25,11 @@ function Home() {
 	const [userData, setUserData] = useState<IUser | null>();
 	const [customersList, setCustomersList] = useState<CustomerType[] | null>();
 
+  const [activeStatus, setActiveStatus] = useState("");
+	const [searchText, setSearchText] = useState("");	
+	const [pageNumber, setPageNumber] = useState(pageStartFrom);
+	const [pageSize, setPageSize] = useState({ value: 2 });
+
   const {
 		isLoading,
 		data: newsList,
@@ -31,12 +37,13 @@ function Home() {
 		isFetching: isFetchingNewsList,
 	} = useNewss({
 		enabled: true,
-		filter_status: "",
-		filter_name: "",
-		page_number: 1,
-		page_size: 2,
-    group_id: 0,		
+		filter_status: activeStatus,
+		filter_name: searchText,
+		page_number: pageNumber,
+		page_size: pageSize.value,
+		group_id: 0,
 	}) || [];
+
 
   
 
@@ -47,6 +54,8 @@ function Home() {
       once: true,
       mirror: false,
     });
+
+    fetchNewsList();
   }, []);
 
 	return (
