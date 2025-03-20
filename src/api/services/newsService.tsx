@@ -49,7 +49,7 @@ const useNewss = ({
 		["newsList"],
 		async () => {
 			try {
-				return await apiClient
+				return await authClient
 					.get(
 						`api/v1/news/
 						?` +
