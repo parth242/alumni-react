@@ -8,7 +8,8 @@ import { useNewss } from "api/services/newsService";
 import { useEvents } from "api/services/eventService";
 import { useJobs } from "api/services/jobService";
 import { useUserHomeData } from "api/services/user";
-import { INews, IEvent, IJob, CustomerType, IUser } from "utils/datatypes";
+import { useSlideshows } from "api/services/slideshowService";
+import { INews, IEvent, IJob, CustomerType, IUser, ISlideshow } from "utils/datatypes";
 import { endDateWithSuffix } from "../components/ui/NewsItem";
 import { pageStartFrom } from "utils/consts";
 import { Autoplay, Pagination, Navigation } from "swiper/modules"; // ✅ Correct import
@@ -87,6 +88,18 @@ function Home() {
 		page_size: 10,		
 	}) || [];
 
+  const {
+		data: slideshowList,
+		refetch: fetchSlideshowList,
+		isFetching: isFetchingSlideshowList,
+	} = useSlideshows({
+		enabled: true,
+		filter_status: activeStatus,
+		filter_name: searchText,		
+		page_number: pageNumber,
+		page_size: 3		
+	}) || [];
+
   useEffect(() => {
     AOS.init({
       duration: 600,
@@ -108,19 +121,26 @@ function Home() {
           data-bs-ride="carousel"
           data-bs-interval="5000"
         >
+          {slideshowList &&
+                      slideshowList?.data &&
+                      slideshowList?.data?.length ? (
+                        slideshowList?.data?.map((item: ISlideshow, i: number) => (
           <div className="carousel-item active">
             <img
-              src="assets/img/hero-carousel/hero-carousel-1.jpg"
+              src={
+                item?.slide_image
+                  ? import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL +
+                    item?.slide_image
+                  : "/assets/img/hero-carousel/hero-carousel-1.jpg"
+              }             
               alt="hero-carousel"
             />
             <div className="carousel-container">
               <h2 className="text-center">
-                Welcome to <br /> Alumni Network
+                {item.slide_title}
               </h2>
               <p className="col-sm-12 col-md-3 mx-auto text-center">
-                Reconnect with your classmates, relive the moments that shaped
-                your journey, and explore new avenues for collaboration and
-                personal development.
+              {item.slide_description}
               </p>
               <div className="button">
                 <a href="#featured-services" className="btn-get-started btn">
@@ -129,7 +149,9 @@ function Home() {
               </div>
             </div>
           </div>
-
+          ))
+          ) : (
+            <>
           <div className="carousel-item">
             <img
               src="assets/img/hero-carousel/hero-carousel-2.jpg"
@@ -173,7 +195,9 @@ function Home() {
               </div>
             </div>
           </div>
-
+          </>
+          )
+          }
           <a
             className="carousel-control-prev"
             href="#hero-carousel"

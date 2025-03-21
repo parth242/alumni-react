@@ -45,7 +45,7 @@ function SlideshowDetails() {
 			.required("Slideshow Title is required")
 			.min(3, "Must be more then 3 character"),
 
-		slide_image: yup.string().required("Slideshow Image is required"),	
+		slide_image: yup.mixed().required("Slideshow Image is required"),	
 			
 		status: yup
 			.string()
@@ -173,7 +173,7 @@ function SlideshowDetails() {
 						},
 					);
 					console.log("uploadConfig", uploadConfig);
-					setValue("image", uploadConfig?.data?.key);
+					setValue("slide_image", uploadConfig?.data?.key);
 				}
 			}
 		} catch (error) {
@@ -269,7 +269,7 @@ function SlideshowDetails() {
 					)}
 					</div>
 
-					<div className="col-span-2">
+					<div className="col-span-1">
 						<Textarea
 								placeholder="Enter Slide Description"
 								name={"slide_description"}
