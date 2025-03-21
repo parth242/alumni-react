@@ -255,6 +255,36 @@ const useUserGroupData = ({
 	);
 };
 
+const useUserHomeData = ({
+	enabled,
+	page_number,
+	page_size,	
+}: UserListRequest) => {
+	return useQuery<UserListResponse, HTTPError>(
+		["userhomeList"],
+		async () => {
+			try {
+				return await apiClient
+					.get(
+						`api/v1/user/homealumnis
+						?` +
+							`&page_number=${page_number}
+						&page_size=${page_size}&flow_types=0&flow_types=1&flow_types=2`,
+					)
+					.json();
+			} catch (error) {
+				return Promise.reject(error);
+			}
+		},
+		{
+			enabled: enabled,
+			refetchOnWindowFocus: false,
+			retry: false,
+			refetchOnMount: false,
+		},
+	);
+};
+
 const useUserEventData = ({
 	enabled,
 	filter_status,

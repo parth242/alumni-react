@@ -6,7 +6,10 @@ import { CustomerType, IUser } from "utils/datatypes";
 import HomeHeader from "components/layout/homeheader";
 import HomeFooter from "components/layout/homefooter";
 import { useNewss } from "api/services/newsService";
-import { INews } from "utils/datatypes";
+import { useEvents } from "api/services/eventService";
+import { useJobs } from "api/services/jobService";
+import { useUserHomeData } from "api/services/user";
+import { INews, IEvent, IJob, IUser } from "utils/datatypes";
 import { endDateWithSuffix } from "../components/ui/NewsItem";
 import { pageStartFrom } from "utils/consts";
 import { Autoplay, Pagination, Navigation } from "swiper/modules"; // ✅ Correct import
@@ -25,10 +28,10 @@ function Home() {
 	const [userData, setUserData] = useState<IUser | null>();
 	const [customersList, setCustomersList] = useState<CustomerType[] | null>();
 
-  const [activeStatus, setActiveStatus] = useState("");
+  const [activeStatus, setActiveStatus] = useState("active");
 	const [searchText, setSearchText] = useState("");	
 	const [pageNumber, setPageNumber] = useState(pageStartFrom);
-	const [pageSize, setPageSize] = useState({ value: 2 });
+	
 
   const {
 		isLoading,
@@ -40,12 +43,50 @@ function Home() {
 		filter_status: activeStatus,
 		filter_name: searchText,
 		page_number: pageNumber,
-		page_size: pageSize.value,
+		page_size: 2,
 		group_id: 0,
 	}) || [];
 
+  const {		
+		data: eventList,
+		refetch: fetchEventList,
+		isFetching: isFetchingEventList,
+	} = useEvents({
+		enabled: true,
+		filter_status: activeStatus,
+		filter_name: searchText,
+		filter_category: [],
+		filter_date: "Upcoming",
+		page_number: pageNumber,
+		page_size: 3,
+		group_id: 0,
+		user_id: 0
+	}) || [];
 
   
+  const {		
+		data: jobList,
+		refetch: fetchJobList,
+		isFetching: isFetchingJobList,
+	} = useJobs({
+		enabled: true,
+		filter_status: activeStatus,
+		filter_name: searchText,
+		user_id: 0,
+		page_number: pageNumber,
+		page_size: 3,
+		is_internship: 0,
+	}) || [];
+
+  const {
+		data: userList,
+		refetch: fetchUserList,
+		isFetching: isFetchingUserList,
+	} = useUserHomeData({
+		enabled: true,		
+		page_number: pageNumber,
+		page_size: 10,		
+	}) || [];
 
   useEffect(() => {
     AOS.init({
@@ -54,7 +95,6 @@ function Home() {
       once: true,
       mirror: false,
     });
-
     
   }, []);
 
@@ -186,7 +226,7 @@ function Home() {
   {newsList &&
     newsList?.data &&
     newsList?.data?.length ? (
-      newsList?.data?.slice(0, 2).map((item: INews, i: number) => (
+      newsList?.data?.map((item: INews, i: number) => (
         <div
           key={item.id}
           className="col-lg-6 col-12"
@@ -250,68 +290,34 @@ function Home() {
                       data-aos="fade-up"
                       data-aos-delay="100"
                     >
-                      <div className="single-event">
+                    {eventList &&
+                      eventList?.data &&
+                      eventList?.data?.length ? (
+                        eventList?.data?.map((item: IEvent, i: number) => (
+                      <div key={item.id} className="single-event">
                         <div className="event-image">
                           <p className="date">
-                            20<span>Feb</span>
+                          {new Date(item.event_date).getDate()}
+                            <span>{new Date(item.event_date).toLocaleString("default", { month: "short" })}</span>
                           </p>
                         </div>
                         <div className="content">
                           <h3>
                             <a href="#">
-                              Scientific writing , Research integrity and
-                              publication ethics workshop
+                              {item.event_title}
                             </a>
                           </h3>
                           <p>
-                            Excepteur sint occaecat cupidatat non proident, sunt
-                            in culpa qui officia deserunt laborum.
+                            {item.description}
                           </p>
                         </div>
                       </div>
 
-					  <div className="single-event">
-                        <div className="event-image">
-                          <p className="date">
-						  28<span>Feb</span>
-                          </p>
-                        </div>
-                        <div className="content">
-                          <h3>
-                            <a href="#">
-							KLE Ayurveda Signs MoU with London College of Ayurveda
-                            </a>
-                          </h3>
-                          <p>
-						  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-                                            deserunt
-                                            laborum.
-                          </p>
-                        </div>
-                      </div>
+                    ))
+                    ) : ("No Upcoming Events")
+                    }
 
-					  <div className="single-event">
-                        <div className="event-image">
-                          <p className="date">
-						  28<span>Feb</span>
-                          </p>
-                        </div>
-                        <div className="content">
-                          <h3>
-                            <a href="#">
-							KLE Ayurveda Signs MoU with London College of Ayurveda
-                            </a>
-                          </h3>
-                          <p>
-						  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-                                            deserunt
-                                            laborum.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-					
+					      </div>					
 
                     {/* Add more events similarly */}
                   </div>
@@ -404,12 +410,16 @@ function Home() {
 
             <div className="col-sm-12 col-md-5">
               {/* Job Item */}
-              <div className="single-event">
+              {jobList &&
+                      jobList?.data &&
+                      jobList?.data?.length ? (
+                        jobList?.data?.map((item: IJob, i: number) => (
+              <div key={item.id} className="single-event">
                 <div className="row align-items-center">
                   <div className="col-lg-4 col-md-6 col-12">
                     <div className="date">
-                      <h2>20</h2>
-                      <p>Feb</p>
+                      <h2>{new Date(item.deadline_date).getDate()}</h2>
+                      <p>{new Date(item.deadline_date).toLocaleString("default", { month: "short" })}</p>
                     </div>
                   </div>
                   <div className="col-lg-8 col-md-6 col-12">
@@ -417,8 +427,7 @@ function Home() {
                       <div className="info">
                         <h4>
                           <a href="javascript:void(0)">
-                            Consultant physiotherapist full time at Physiqure
-                            healthcare pvt limited
+                           {item.job_title}
                           </a>
                         </h4>
                       </div>
@@ -427,51 +436,11 @@ function Home() {
                 </div>
               </div>
 
-			  <div className="single-event">
-                <div className="row align-items-center">
-                  <div className="col-lg-4 col-md-6 col-12">
-                    <div className="date">
-                      <h2>25</h2>
-                      <p>Feb</p>
-                    </div>
-                  </div>
-                  <div className="col-lg-8 col-md-6 col-12">
-                    <div className="event-info">
-                      <div className="info">
-                        <h4>
-                          <a href="javascript:void(0)">
-						  Tutor / Lecturers at School of Allied Health
-                                            Sciences (SAHS)
-                          </a>
-                        </h4>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                ))
+                ) : ("No Jobs")
+                }
 
-			  <div className="single-event">
-                <div className="row align-items-center">
-                  <div className="col-lg-4 col-md-6 col-12">
-                    <div className="date">
-                      <h2>01</h2>
-                      <p>Mar</p>
-                    </div>
-                  </div>
-                  <div className="col-lg-8 col-md-6 col-12">
-                    <div className="event-info">
-                      <div className="info">
-                        <h4>
-                          <a href="javascript:void(0)">
-						  Media est eligendi oatio cumrue
-                          </a>
-                        </h4>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
+			 
               {/* More job items can be added here */}
             </div>
           </div>
@@ -774,98 +743,29 @@ function Home() {
       }}
     >
       <div className="swiper-wrapper align-items-center pt-4">
+      {userList &&
+                      userList?.data &&
+                      userList?.data?.length ? (
+                        userList?.data?.map((item: IUser, i: number) => (
       <SwiperSlide>
               <div className="swiper-slide">
                 <img
-                  src="assets/img/testimonials/testimonials-1.jpg"
+                  src={
+                    item?.image
+                      ? import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL +
+                        item?.image
+                      : "/assets/images/icon-user.webp"
+                  }
                   className="img-fluid"
                   alt=""
                 />
               </div>
             </SwiperSlide>
-
+           ))
+           ) : ("No Members")
+           }
                        
-            <SwiperSlide>
-            <div className="swiper-slide">
-                    <img
-                      src="assets/img/testimonials/testimonials-2.jpg"
-                      className="img-fluid"
-                      alt=""
-                    />
-                  </div>
-              </SwiperSlide>
-          <SwiperSlide>
-			  <div className="swiper-slide">
-                <img
-                  src="assets/img/testimonials/testimonials-3.jpg"
-                  className="img-fluid"
-                  alt=""
-                />
-              </div>
-              </SwiperSlide>
-              <SwiperSlide>
-			  <div className="swiper-slide">
-                <img
-                  src="assets/img/testimonials/testimonials-4.jpg"
-                  className="img-fluid"
-                  alt=""
-                />
-              </div>
-              </SwiperSlide>
-              <SwiperSlide>
-			  <div className="swiper-slide">
-                <img
-                  src="assets/img/testimonials/testimonials-5.jpg"
-                  className="img-fluid"
-                  alt=""
-                />
-              </div>
-              </SwiperSlide>
-              <SwiperSlide>
-			  <div className="swiper-slide">
-                <img
-                  src="assets/img/testimonials/testimonials-1.jpg"
-                  className="img-fluid"
-                  alt=""
-                />
-              </div>
-              </SwiperSlide>
-              <SwiperSlide>
-			  <div className="swiper-slide">
-                <img
-                  src="assets/img/testimonials/testimonials-2.jpg"
-                  className="img-fluid"
-                  alt=""
-                />
-              </div>
-              </SwiperSlide>
-              <SwiperSlide>
-			  <div className="swiper-slide">
-                <img
-                  src="assets/img/testimonials/testimonials-3.jpg"
-                  className="img-fluid"
-                  alt=""
-                />
-              </div>
-              </SwiperSlide>
-              <SwiperSlide>
-			  <div className="swiper-slide">
-                <img
-                  src="assets/img/testimonials/testimonials-4.jpg"
-                  className="img-fluid"
-                  alt=""
-                />
-              </div>
-              </SwiperSlide>
-              <SwiperSlide>
-			  <div className="swiper-slide">
-                <img
-                  src="assets/img/testimonials/testimonials-5.jpg"
-                  className="img-fluid"
-                  alt=""
-                />
-              </div>
-              </SwiperSlide>
+            
               </div>
               {/* Add more client items */}
               </Swiper>
