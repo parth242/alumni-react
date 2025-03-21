@@ -573,4 +573,5 @@ export {
 	accountDeleteRequest,
 	useUserGroupData,	
 	useUserEventData,
+	useUserHomeData,
 };

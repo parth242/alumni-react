@@ -2,14 +2,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAppState } from "utils/useAppState";
 import React, { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { CustomerType, IUser } from "utils/datatypes";
 import HomeHeader from "components/layout/homeheader";
 import HomeFooter from "components/layout/homefooter";
 import { useNewss } from "api/services/newsService";
 import { useEvents } from "api/services/eventService";
 import { useJobs } from "api/services/jobService";
 import { useUserHomeData } from "api/services/user";
-import { INews, IEvent, IJob, IUser } from "utils/datatypes";
+import { INews, IEvent, IJob, CustomerType, IUser } from "utils/datatypes";
 import { endDateWithSuffix } from "../components/ui/NewsItem";
 import { pageStartFrom } from "utils/consts";
 import { Autoplay, Pagination, Navigation } from "swiper/modules"; // ✅ Correct import
