@@ -417,8 +417,14 @@ function Home() {
                 <div className="row align-items-center">
                   <div className="col-lg-4 col-md-6 col-12">
                     <div className="date">
+                    {item.deadline_date ? (
+                    <>
                       <h2>{new Date(item.deadline_date).getDate()}</h2>
                       <p>{new Date(item.deadline_date).toLocaleString("default", { month: "short" })}</p>
+                      </>
+                    ) : (
+                      <p>No Date</p>
+                    )}
                     </div>
                   </div>
                   <div className="col-lg-8 col-md-6 col-12">
@@ -753,9 +759,9 @@ function Home() {
                     item?.image
                       ? import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL +
                         item?.image
-                      : "/assets/images/icon-user.webp"
+                      : "/assets/images/profile.png"
                   }
-                  className="img-fluid"
+                  className="w-[400px] h-[400px] object-cover"
                   alt=""
                 />
               </div>
