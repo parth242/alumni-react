@@ -417,7 +417,7 @@ function Home() {
                 <div className="row align-items-center">
                   <div className="col-lg-4 col-md-6 col-12">
                     <div className="date">
-                    {item.deadline_date ? (
+                    {item?.deadline_date && item.deadline_date !== "0000-00-00" ? (
                     <>
                       <h2>{new Date(item.deadline_date).getDate()}</h2>
                       <p>{new Date(item.deadline_date).toLocaleString("default", { month: "short" })}</p>
@@ -761,7 +761,6 @@ function Home() {
                         item?.image
                       : "/assets/images/profile.png"
                   }
-                  className="w-[400px] h-[400px] object-cover"
                   alt=""
                 />
               </div>
