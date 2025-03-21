@@ -55,7 +55,7 @@ function Home() {
       mirror: false,
     });
 
-    fetchNewsList();
+    
   }, []);
 
 	return (
