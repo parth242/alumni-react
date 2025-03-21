@@ -2,7 +2,8 @@ import Button from "components/ui/common/Button";
 import { Input } from "components/ui/common/Input";
 import Select from "components/ui/common/Select";
 import Textarea from "components/ui/common/Textarea";
-import { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import axios, { AxiosResponse } from "axios";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -14,6 +15,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { HTTPError } from "ky";
 import { TSlideshowFormData,ISlideshow, TSelect} from "utils/datatypes";
 import { allowedFiles, fileInvalid, filesExt, filesLimit, filesSize } from "utils/consts";
+import Loader from "components/layout/loader";
 
 
 
@@ -23,7 +25,8 @@ function SlideshowDetails() {
 		id: string;
 	};
 
-	
+	const [image, setImage] = useState<File | null>(null);
+	const [loading, setLoading] = useState(false);
 
 	const [statusList] = useState([
 		{ text: "Active", value: "active" },
@@ -41,7 +44,8 @@ function SlideshowDetails() {
 			.string()
 			.required("Slideshow Title is required")
 			.min(3, "Must be more then 3 character"),
-				
+
+		slide_image: yup.string().required("Slideshow Image is required"),	
 			
 		status: yup
 			.string()
@@ -96,6 +100,7 @@ function SlideshowDetails() {
 
 	const { mutate } = useMutation(createSlideshow, {
 		onSuccess: async () => {
+			setLoading(false);
 			SuccessToastMessage({
 				title: "Slideshow Created Successfully",
 				id: "create_slideshow_success",
@@ -103,44 +108,19 @@ function SlideshowDetails() {
 			navigate("/admin/slideshows");
 		},
 		onError: async (e: HTTPError) => {
+			setLoading(false);
 			// const error = await e.response.text();
 			// console.log("error", error);
 			ErrorToastMessage({ error: e, id: "create_slideshow" });
 		},
 	});
-	const onSubmit = (data: TSlideshowFormData) => {
+	const onSubmit = async (data: TSlideshowFormData) => {
+		setLoading(true);
+		await saveProfileImage();
+		data.slide_image = getValues("slide_image") || "";
 		
+		mutate(data);
 		
-		const imageFile = (
-			document.querySelector('input[type="file"]') as HTMLInputElement
-		)?.files?.[0];
-
-		if (imageFile) {
-			const formdata = new FormData();
-			formdata.append("type", "slideshow");
-			formdata.append("file", imageFile);
-
-			useUploadImage({ data: formdata })
-				.then((response: any) => {
-					//setValue("image", data.files[0].filename);
-					if (response.message == "Upload Success") {
-						// Update data with the uploaded image file name
-						data.slide_image = response.files[0].filename;
-					} else {
-						console.error("File upload failed:", response.error);
-						return; // Stop further processing if upload fails
-					}
-
-					// Call mutate once the file has been uploaded
-					mutate(data);
-				})
-				.catch(error => {
-					console.error("Error during file upload:", error);
-				});
-		} else {
-			// If no image is uploaded, just call mutate
-			mutate(data);
-		}
 		
 	};
 
@@ -154,22 +134,75 @@ function SlideshowDetails() {
 		navigate("/admin/slideshows");
 	  };
 
+	  const saveProfileImage = async () => {
+		try {
+			let uploadConfig: AxiosResponse | null = null;
+			const selectedFile = (image as File) || "";
+			console.log("selectedFile", selectedFile);
+			if (selectedFile) {
+				const response = await axios.get(
+					import.meta.env.VITE_BASE_URL +
+						"/api/v1/upload?type=slideshow&filename=" +
+						selectedFile.name,
+				);
+				if (response.status === 200) {
+					console.log("response", response);
+					uploadConfig = response.data;
+					console.log(
+						"uploadConfig?.data?.url",
+						uploadConfig?.data?.url,
+					);
+					const upload = await axios.put(
+						uploadConfig?.data?.url,
+						selectedFile,
+						{
+							headers: {
+								"Content-Type": selectedFile?.type || "",
+							},
+							onUploadProgress: progressEvent => {
+								const percentCompleted = Math.round(
+									(progressEvent.loaded * 100) /
+										(progressEvent.total || 1),
+								);
+								// onProgress(percentCompleted);
+								console.log(
+									"percentCompleted",
+									percentCompleted,
+								);
+							},
+						},
+					);
+					console.log("uploadConfig", uploadConfig);
+					setValue("image", uploadConfig?.data?.key);
+				}
+			}
+		} catch (error) {
+			return;
+		}
+	};
+
 	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (file) {
 			const ext: string | null = (
 				file.name.split(".").pop() || ""
 			).toLowerCase();
+
+			setImage(null);
+			setErrorMessage("");
+			setValue("slide_image", "");
+			setSelectedImage("");
+
 			if (filesExt["image"].indexOf(ext) < 0) {
 				setErrorMessage(fileInvalid["image"]);
-
 				return true;
-			}
-
-			if (file?.size > filesSize["image"]) {
+			} else if (file?.size > filesSize["image"]) {
 				setErrorMessage(
 					`File size limit: The image you tried uploading exceeds the maximum file size (${filesLimit["image"]}) `,
 				);
+			} else {
+				setImage(file);
+				
 			}
 		}
 	};
@@ -202,9 +235,15 @@ function SlideshowDetails() {
 							type="file"
 							className="mt-1 block w-full text-sm text-gray-500"
 							accept={`${allowedFiles["image"]}`}
+							{...register("slide_image")}
 							onChange={handleImageChange}							
 						/>
 						<span className="text-xs text-red-500">
+						{errors.slide_image && (
+							<>
+       						 <span>{errors.slide_image.message}</span>
+							</>
+      					)}
 						{errorMessage && (
 							<>
 								<span>{errorMessage}</span>
@@ -220,8 +259,7 @@ function SlideshowDetails() {
 						<>
 					<img
 									src={
-										import.meta.env.VITE_BASE_URL +
-											"upload/slideshow/" +
+										import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL +
 											slideshowDetails?.data.slide_image
 									}
 									className="w-100 h-100"
@@ -229,6 +267,15 @@ function SlideshowDetails() {
 								/>
 						</>
 					)}
+					</div>
+
+					<div className="col-span-2">
+						<Textarea
+								placeholder="Enter Slide Description"
+								name={"slide_description"}
+								label={"Description"}
+								register={register}
+							/>
 					</div>
 					
 					<div className="col-span-1">
@@ -243,7 +290,7 @@ function SlideshowDetails() {
 				</div>
 				
 								
-				
+				{loading && <Loader></Loader>}
 				<div className="mt-6">
 					<Button className="!transition-colors !duration-700 text-lg font-medium text-white shadow-sm hover:!bg-blue-700 focus:outline-none focus:ring-0 focus:ring-primary focus:ring-offset-0 py-3 px-10">
 						Save

@@ -187,7 +187,10 @@ function AlumniDetails() {
 			.number()
 			.typeError("End Year is required")
 			.nullable()
-			.required("End Year is required."),
+			.when('id', {
+				is: (id) => !id,  // Apply this validation if `id` is not present
+				then: yup.number().required("End Year is required.")
+				}),
 		country_mobileno_code: yup.string().required("Country Code is required"),
 		mobileno: yup
 			.string()
