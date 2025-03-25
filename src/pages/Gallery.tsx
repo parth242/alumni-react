@@ -266,17 +266,20 @@ function Gallery() {
 			{galleryList &&
 				galleryList?.data &&
 				galleryList?.data?.length ? (				
-				galleryList?.data?.map((item: IGallery, i: number) => (
-
-          <div key={img.id} className="relative">
-            <img src={`${API_URL}${img.path}`} alt="Uploaded" className="w-full h-40 object-cover rounded shadow" />
-            <button
-              onClick={() => showDeleteModal(item.id)}
-              className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 text-sm rounded"
-            >
-              Delete
-            </button>
-          </div>
+				galleryList?.data?.map((item: IGallery, i: number) => item?.gallery_image && (
+				
+							<div key={item.id} className="relative">
+							<img src={import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL +
+                    item?.gallery_image} alt="Uploaded" className="w-full h-40 object-cover rounded shadow" />
+							<button
+							  onClick={() => showDeleteModal(item.id)}
+							  className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 text-sm rounded"
+							>
+							  Delete
+							</button>
+						  </div>
+						  
+          
 		 ))
 		 ) : ("No image found")
 		 }

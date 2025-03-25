@@ -104,6 +104,7 @@ import AlumniWorkCompany from "pages/AlumniWorkCompany";
 import ManageEvents from "pages/ManageEvents";
 import AlumniMessages from "pages/AlumniMessages";
 import AlumniMessageDetail from "pages/AlumniMessageDetail";
+import Gallery from "pages/Gallery";
 
 const queryClient = new QueryClient();
 
@@ -961,6 +962,15 @@ const createRoutes = () => (
 								</ProtectedRoute>
 							}
 						/>
+						<Route
+							path="gallery"
+							element={
+								<ProtectedRoute>
+									<Gallery />
+								</ProtectedRoute>
+							}
+						/>
+						
 						<Route
 							path="countries"
 							element={

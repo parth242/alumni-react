@@ -9,7 +9,8 @@ import { useEvents } from "api/services/eventService";
 import { useJobs } from "api/services/jobService";
 import { useUserHomeData } from "api/services/user";
 import { useSlideshows } from "api/services/slideshowService";
-import { INews, IEvent, IJob, CustomerType, IUser, ISlideshow } from "utils/datatypes";
+import { useGallerys } from "api/services/galleryService";
+import { INews, IEvent, IJob, CustomerType, IUser, ISlideshow, IGallery } from "utils/datatypes";
 import { endDateWithSuffix } from "../components/ui/NewsItem";
 import { pageStartFrom } from "utils/consts";
 import { Autoplay, Pagination, Navigation } from "swiper/modules"; // ✅ Correct import
@@ -98,6 +99,16 @@ function Home() {
 		filter_name: searchText,		
 		page_number: pageNumber,
 		page_size: 3		
+	}) || [];
+
+  const {
+		data: galleryList,
+		refetch: fetchGalleryList,
+		isFetching: isFetchingGalleryList,
+	} = useGallerys({
+		enabled: true,		
+		page_number: pageNumber,
+		page_size: 12	
 	}) || [];
 
   useEffect(() => {
@@ -614,134 +625,32 @@ function Home() {
         <div className="container" data-aos="fade-up" data-aos-delay="100">
           <div className="row g-0 pt-4">
             {/* Gallery Items */}
+            {galleryList &&
+                      galleryList?.data &&
+                      galleryList?.data?.length ? (
+                        galleryList?.data?.map((item: IGallery, i: number) => item?.gallery_image && (
+                          
             <div className="col-lg-3 col-md-4">
               <div className="gallery-item">
                 <a
-                  href="assets/img/gallery/gallery-1.jpg"
+                  href={import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL +
+                    item?.gallery_image}
                   className="glightbox"
                   data-gallery="images-gallery"
                 >
                   <img
-                    src="assets/img/gallery/gallery-1.jpg"
+                    src={import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL +
+                      item?.gallery_image}
                     alt=""
                     className="img-fluid"
                   />
                 </a>
               </div>
             </div>
-
-			<div className="col-lg-3 col-md-4">
-              <div className="gallery-item">
-                <a
-                  href="assets/img/gallery/gallery-2.jpg"
-                  className="glightbox"
-                  data-gallery="images-gallery"
-                >
-                  <img
-                    src="assets/img/gallery/gallery-2.jpg"
-                    alt=""
-                    className="img-fluid"
-                  />
-                </a>
-              </div>
-            </div>
-
-			<div className="col-lg-3 col-md-4">
-              <div className="gallery-item">
-                <a
-                  href="assets/img/gallery/gallery-3.jpg"
-                  className="glightbox"
-                  data-gallery="images-gallery"
-                >
-                  <img
-                    src="assets/img/gallery/gallery-3.jpg"
-                    alt=""
-                    className="img-fluid"
-                  />
-                </a>
-              </div>
-            </div>
-
-			<div className="col-lg-3 col-md-4">
-              <div className="gallery-item">
-                <a
-                  href="assets/img/gallery/gallery-4.jpg"
-                  className="glightbox"
-                  data-gallery="images-gallery"
-                >
-                  <img
-                    src="assets/img/gallery/gallery-4.jpg"
-                    alt=""
-                    className="img-fluid"
-                  />
-                </a>
-              </div>
-            </div>
-
-			<div className="col-lg-3 col-md-4">
-              <div className="gallery-item">
-                <a
-                  href="assets/img/gallery/gallery-5.jpg"
-                  className="glightbox"
-                  data-gallery="images-gallery"
-                >
-                  <img
-                    src="assets/img/gallery/gallery-5.jpg"
-                    alt=""
-                    className="img-fluid"
-                  />
-                </a>
-              </div>
-            </div>
-
-			<div className="col-lg-3 col-md-4">
-              <div className="gallery-item">
-                <a
-                  href="assets/img/gallery/gallery-6.jpg"
-                  className="glightbox"
-                  data-gallery="images-gallery"
-                >
-                  <img
-                    src="assets/img/gallery/gallery-6.jpg"
-                    alt=""
-                    className="img-fluid"
-                  />
-                </a>
-              </div>
-            </div>
-
-			<div className="col-lg-3 col-md-4">
-              <div className="gallery-item">
-                <a
-                  href="assets/img/gallery/gallery-7.jpg"
-                  className="glightbox"
-                  data-gallery="images-gallery"
-                >
-                  <img
-                    src="assets/img/gallery/gallery-7.jpg"
-                    alt=""
-                    className="img-fluid"
-                  />
-                </a>
-              </div>
-            </div>
-
-			<div className="col-lg-3 col-md-4">
-              <div className="gallery-item">
-                <a
-                  href="assets/img/gallery/gallery-8.jpg"
-                  className="glightbox"
-                  data-gallery="images-gallery"
-                >
-                  <img
-                    src="assets/img/gallery/gallery-8.jpg"
-                    alt=""
-                    className="img-fluid"
-                  />
-                </a>
-              </div>
-            </div>
-
+            
+              ))
+                    ) : ("No Gallery Image")
+                    }
             {/* Add more gallery items similarly */}
           </div>
         </div>
