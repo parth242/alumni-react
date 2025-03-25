@@ -21,8 +21,9 @@ export default function Navbar() {
 	const [{ user, customers, wabaActivationStatus, selectedCustomer }] =
 		useAppState();
 	const pageNames: StringStringType = {
-		dashboard: `Welcome, ${user?.first_name}!👋`,
+		dashboard: `Welcome, ${user?.first_name}!`,
 		users: `Users`,
+		testimonials: `Success Stories`,
 		["user-details"]: `User Details`,
 	};
 	console.log("user", user);

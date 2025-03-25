@@ -3,6 +3,7 @@ import { Input } from "components/ui/common/Input";
 import Select from "components/ui/common/Select";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import Textarea from "components/ui/common/Textarea";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Icon from "utils/icon";
