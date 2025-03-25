@@ -213,16 +213,16 @@ function Gallery() {
 	};
 	
 	return (
-		<div className="">
-			
+		<div className="p-4">
+      <h2 className="text-xl font-bold mb-4">Gallery Admin</h2>
 
-			<form className="mt-5" onSubmit={handleSubmit(onSubmit)}>				
+			<form className="mt-5 mb-4" onSubmit={handleSubmit(onSubmit)}>				
 
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-6 mt-10">
 					
 					
 					<div className="col-span-1">
-					<label htmlFor="gallery_image" className="font-medium text-gray-900 dark:text-darkPrimary">College Logo</label>
+					<label htmlFor="gallery_image" className="font-medium text-gray-900 dark:text-darkPrimary">Gallery Image</label>
 					<div className="relative">						
 						<input
 							id="gallery_image"
