@@ -530,9 +530,9 @@ function Home() {
                 <div className="profile mt-auto">
                   <img
                     src={
-                      item?.image
+                      item.user?.image
                         ? import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL +
-                          item?.image
+                          item.user?.image
                         : "/assets/images/profile.png"
                     }
                     className="testimonial-img"

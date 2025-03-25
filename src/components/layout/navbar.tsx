@@ -23,7 +23,9 @@ export default function Navbar() {
 	const pageNames: StringStringType = {
 		dashboard: `Welcome, ${user?.first_name}!`,
 		users: `Users`,
+		settings: `College Profile`,
 		testimonials: `Success Stories`,
+		workroles: `Job Roles`,
 		["user-details"]: `User Details`,
 	};
 	console.log("user", user);
@@ -71,9 +73,20 @@ export default function Navbar() {
 	};
 	useEffect(() => {
 		let pageName: string[] = location.pathname.replace("/admin/", "").split("/");
-		setAppState({
-			pageName: pageName[0],
-		});
+		if(pageName[0]=='testimonial-details'){
+			setAppState({
+				pageName: 'Success Story-Details',
+			});
+		} else if(pageName[0]=='workrole-details'){
+			setAppState({
+				pageName: 'Job Role-Details',
+			});
+		} else{
+			setAppState({
+				pageName: pageName[0],
+			});
+		}
+		
 	}, [location.pathname]);
 
 	const { mutate, isLoading: logoutLoading } = useMutation(logout, {

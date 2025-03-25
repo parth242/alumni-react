@@ -148,7 +148,7 @@ function ProfessionalAreas() {
 	const TableHeadData: TableHeadType = [
 		{
 			id: 1,
-			name: "Skill Name",
+			name: "Area Name",
 		},		
 		{
 			id: 2,

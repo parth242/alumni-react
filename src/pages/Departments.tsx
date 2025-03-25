@@ -255,7 +255,7 @@ function Departments() {
 		<div className="">
 			<div className="flex justify-between border-b border-border pb-5 items-center">
 				<span className="text-lg font-semibold">
-					Users
+					Departments
 				</span>
 				{isAddAccess ? (
 							

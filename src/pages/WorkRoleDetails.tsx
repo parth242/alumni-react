@@ -32,7 +32,7 @@ function WorkRoleDetails() {
 			.optional(),
 		workrole_name: yup
 			.string()
-			.required("WorkRole Name is required"),	
+			.required("JobRole Name is required"),	
 		status: yup
 			.string()
 			.required("Status is required").default("active"),
@@ -80,7 +80,7 @@ function WorkRoleDetails() {
 	const { mutate } = useMutation(createWorkRole, {
 		onSuccess: async () => {
 			SuccessToastMessage({
-				title: "WorkRole Created Successfully",
+				title: "JobRole Created Successfully",
 				id: "create_workrole_success",
 			});
 			navigate("/admin/workroles");
@@ -113,9 +113,9 @@ function WorkRoleDetails() {
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-6 mt-10">
 					<div className="col-span-1">
 						<Input
-							placeholder="Enter WorkRole Name"
+							placeholder="Enter JobRole Name"
 							name={"workrole_name"}
-							label={"WorkRole Name"}
+							label={"JobRole Name"}
 							error={errors?.workrole_name?.message}
 							register={register}							
 						/>

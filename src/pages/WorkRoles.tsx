@@ -38,7 +38,7 @@ function WorkRoles() {
 	const [confirmBtnTitle, setconfirmBtnTitle] =useState("Confirm");
 
 	const ConfirmPopupData : ConfirmPopupDataType =
-		{ title: "WorkRole Delete", text: "Are you sure you want to delete WorkRole?" };
+		{ title: "JobRole Delete", text: "Are you sure you want to delete JobRole?" };
 
 	const {
 		isLoading,
@@ -148,7 +148,7 @@ function WorkRoles() {
 	const TableHeadData: TableHeadType = [
 		{
 			id: 1,
-			name: "WorkRole Name",
+			name: "JobRole Name",
 		},		
 		{
 			id: 2,
@@ -251,7 +251,7 @@ function WorkRoles() {
 		<div className="">
 			<div className="flex justify-between border-b border-border pb-5 items-center">
 				<span className="text-lg font-semibold">
-					Role & Responsibility
+					Job Roles
 				</span>
 				{isAddAccess ? (
 							
@@ -259,7 +259,7 @@ function WorkRoles() {
 					to={"/admin/workrole-details"}
 					className={`rounded-md border border-transparent bg-primary p-2 text-sm font-medium text-white shadow-sm hover:bg-primary focus:outline-none focus:ring-0 focus:ring-primary focus:ring-offset-0 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400 disabled:hover:bg-gray-200`}>
 					<Icon icon="plus" className="mr-1 h-5 w-5 text-white" />
-					Add WorkRole
+					Add JobRole
 				</Link>
 				) : ("")}
 			</div>
