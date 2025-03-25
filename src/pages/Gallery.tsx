@@ -106,6 +106,7 @@ function Gallery() {
 	const { mutate } = useMutation(createGallery, {
 		onSuccess: async () => {
 			setLoading(false);
+			reset();
 			SuccessToastMessage({
 				title: "Gallery Created Successfully",
 				id: "create_gallery_success",
@@ -214,7 +215,7 @@ function Gallery() {
 	
 	return (
 		<div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Gallery Admin</h2>
+      <h2 className="text-xl font-bold mb-4">Add Gallery</h2>
 
 			<form className="mt-5 mb-4" onSubmit={handleSubmit(onSubmit)}>				
 
@@ -262,7 +263,7 @@ function Gallery() {
 				</div>
 			</form>
 			{/* Image Gallery */}
-			<div className="grid grid-cols-3 gap-4">
+			<div className="grid grid-cols-3 gap-4 mt-10">			
 			{galleryList &&
 				galleryList?.data &&
 				galleryList?.data?.length ? (				

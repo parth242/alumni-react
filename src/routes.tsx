@@ -105,6 +105,8 @@ import ManageEvents from "pages/ManageEvents";
 import AlumniMessages from "pages/AlumniMessages";
 import AlumniMessageDetail from "pages/AlumniMessageDetail";
 import Gallery from "pages/Gallery";
+import Testimonials from "pages/Testimonials";
+import TestimonialDetails from "pages/TestimonialDetails";
 
 const queryClient = new QueryClient();
 
@@ -839,6 +841,30 @@ const createRoutes = () => (
 							element={
 								<ProtectedRoute>
 									<DepartmentDetails />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="testimonials"
+							element={
+								<ProtectedRoute>
+									<Testimonials />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="testimonial-details"
+							element={
+								<ProtectedRoute>
+									<TestimonialDetails />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="testimonial-details/:id"
+							element={
+								<ProtectedRoute>
+									<TestimonialDetails />
 								</ProtectedRoute>
 							}
 						/>

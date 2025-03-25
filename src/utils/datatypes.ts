@@ -322,6 +322,42 @@ export type DepartmentsRequest = {
 	page_size: number;
 };
 
+export type TTestimonialFormData = {
+	id?: number;
+	user_id: number;
+	story_description: string;	
+	status: string;
+};
+export type ITestimonial = {
+	id?: number;
+	user_id: number;
+	story_description: string;	
+	user?: { first_name: string; last_name: string; professional_headline: string; image: string };
+	status: string;
+	created_on: Date;
+	updated_on: Date;
+	createdAt: Date;
+	updatedAt: Date;
+};
+export type TestimonialsResponse = {
+	total_records: number;
+	data: ITestimonial[];
+};
+export type TestimonialRequest = {
+	enabled: boolean;
+	id: number;
+};
+export type TestimonialResponse = {
+	message: string;
+	data: ITestimonial;
+};
+export type TestimonialsRequest = {
+	enabled: boolean;
+	filter_status: string;	
+	page_number: number;
+	page_size: number;
+};
+
 export type TCategoryFormData = {
 	id?: number;
 	category_name: string;

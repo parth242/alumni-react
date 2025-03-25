@@ -10,7 +10,8 @@ import { useJobs } from "api/services/jobService";
 import { useUserHomeData } from "api/services/user";
 import { useSlideshows } from "api/services/slideshowService";
 import { useGallerys } from "api/services/galleryService";
-import { INews, IEvent, IJob, CustomerType, IUser, ISlideshow, IGallery } from "utils/datatypes";
+import { useTestimonials } from "api/services/testimonialService";
+import { INews, IEvent, IJob, CustomerType, IUser, ISlideshow, IGallery, ITestimonial } from "utils/datatypes";
 import { endDateWithSuffix } from "../components/ui/NewsItem";
 import { pageStartFrom } from "utils/consts";
 import { Autoplay, Pagination, Navigation } from "swiper/modules"; // ✅ Correct import
@@ -111,6 +112,17 @@ function Home() {
 		page_size: 12	
 	}) || [];
 
+  const {	
+		data: testimonialList,
+		refetch: fetchTestimonialList,
+		isFetching: isFetchingTestimonialList,
+	} = useTestimonials({
+		enabled: true,
+		filter_status: activeStatus,		
+		page_number: pageNumber,
+		page_size: 10,
+	}) || [];
+
   useEffect(() => {
     AOS.init({
       duration: 600,
@@ -153,11 +165,7 @@ function Home() {
               <p className="col-sm-12 col-md-3 mx-auto text-center">
               {item.slide_description}
               </p>
-              <div className="button">
-                <a href="#featured-services" className="btn-get-started btn">
-                  Register Now
-                </a>
-              </div>
+              
             </div>
           </div>
           ))
@@ -510,104 +518,35 @@ function Home() {
       }}
     >
             {/* Testimonial Item 1 */}
+            {testimonialList &&
+                      testimonialList?.data &&
+                      testimonialList?.data?.length ? (
+                        testimonialList?.data?.map((item: ITestimonial, i: number) => (
             <SwiperSlide>
               <div className="testimonial-item">
                 <p>
-                  Proin iaculis purus consequat sem cure digni ssim donec
-                  porttitora entum suscipit rhoncus.
+                  {item.story_description}
                 </p>
                 <div className="profile mt-auto">
                   <img
-                    src="assets/img/testimonials/testimonials-1.jpg"
+                    src={
+                      item?.image
+                        ? import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL +
+                          item?.image
+                        : "/assets/images/profile.png"
+                    }
                     className="testimonial-img"
                     alt=""
                   />
-                  <h3>Saul Goodman</h3>
-                  <h4>Ceo &amp; Founder</h4>
+                  <h3>{item.user?.first_name+' '+item.user?.last_name}</h3>
+                  <h4>{item.user?.professional_headline}</h4>
                 </div>
               </div>
             </SwiperSlide>
-
-            {/* Testimonial Item 2 */}
-            <SwiperSlide>
-              <div className="testimonial-item">
-                <p>
-                  Export tempor illum tamen malis malis eram quae irure esse
-                  labore quem cillum quid cillum eram malis quorum velit fore
-                  eram velit sunt aliqua noster fugiat irure amet legam anim
-                  culpa.
-                </p>
-                <div className="profile mt-auto">
-                  <img
-                    src="assets/img/testimonials/testimonials-2.jpg"
-                    className="testimonial-img"
-                    alt=""
-                  />
-                  <h3>Sara Wilsson</h3>
-                  <h4>Designer</h4>
-                </div>
-              </div>
-            </SwiperSlide>
-
-            <SwiperSlide>
-              <div className="testimonial-item">
-                <p>
-                  Export tempor illum tamen malis malis eram quae irure esse
-                  labore quem cillum quid cillum eram malis quorum velit fore
-                  eram velit sunt aliqua noster fugiat irure amet legam anim
-                  culpa.
-                </p>
-                <div className="profile mt-auto">
-                  <img
-                    src="assets/img/testimonials/testimonials-3.jpg"
-                    className="testimonial-img"
-                    alt=""
-                  />
-                  <h3>Sara Wilsson</h3>
-                  <h4>Designer</h4>
-                </div>
-              </div>
-            </SwiperSlide>
-
-            <SwiperSlide>
-              <div className="testimonial-item">
-                <p>
-                  Export tempor illum tamen malis malis eram quae irure esse
-                  labore quem cillum quid cillum eram malis quorum velit fore
-                  eram velit sunt aliqua noster fugiat irure amet legam anim
-                  culpa.
-                </p>
-                <div className="profile mt-auto">
-                  <img
-                    src="assets/img/testimonials/testimonials-4.jpg"
-                    className="testimonial-img"
-                    alt=""
-                  />
-                  <h3>Sara Wilsson</h3>
-                  <h4>Designer</h4>
-                </div>
-              </div>
-            </SwiperSlide>
-
-            <SwiperSlide>
-              <div className="testimonial-item">
-                <p>
-                  Export tempor illum tamen malis malis eram quae irure esse
-                  labore quem cillum quid cillum eram malis quorum velit fore
-                  eram velit sunt aliqua noster fugiat irure amet legam anim
-                  culpa.
-                </p>
-                <div className="profile mt-auto">
-                  <img
-                    src="assets/img/testimonials/testimonials-5.jpg"
-                    className="testimonial-img"
-                    alt=""
-                  />
-                  <h3>Sara Wilsson</h3>
-                  <h4>Designer</h4>
-                </div>
-              </div>
-            </SwiperSlide>
+            ))
+            ) : ("No any Success Story")
+            }
+           
             {/* Add other SwiperSlides here */}
             {/* Testimonial Item 3, 4, 5 */}
           </Swiper>
