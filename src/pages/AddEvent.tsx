@@ -97,6 +97,8 @@ function AddEvent() {
 		{ text: "Meetups", value: "Meetups" },
 		{ text: "Conferences", value: "Conferences" },
 		{ text: "Symposiums", value: "Symposiums" },
+		{ text: "Workshops", value: "Workshops" },
+		{ text: "Community Events", value: "Community Events" },
 	]);
 
 	const {

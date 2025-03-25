@@ -701,6 +701,36 @@ export type NewssRequest = {
 	group_id: number;
 };
 
+export type TGalleryFormData = {
+	id?: number;
+	gallery_image: string;	
+};
+
+export type IGallery = {
+	id?: number;
+	gallery_image: string;	
+	createdAt: string;
+	updated_on: Date;
+};
+export type GallerysResponse = {
+	total_records: number;
+	data: IGallery[];
+	total_data: IGallery[];
+};
+export type GalleryRequest = {
+	enabled: boolean;
+	id: number;
+};
+export type GalleryResponse = {
+	message: string;
+	data: IGallery;
+};
+export type GallerysRequest = {
+	enabled: boolean;	
+	page_number: number;
+	page_size: number;	
+};
+
 export type TMailFormData = {
 	subject: string;
 	recipients: string[];
