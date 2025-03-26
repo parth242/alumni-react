@@ -89,40 +89,27 @@ function Photo() {
 	const [uploadedImage, setUploadedImage] = useState<string>();
 	const [image, setImage] = useState<File | null>(null);
 
-	const cropImage = (file: File, width: number, height: number) => {
-		return new Promise<File>((resolve) => {
-		  const reader = new FileReader();
-		  reader.readAsDataURL(file);
-		  reader.onload = (event) => {
-			const img = new Image();
-			img.src = event.target?.result as string;
-			img.onload = () => {
-			  const canvas = document.createElement("canvas");
-			  const ctx = canvas.getContext("2d");
+	const handleCroppedImage = (croppedFile) => {
+		console.log("Cropped File:", croppedFile);
 	  
-			  // Set canvas size
-			  canvas.width = width;
-			  canvas.height = height;
+		if (croppedFile) {
+		  const newFile = new File([croppedFile], croppedFile.name, { type: croppedFile.type });
 	  
-			  // Draw cropped image on canvas
-			  ctx?.drawImage(img, 0, 0, width, height);
+		  setFileList([
+			{
+			  uid: "-1",
+			  name: newFile.name,
+			  status: "done",
+			  url: URL.createObjectURL(newFile),
+			  originFileObj: newFile, // Replace original file with cropped file
+			},
+		  ]);
 	  
-			  // Convert canvas to Blob and then to File
-			  canvas.toBlob((blob) => {
-				if (blob) {
-				  const croppedFile = new File([blob], file.name, {
-					type: "image/jpeg",
-					lastModified: Date.now(),
-				  });
-				  resolve(croppedFile);
-				}
-			  }, "image/jpeg");
-			};
-		  };
-		});
+		  setImage(newFile); // Store cropped file
+		}
 	  };
 	  
-
+	
 	const onChange: UploadProps["onChange"] = async ({ fileList: newFileList }) => {
 		const latestFile = newFileList[newFileList.length - 1];
 	  
@@ -130,16 +117,18 @@ function Photo() {
 	  
 		console.log("Latest File:", latestFile);
 	  
-		// Crop the image before setting it
-		const croppedFile = await cropImage(latestFile.originFileObj, 400, 400);
-	  
+		const croppedFile = latestFile.originFileObj;
+
+			  
 		setErrorMessage("");
 		setValue("image", "");
 		setImage(null);
 		setSelectedImage("");
 	  
-		const ext = croppedFile.name.split(".").pop()?.toLowerCase() || "";
-	  
+		const ext: string | null = (
+			croppedFile.name.split(".").pop() || ""
+		).toLowerCase();
+
 		if (filesExt["image"].indexOf(ext) < 0) {
 		  setErrorMessage(fileInvalid["image"]);
 		  return;
@@ -149,7 +138,7 @@ function Photo() {
 		}
 	  
 		setImage(croppedFile); // Store cropped image
-		setFileList([{ ...latestFile, originFileObj: croppedFile }]); // Replace with cropped file
+		setFileList(newFileList);
 	  
 		const reader = new FileReader();
 		reader.onload = () => {
@@ -320,13 +309,14 @@ function Photo() {
 							rotationSlider
 							modalOk="Upload"
 							modalCancel="Cancel"
-							aspect={1} // 1:1 aspect ratio for square crop
 							cropSize={{ width: 400, height: 400 }} // Fixed crop size
-							showReset
+							aspect={1} // Ensures square cropping (400x400)
 							showGrid
 							modalProps={{
 								className: "custom-upload-modal",
-							}}>
+							}}
+							onModalOk={(croppedFile) => handleCroppedImage(croppedFile)} // Capture cropped image
+							>
 							<Upload
 								className="bg-white border-2 rounded-lg shadow-lg"
 								action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
