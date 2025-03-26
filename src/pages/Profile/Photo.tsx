@@ -89,42 +89,76 @@ function Photo() {
 	const [uploadedImage, setUploadedImage] = useState<string>();
 	const [image, setImage] = useState<File | null>(null);
 
-	const onChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
+	const cropImage = (file: File, width: number, height: number) => {
+		return new Promise<File>((resolve) => {
+		  const reader = new FileReader();
+		  reader.readAsDataURL(file);
+		  reader.onload = (event) => {
+			const img = new Image();
+			img.src = event.target?.result as string;
+			img.onload = () => {
+			  const canvas = document.createElement("canvas");
+			  const ctx = canvas.getContext("2d");
+	  
+			  // Set canvas size
+			  canvas.width = width;
+			  canvas.height = height;
+	  
+			  // Draw cropped image on canvas
+			  ctx?.drawImage(img, 0, 0, width, height);
+	  
+			  // Convert canvas to Blob and then to File
+			  canvas.toBlob((blob) => {
+				if (blob) {
+				  const croppedFile = new File([blob], file.name, {
+					type: "image/jpeg",
+					lastModified: Date.now(),
+				  });
+				  resolve(croppedFile);
+				}
+			  }, "image/jpeg");
+			};
+		  };
+		});
+	  };
+	  
+
+	const onChange: UploadProps["onChange"] = async ({ fileList: newFileList }) => {
 		const latestFile = newFileList[newFileList.length - 1];
-
+	  
+		if (!latestFile) return;
+	  
 		console.log("Latest File:", latestFile);
-		// Access the actual file object
-		const file = latestFile.originFileObj;
-
-		if (file) {
-			const ext: string | null = (
-				file.name.split(".").pop() || ""
-			).toLowerCase();
-
-			setErrorMessage("");
-			setValue("image", "");
-			setImage(null);
-			setSelectedImage("");
-
-			if (filesExt["image"].indexOf(ext) < 0) {
-				setErrorMessage(fileInvalid["image"]);
-				return true;
-			} else if ((file.size as number) > filesSize["image"]) {
-				setErrorMessage(
-					`File size limit: The image you tried uploading exceeds the maximum file size (${filesLimit["image"]}) `,
-				);
-			} else {
-				setImage(file);
-				setFileList(newFileList);
-				const reader = new FileReader();
-				reader.onload = () => {
-					console.log("reader.result", reader.result);
-					setSelectedImage(reader.result as string);
-				};
-				reader.readAsDataURL(file);
-			}
+	  
+		// Crop the image before setting it
+		const croppedFile = await cropImage(latestFile.originFileObj, 400, 400);
+	  
+		setErrorMessage("");
+		setValue("image", "");
+		setImage(null);
+		setSelectedImage("");
+	  
+		const ext = croppedFile.name.split(".").pop()?.toLowerCase() || "";
+	  
+		if (filesExt["image"].indexOf(ext) < 0) {
+		  setErrorMessage(fileInvalid["image"]);
+		  return;
+		} else if ((croppedFile.size as number) > filesSize["image"]) {
+		  setErrorMessage(`File size limit: The image exceeds ${filesLimit["image"]}`);
+		  return;
 		}
-	};
+	  
+		setImage(croppedFile); // Store cropped image
+		setFileList([{ ...latestFile, originFileObj: croppedFile }]); // Replace with cropped file
+	  
+		const reader = new FileReader();
+		reader.onload = () => {
+		  console.log("Cropped Image Data:", reader.result);
+		  setSelectedImage(reader.result as string);
+		};
+		reader.readAsDataURL(croppedFile);
+	  };
+	  
 
 	
 	const saveProfileImage = async () => {
@@ -320,14 +354,12 @@ function Photo() {
 									src={
 										selectedImage ||
 										import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL + uploadedImage
-									}
-									className="w-32 h-32 rounded-full"
+									}									
 									alt="userImage"
 								/>
 							) : (
 								<img
-									src="/assets/images/profile.png"
-									className="w-32 h-32 rounded-full"
+									src="/assets/images/profile.png"									
 									alt="userImage"
 								/>
 							)}
