@@ -89,26 +89,13 @@ function Photo() {
 	const [uploadedImage, setUploadedImage] = useState<string>();
 	const [image, setImage] = useState<File | null>(null);
 
-	const handleCroppedImage = (croppedFile) => {
-		console.log("Cropped File:", croppedFile);
-	  
-		if (croppedFile) {
-		  const newFile = new File([croppedFile], croppedFile.name, { type: croppedFile.type });
-	  
-		  setFileList([
-			{
-			  uid: "-1",
-			  name: newFile.name,
-			  status: "done",
-			  url: URL.createObjectURL(newFile),
-			  originFileObj: newFile, // Replace original file with cropped file
-			},
-		  ]);
-	  
-		  setImage(newFile); // Store cropped file
-		}
+	const getSrcFromFile = (file) => {
+		return new Promise((resolve) => {
+		  const reader = new FileReader();
+		  reader.readAsDataURL(file.originFileObj);
+		  reader.onload = () => resolve(reader.result);
+		});
 	  };
-	  
 	
 	const onChange: UploadProps["onChange"] = async ({ fileList: newFileList }) => {
 		const latestFile = newFileList[newFileList.length - 1];
@@ -197,20 +184,18 @@ function Photo() {
 		}
 	};
 
-	const onPreview = async (file: UploadFile) => {
-		let src = file.url as string;
-		if (!src) {
-			src = await new Promise(resolve => {
-				const reader = new FileReader();
-				reader.readAsDataURL(file.originFileObj as File);
-				reader.onload = () => resolve(reader.result as string);
-			});
-		}
-		const image = new Image();
-		image.src = src;
+	const onPreview = async (file) => {
+		const src = file.url || (await getSrcFromFile(file));
 		const imgWindow = window.open(src);
-		imgWindow?.document.write(image.outerHTML);
-	};
+	
+		if (imgWindow) {
+		  const image = new Image();
+		  image.src = src;
+		  imgWindow.document.write(image.outerHTML);
+		} else {
+		  window.location.href = src;
+		}
+	  };
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -314,12 +299,11 @@ function Photo() {
 							showGrid
 							modalProps={{
 								className: "custom-upload-modal",
-							}}
-							onModalOk={(croppedFile) => handleCroppedImage(croppedFile)} // Capture cropped image
-							>
+							}}>
 							<Upload
 								className="bg-white border-2 rounded-lg shadow-lg"
 								action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+								listType="picture-card"
 								fileList={fileList}
 								onChange={onChange}
 								onPreview={onPreview}
