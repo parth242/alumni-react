@@ -96,6 +96,40 @@ function Photo() {
 		  reader.onload = () => resolve(reader.result);
 		});
 	  };
+
+	  const cropImage = (file: File, width: number, height: number) => {
+		return new Promise<File>((resolve) => {
+		  const reader = new FileReader();
+		  reader.readAsDataURL(file);
+		  reader.onload = (event) => {
+			const img = new Image();
+			img.src = event.target?.result as string;
+			img.onload = () => {
+			  const canvas = document.createElement("canvas");
+			  const ctx = canvas.getContext("2d");
+	  
+			  // Set canvas size
+			  canvas.width = width;
+			  canvas.height = height;
+	  
+			  // Draw cropped image on canvas
+			  ctx?.drawImage(img, 0, 0, width, height);
+	  
+			  // Convert canvas to Blob and then to File
+			  canvas.toBlob((blob) => {
+				if (blob) {
+				  const croppedFile = new File([blob], file.name, {
+					type: "image/jpeg",
+					lastModified: Date.now(),
+				  });
+				  resolve(croppedFile);
+				}
+			  }, "image/jpeg");
+			};
+		  };
+		});
+	  };
+	  
 	
 	const onChange: UploadProps["onChange"] = async ({ fileList: newFileList }) => {
 		const latestFile = newFileList[newFileList.length - 1];
@@ -104,7 +138,7 @@ function Photo() {
 	  
 		console.log("Latest File:", latestFile);
 	  
-		const croppedFile = latestFile.originFileObj;
+		const croppedFile = await cropImage(latestFile.originFileObj, 400, 400);
 
 			  
 		setErrorMessage("");
@@ -197,38 +231,6 @@ function Photo() {
 		}
 	  };
 
-	  const cropImage = (file: File, width: number, height: number) => {
-		return new Promise<File>((resolve) => {
-		  const reader = new FileReader();
-		  reader.readAsDataURL(file);
-		  reader.onload = (event) => {
-			const img = new Image();
-			img.src = event.target?.result as string;
-			img.onload = () => {
-			  const canvas = document.createElement("canvas");
-			  const ctx = canvas.getContext("2d");
-	  
-			  // Set fixed crop size
-			  canvas.width = width;
-			  canvas.height = height;
-	  
-			  // Draw image on canvas
-			  ctx?.drawImage(img, 0, 0, width, height);
-	  
-			  // Convert canvas to File
-			  canvas.toBlob((blob) => {
-				if (blob) {
-				  const croppedFile = new File([blob], `cropped_${file.name}`, {
-					type: "image/jpeg",
-					lastModified: Date.now(),
-				  });
-				  resolve(croppedFile);
-				}
-			  }, "image/jpeg");
-			};
-		  };
-		});
-	  };
 	  
 
 	useEffect(() => {
@@ -329,15 +331,12 @@ function Photo() {
 							modalOk="Upload"
 							modalCancel="Cancel"
 							aspect={1} // 1:1 for 400x400 crop
+							cropSize={{ width: 400, height: 400 }} // Fixed crop size
 							showReset
 							showGrid
 							modalProps={{
 								className: "custom-upload-modal",
-							}}
-							beforeCrop={(file) => new Promise((resolve) => {
-								cropImage(file, 400, 400).then((croppedFile) => resolve(croppedFile));
-							})}
-							>
+							}}>
 							<Upload
 								className="bg-white border-2 rounded-lg shadow-lg"
 								action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"								
