@@ -307,7 +307,7 @@ function Photo() {
 								fileList={fileList}
 								onChange={onChange}
 								onPreview={onPreview}
-								beforeUpload={() => false}>
+								>
 								{fileList.length < 1 && (
 								<AntdButton className="bg-transparent mt-1 border-none" icon={<UploadOutlined />}>
 									Click to Upload
