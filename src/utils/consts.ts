@@ -91,16 +91,16 @@ export const allowedFiles: AllowedFilesType = {
 	sheet: [".xlsx", ".xls", ".csv"],
 };
 export const filesSize: FilesSizeType = {
-	image: 2000000,
+	image: 2097152,
 	video: 16777216,
-	document: 2000000,
+	document: 2097152,
 	sheet: 104857600,
 };
 
 export const filesLimit: FileInvalidType = {
-	image: "5MB",
+	image: "2MB",
 	video: "16MB",
-	document: "100MB",
+	document: "2MB",
 	sheet: "100MB",
 };
 

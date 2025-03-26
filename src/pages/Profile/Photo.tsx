@@ -8,6 +8,7 @@ import ProfileHeader from "components/layout/profileheader";
 import ProfileSidebar from "components/layout/profilesidebar";
 import Loader from "components/layout/loader";
 import React, { useEffect, useState, ChangeEvent } from "react";
+import ImgCrop from "antd-img-crop";
 import {
 	ErrorToastMessage,
 	SuccessToastMessage,
@@ -35,6 +36,8 @@ import {
 } from "utils/consts";
 import { Button } from "flowbite-react";
 import axios, { AxiosResponse } from "axios";
+import { UploadOutlined } from "@ant-design/icons";
+import { Upload, UploadFile, UploadProps, Button as AntdButton } from "antd";
 
 function Photo() {
 	const {
@@ -50,6 +53,11 @@ function Photo() {
 	const [userData, setUserData] = useState<BasicProfile | null>();
 	const [userId, setUserId] = useState(0);
 	const [loading, setLoading] = useState(false);
+
+	const [fileList, setFileList] = useState<UploadFile[]>([]);
+	const [errorFileMessage, setErrorFileMessage] = useState<string | null>(
+		null,
+	);
 
 	const navigate = useNavigate();
 
@@ -81,27 +89,33 @@ function Photo() {
 	const [uploadedImage, setUploadedImage] = useState<string>();
 	const [image, setImage] = useState<File | null>(null);
 
+	const onChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
+		const latestFile = newFileList[newFileList.length - 1];
 
-	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0];
+		console.log("Latest File:", latestFile);
+		// Access the actual file object
+		const file = latestFile.originFileObj;
+
 		if (file) {
 			const ext: string | null = (
 				file.name.split(".").pop() || ""
 			).toLowerCase();
-			setImage(null);
+
 			setErrorMessage("");
-		setValue("image", "");
-		setSelectedImage("");
+			setValue("image", "");
+			setImage(null);
+			setSelectedImage("");
 
 			if (filesExt["image"].indexOf(ext) < 0) {
 				setErrorMessage(fileInvalid["image"]);
 				return true;
-			} else if (file?.size > filesSize["image"]) {
+			} else if ((file.size as number) > filesSize["image"]) {
 				setErrorMessage(
 					`File size limit: The image you tried uploading exceeds the maximum file size (${filesLimit["image"]}) `,
 				);
 			} else {
 				setImage(file);
+				setFileList(newFileList);
 				const reader = new FileReader();
 				reader.onload = () => {
 					console.log("reader.result", reader.result);
@@ -112,6 +126,7 @@ function Photo() {
 		}
 	};
 
+	
 	const saveProfileImage = async () => {
 		try {
 			let uploadConfig: AxiosResponse | null = null;
@@ -157,6 +172,21 @@ function Photo() {
 		} catch (error) {
 			return;
 		}
+	};
+
+	const onPreview = async (file: UploadFile) => {
+		let src = file.url as string;
+		if (!src) {
+			src = await new Promise(resolve => {
+				const reader = new FileReader();
+				reader.readAsDataURL(file.originFileObj as File);
+				reader.onload = () => resolve(reader.result as string);
+			});
+		}
+		const image = new Image();
+		image.src = src;
+		const imgWindow = window.open(src);
+		imgWindow?.document.write(image.outerHTML);
 	};
 
 	useEffect(() => {
@@ -205,6 +235,12 @@ function Photo() {
 	const onSubmit = async (data: ProfilePicDataType) => {
 		setLoading(true);
 		await saveProfileImage();
+		if(getValues("image")==''){
+			setErrorMessage(
+				`Please upload photo file `,
+			);
+			return false;
+		}
 		data.image = getValues("image") || "";
 		
 		const storedUserData = localStorage.getItem("user");
@@ -239,13 +275,46 @@ function Photo() {
 						onSubmit={handleSubmit(onSubmit)}
 						className="flex flex-col gap-4 mt-10">
 						<div className="flex gap-4 ">
-							<input
+							{/* <input
 								id="profile-image"
 								type="file"
 								accept={`${allowedFiles["image"]}`}
 								onChange={handleImageChange}
 								className="" // Hide the file input visually
-							/>
+							/> */}
+						<ImgCrop
+							rotationSlider
+							modalOk="Upload"
+							modalCancel="Cancel"
+							aspect={1} // 1:1 aspect ratio for square crop
+							cropSize={{ width: 400, height: 400 }} // Fixed crop size
+							showReset
+							showGrid
+							modalProps={{
+								className: "custom-upload-modal",
+							}}>
+							<Upload
+								className="bg-white border-2 rounded-lg shadow-lg"
+								action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+								fileList={fileList}
+								onChange={onChange}
+								onPreview={onPreview}
+								beforeUpload={() => false}>
+								{fileList.length < 1 && (
+								<AntdButton className="bg-transparent mt-1 border-none" icon={<UploadOutlined />}>
+									Click to Upload
+								</AntdButton>
+								)}
+							</Upload>
+							</ImgCrop>
+							<span className="text-xs text-red-500">
+						{errorMessage && (
+							<>
+								<span>{errorMessage}</span>
+							</>
+						)}
+						&nbsp;
+					</span>
 							{selectedImage || uploadedImage ? (
 								<img
 									src={

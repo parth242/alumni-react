@@ -107,6 +107,7 @@ function Gallery() {
 		onSuccess: async () => {
 			setLoading(false);
 			reset();
+			setErrorMessage("");
 			SuccessToastMessage({
 				title: "Gallery Created Successfully",
 				id: "create_gallery_success",
@@ -205,6 +206,12 @@ function Gallery() {
 	const onSubmit = async (data: TGalleryFormData) => {
 		setLoading(true);
 		await saveProfileImage();
+		if(getValues("gallery_image")==''){
+			setErrorMessage(
+				`Please upload image file `,
+			);
+			return false;
+		}
 		data.gallery_image = getValues("gallery_image") || "";
 		
 		console.log('gallerydata',data);

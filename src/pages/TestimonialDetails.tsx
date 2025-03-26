@@ -41,7 +41,8 @@ function TestimonialDetails() {
 			.required("Alumni is required."),
 		story_description: yup
 			.string()
-			.required("Story Description is required"),			
+			.required("Story Description is required")
+			.max(100, "Story Description cannot exceed 100 characters"),		
 		status: yup
 			.string()
 			.required("Status is required").default("active"),
@@ -163,6 +164,7 @@ function TestimonialDetails() {
 								placeholder="Enter Description"
 								name={"story_description"}
 								label={"Story Description"}
+								error={errors?.story_description?.message}
 								register={register}
 							/>
 				</div>
