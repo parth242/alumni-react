@@ -389,6 +389,8 @@ function SlideshowDetails() {
 									alt="userImage"
 								/>
 						</>
+					) : (
+						null
 					)}
 					</div>
 
