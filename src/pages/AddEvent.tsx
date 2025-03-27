@@ -31,6 +31,10 @@ import { pageStartFrom } from "utils/consts";
 import axios, { AxiosResponse } from "axios";
 import FlexStartEnd from "components/ui/common/FlexStartEnd";
 import BtnLink from "components/ui/common/BtnLink";
+import ImgCrop from "antd-img-crop";
+import { UploadOutlined } from "@ant-design/icons";
+import { Upload, UploadFile, UploadProps, Button as AntdButton } from "antd";
+
 
 function AddEvent() {
 	const navigate = useNavigate();
@@ -77,7 +81,10 @@ function AddEvent() {
 		[],
 	);
 
+	const [selectedImage, setSelectedImage] = useState<string>();
 	const [uploadedImage, setUploadedImage] = useState<string>();
+	const [oldImage, setOldImage] = useState<string>();
+	const [fileList, setFileList] = useState<UploadFile[]>([]);
 
 	const getUserData = async () => {
 		const userString = localStorage.getItem("user");
@@ -161,6 +168,7 @@ function AddEvent() {
 			setSelectedValuesGroup(defaultValues as any);
 
 			setUploadedImage(eventDetails?.data?.event_image as string);
+			setOldImage(eventDetails?.data?.event_image as string);
 
 		trigger();
 		}
@@ -171,32 +179,107 @@ function AddEvent() {
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [image, setImage] = useState<File | null>(null);
 
-	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0];
-		if (file) {
-			const ext: string | null = (
-				file.name.split(".").pop() || ""
-			).toLowerCase();
-			setImage(null);
-			if (filesExt["image"].indexOf(ext) < 0) {
-				setErrorMessage(fileInvalid["image"]);
-				return true;
-			} else if (file?.size > filesSize["image"]) {
-				setErrorMessage(
-					`File size limit: The image you tried uploading exceeds the maximum file size (${filesLimit["image"]}) `,
-				);
-			} else {
-				setImage(file);
-			}
-		}
-	};
+	const getSrcFromFile = (file) => {
+		return new Promise((resolve) => {
+		  const reader = new FileReader();
+		  reader.readAsDataURL(file.originFileObj);
+		  reader.onload = () => resolve(reader.result);
+		});
+	  };
 
+	  const cropImage = (file: File, width: number, height: number) => {
+		return new Promise<File>((resolve) => {
+		  const reader = new FileReader();
+		  reader.readAsDataURL(file);
+		  reader.onload = (event) => {
+			const img = new Image();
+			img.src = event.target?.result as string;
+			img.onload = () => {
+			  const canvas = document.createElement("canvas");
+			  const ctx = canvas.getContext("2d");
+	  
+			  // Set canvas size
+			  canvas.width = width;
+			  canvas.height = height;
+	  
+			  // Draw cropped image on canvas
+			  ctx?.drawImage(img, 0, 0, width, height);
+	  
+			  // Convert canvas to Blob and then to File
+			  canvas.toBlob((blob) => {
+				if (blob) {
+				  const croppedFile = new File([blob], file.name, {
+					type: "image/jpeg",
+					lastModified: Date.now(),
+				  });
+				  resolve(croppedFile);
+				}
+			  }, "image/jpeg");
+			};
+		  };
+		});
+	  };
+	  
+	
+	const onChange: UploadProps["onChange"] = async ({ fileList: newFileList }) => {
+		const latestFile = newFileList[newFileList.length - 1];
+	  
+		if (!latestFile) return;
+	  
+		console.log("Latest File:", latestFile);
+	  
+		const croppedFile = await cropImage(latestFile.originFileObj, 1024, 768);
+
+			  
+		setErrorMessage("");
+		setValue("event_image", "");
+		setImage(null);
+		setSelectedImage("");
+	  
+		const ext: string | null = (
+			croppedFile.name.split(".").pop() || ""
+		).toLowerCase();
+
+		if (filesExt["image"].indexOf(ext) < 0) {
+		  setErrorMessage(fileInvalid["image"]);
+		  return;
+		} else if ((croppedFile.size as number) > filesSize["image"]) {
+		  setErrorMessage(`File size limit: The image exceeds ${filesLimit["image"]}`);
+		  return;
+		}
+	  
+		setImage(croppedFile); // Store cropped image
+		setFileList(newFileList);
+	  
+		const reader = new FileReader();
+		reader.onload = () => {
+		  console.log("Cropped Image Data:", reader.result);
+		  setSelectedImage(reader.result as string);
+		};
+		reader.readAsDataURL(croppedFile);
+	  };
+
+	
 	const saveProfileImage = async () => {
 		try {
 			let uploadConfig: AxiosResponse | null = null;
 			const selectedFile = (image as File) || "";
 			console.log("selectedFile", selectedFile);
 			if (selectedFile) {
+
+				if(oldImage!='' && oldImage!=null){
+					const responseapi = await axios.get(
+						import.meta.env.VITE_BASE_URL +
+							"/api/v1/upload/deleteOldImage?key=" +
+							oldImage,
+					);
+	
+					if (responseapi.status === 200) {
+						setOldImage("");
+					}
+	
+				}
+
 				const response = await axios.get(
 					import.meta.env.VITE_BASE_URL +
 						"/api/v1/upload?type=events&filename=" +
@@ -232,11 +315,35 @@ function AddEvent() {
 					console.log("uploadConfig", uploadConfig);
 					setValue("event_image", uploadConfig?.data?.key);
 				}
+			} else{
+				setValue("event_image", "");
+				setImage(null);
 			}
 		} catch (error) {
 			return;
 		}
 	};
+
+	const onPreview = async (file) => {
+		const src = file.url || (await getSrcFromFile(file));
+		const imgWindow = window.open(src);
+	
+		if (imgWindow) {
+		  const image = new Image();
+		  image.src = src;
+		  imgWindow.document.write(image.outerHTML);
+		} else {
+		  window.location.href = src;
+		}
+	  };
+
+	const handleRemove = (file) => {
+		
+		setFileList([]); // Clears the file list
+		setValue("event_image", "");
+		setImage(null);
+		setSelectedImage("");
+	};  
 
 	const handleGroup = (selectedOptions: any) => {
 		console.log('selectedOptions',selectedOptions);
@@ -251,6 +358,9 @@ function AddEvent() {
 
 	const { mutate, isError, error } = useMutation(createEvent, {
 		onSuccess: async (res: any) => {
+			setFileList([]); // Clears the file list
+			setValue("event_image", "");
+			setImage(null);			
 			setLoading(false);
 			SuccessToastMessage({
 				title: "Event Added Successfully",
@@ -267,6 +377,13 @@ function AddEvent() {
 	const onSubmit = async (data: TEventFormData) => {
 		setLoading(true);
 		await saveProfileImage();
+		if(getValues("event_image")==''){
+			setErrorMessage(
+				`Please upload Event Image`,
+			);
+			setLoading(false);
+			return false;
+		}
 		data.event_image = getValues("event_image") || "";
 		console.log("data.event_image", data.event_image);
 		data.user_id = Number(myuser?.id);
@@ -420,16 +537,44 @@ function AddEvent() {
 							className="block text-sm font-medium text-gray-700">
 							Image
 						</label>
-						<input
-							id="event_image"
-							type="file"
-							className="mt-1 block w-full text-sm text-gray-500"
-							accept={`${allowedFiles["image"]}`}
-							onChange={handleImageChange}
-						/>
-						{uploadedImage && (
+						<ImgCrop
+							rotationSlider
+							modalOk="Upload"
+							modalCancel="Cancel"
+							aspect={4 / 3}  							
+							showReset
+							showGrid
+							modalProps={{
+								className: "custom-upload-modal",
+							}}>
+							<Upload
+								className="border-2 rounded-lg shadow-lg"
+								action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"								
+								fileList={fileList}
+								onChange={onChange}
+								onPreview={onPreview}
+								onRemove={handleRemove}
+								>
+								{fileList.length < 1 && (
+								<AntdButton className="bg-transparent mt-1 border-none" icon={<UploadOutlined />}>
+									Click to Upload
+								</AntdButton>
+								)}
+							</Upload>
+							</ImgCrop>
+						<span className="text-xs text-red-500">
+						
+						{errorMessage && (
+							<>
+								<span>{errorMessage}</span>
+							</>
+						)}
+						&nbsp;
+					</span>
+						{selectedImage || uploadedImage && (
 								<img
 									src={
+										selectedImage ||
 										import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL + uploadedImage
 									}
 									className="mt-4 w-40 h-40 square-full"
