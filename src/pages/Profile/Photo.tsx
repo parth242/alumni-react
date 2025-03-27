@@ -87,6 +87,7 @@ function Photo() {
 	const [fileControl, setFileControl] = useState<FileList | null>(null);
 	const [selectedImage, setSelectedImage] = useState<string>();
 	const [uploadedImage, setUploadedImage] = useState<string>();
+	const [oldImage, setOldImage] = useState<string>();
 	const [image, setImage] = useState<File | null>(null);
 
 	const getSrcFromFile = (file) => {
@@ -175,7 +176,20 @@ function Photo() {
 		try {
 			let uploadConfig: AxiosResponse | null = null;
 			const selectedFile = (image as File) || "";
+			const olduploadedfile = oldImage;
 			console.log("selectedFile", selectedFile);
+			if(oldImage!='' && oldImage!=null){
+				const responseapi = await axios.get(
+					import.meta.env.VITE_BASE_URL +
+						"/api/v1/upload/deleteOldImage?key=" +
+						oldImage,
+				);
+
+				if (responseapi.status === 200) {
+					setOldImage("");
+				}
+
+			}
 			if (selectedFile) {
 				const response = await axios.get(
 					import.meta.env.VITE_BASE_URL +
@@ -246,6 +260,7 @@ function Photo() {
 			if (userDataResponse) {
 				
 				setUploadedImage(userDataResponse.image as string);
+				setOldImage(userDataResponse.image as string);
 			}
 		};
 
@@ -289,6 +304,7 @@ function Photo() {
 			setErrorMessage(
 				`Please upload photo file `,
 			);
+			setLoading(false);
 			return false;
 		}
 		data.image = getValues("image") || "";
