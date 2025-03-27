@@ -104,6 +104,7 @@ function Gallery() {
 			if (responseapi.status === 200) {
 				deleteItem(itemId);
 				setIsDeleteConfirm(false);
+				setOldGalleryImage("");
 			}
 
 		}
@@ -260,6 +261,9 @@ function Gallery() {
 					console.log("uploadConfig", uploadConfig);
 					setValue("gallery_image", uploadConfig?.data?.key);
 				}
+			} else{
+				setValue("gallery_image", "");
+				setImage(null);
 			}
 		} catch (error) {
 			return;
@@ -336,22 +340,17 @@ function Gallery() {
 								className: "custom-upload-modal",
 							}}>
 							<Upload
-								className="bg-white border border-gray-300 rounded-md px-4 py-2 cursor-pointer shadow-sm hover:bg-gray-100 transition-all"
+								className="border-2 rounded-lg shadow-lg"
 								action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"								
 								fileList={fileList}
 								onChange={onChange}
 								onPreview={onPreview}
 								onRemove={handleRemove}
-								showUploadList={false}
 								>
 								{fileList.length < 1 && (
-								<label
-								htmlFor="file-upload"
-								className="cursor-pointer text-gray-700 font-medium"
-								style={{ display: "inline-block" }}
-							  >
-								Browse...
-							  </label>
+								<AntdButton className="bg-transparent mt-1 border-none" icon={<UploadOutlined />}>
+									Click to Upload
+								</AntdButton>
 								)}
 							</Upload>
 							</ImgCrop>

@@ -178,19 +178,22 @@ function Photo() {
 			const selectedFile = (image as File) || "";
 			const olduploadedfile = oldImage;
 			console.log("selectedFile", selectedFile);
-			if(oldImage!='' && oldImage!=null){
-				const responseapi = await axios.get(
-					import.meta.env.VITE_BASE_URL +
-						"/api/v1/upload/deleteOldImage?key=" +
-						oldImage,
-				);
+			
+			if (selectedFile) {
 
-				if (responseapi.status === 200) {
-					setOldImage("");
+				if(olduploadedfile!='' && olduploadedfile!=null){
+					const responseapi = await axios.get(
+						import.meta.env.VITE_BASE_URL +
+							"/api/v1/upload/deleteOldImage?key=" +
+							olduploadedfile,
+					);
+	
+					if (responseapi.status === 200) {
+						setOldImage("");
+					}
+	
 				}
 
-			}
-			if (selectedFile) {
 				const response = await axios.get(
 					import.meta.env.VITE_BASE_URL +
 						"/api/v1/upload?type=profile&filename=" +
@@ -226,6 +229,9 @@ function Photo() {
 					console.log("uploadConfig", uploadConfig);
 					setValue("image", uploadConfig?.data?.key);
 				}
+			} else{
+				setValue("image", "");
+				setImage(null);
 			}
 		} catch (error) {
 			return;

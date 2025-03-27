@@ -240,19 +240,20 @@ function SlideshowDetails() {
 			let uploadConfig: AxiosResponse | null = null;
 			const selectedFile = (image as File) || "";
 			console.log("selectedFile", selectedFile);
-			if(oldImage!='' && oldImage!=null){
-				const responseapi = await axios.get(
-					import.meta.env.VITE_BASE_URL +
-						"/api/v1/upload/deleteOldImage?key=" +
-						oldImage,
-				);
-
-				if (responseapi.status === 200) {
-					setOldImage("");
-				}
-
-			}
+			
 			if (selectedFile) {
+				if(oldImage!='' && oldImage!=null){
+					const responseapi = await axios.get(
+						import.meta.env.VITE_BASE_URL +
+							"/api/v1/upload/deleteOldImage?key=" +
+							oldImage,
+					);
+	
+					if (responseapi.status === 200) {
+						setOldImage("");
+					}
+	
+				}
 				const response = await axios.get(
 					import.meta.env.VITE_BASE_URL +
 						"/api/v1/upload?type=slideshow&filename=" +
@@ -288,6 +289,9 @@ function SlideshowDetails() {
 					console.log("uploadConfig", uploadConfig);
 					setValue("slide_image", uploadConfig?.data?.key);
 				}
+			} else{
+				setValue("slide_image", "");
+				setImage(null);
 			}
 		} catch (error) {
 			return;
