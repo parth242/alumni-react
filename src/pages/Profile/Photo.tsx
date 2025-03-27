@@ -253,16 +253,17 @@ function Photo() {
 		setSelectedImage("");
 	};  
 
-	useEffect(() => {
-		const fetchData = async () => {
-			const userDataResponse = (await getMyDetails()) as ProfilePicDataType;
-					
-			if (userDataResponse) {
+	const fetchData = async () => {
+		const userDataResponse = (await getMyDetails()) as ProfilePicDataType;
 				
-				setUploadedImage(userDataResponse.image as string);
-				setOldImage(userDataResponse.image as string);
-			}
-		};
+		if (userDataResponse) {
+			
+			setUploadedImage(userDataResponse.image as string);
+			setOldImage(userDataResponse.image as string);
+		}
+	};
+
+	useEffect(() => {	
 
 		fetchData();
 	}, []); // Empty dependency array means this effect runs once on mount
@@ -282,12 +283,17 @@ function Photo() {
 				}
 				
 			}
+						
+			setFileList([]); // Clears the file list
+			setValue("image", "");
+			setImage(null);
+			setSelectedImage("");
+			fetchData();
 			setLoading(false);
 			SuccessToastMessage({
 				title: "Profile Picture uploaded Successfully",
 				id: "create_user_success",
 			});
-			navigate("/profile/photo");
 		},
 		onError: async (e: HTTPError) => {
 			setLoading(false);
