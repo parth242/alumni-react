@@ -14,6 +14,9 @@ import axios, { AxiosResponse } from "axios";
 import { allowedFiles, fileInvalid, filesExt, filesLimit, filesSize, pageStartFrom } from "utils/consts";
 import Loader from "components/layout/loader";
 import ConfirmPopup from "components/ui/ConfirmPopup";
+import ImgCrop from "antd-img-crop";
+import { UploadOutlined } from "@ant-design/icons";
+import { Upload, UploadFile, UploadProps, Button as AntdButton } from "antd";
 
 
 function Gallery() {
@@ -29,11 +32,13 @@ function Gallery() {
 	const [pageSize, setPageSize] = useState({ value: 10 });
 
 	const [itemId, setItemId] = useState(null);
+	const [oldGalleryImage, setOldGalleryImage] = useState<string>();
 	const [isDeleteConfirm, setIsDeleteConfirm] = useState(false);
 	const [IsDeleteCancelled, setIsDeleteCancelled] = useState(false);
 	const [ConfirmResult, setConfirmResult] = useState(false);
 	const [cancelBtnTitle, setcancelBtnTitle] =useState("Cancel");
 	const [confirmBtnTitle, setconfirmBtnTitle] =useState("Confirm");
+	const [fileList, setFileList] = useState<UploadFile[]>([]);
 
 	const ConfirmPopupData : ConfirmPopupDataType =
 		{ title: "Gallery Delete", text: "Are you sure you want to delete Gallery?" };
@@ -88,13 +93,26 @@ function Gallery() {
 	});
 
 	// Handle the actual deletion of the item
-	const submitDelete = (itemId: any) => {
-		deleteItem(itemId);
-		setIsDeleteConfirm(false);
+	const submitDelete = async (itemId: any) => {
+		if(oldGalleryImage!='' && oldGalleryImage!=null){
+			const responseapi = await axios.get(
+				import.meta.env.VITE_BASE_URL +
+					"/api/v1/upload/deleteOldImage?key=" +
+					oldGalleryImage,
+			);
+
+			if (responseapi.status === 200) {
+				deleteItem(itemId);
+				setIsDeleteConfirm(false);
+			}
+
+		}
+		
 	  };
 	// Handle the displaying of the modal based on type and id
-	const showDeleteModal = (itemId: any) => {
+	const showDeleteModal = (itemId: any,galleryImage: string) => {
 		setItemId(itemId);
+		setOldGalleryImage(galleryImage);
 		console.log(itemId);
 		
 		  //setDeleteMessage(`Are you sure you want to delete the vegetable '${vegetables.find((x) => x.id === id).name}'?`);
@@ -103,11 +121,91 @@ function Gallery() {
 		  setIsDeleteConfirm(true);
 	  };
 
+	  const getSrcFromFile = (file) => {
+		return new Promise((resolve) => {
+		  const reader = new FileReader();
+		  reader.readAsDataURL(file.originFileObj);
+		  reader.onload = () => resolve(reader.result);
+		});
+	  };
+
+	  const cropImage = (file: File, width: number, height: number) => {
+		return new Promise<File>((resolve) => {
+		  const reader = new FileReader();
+		  reader.readAsDataURL(file);
+		  reader.onload = (event) => {
+			const img = new Image();
+			img.src = event.target?.result as string;
+			img.onload = () => {
+			  const canvas = document.createElement("canvas");
+			  const ctx = canvas.getContext("2d");
+	  
+			  // Set canvas size
+			  canvas.width = width;
+			  canvas.height = height;
+	  
+			  // Draw cropped image on canvas
+			  ctx?.drawImage(img, 0, 0, width, height);
+	  
+			  // Convert canvas to Blob and then to File
+			  canvas.toBlob((blob) => {
+				if (blob) {
+				  const croppedFile = new File([blob], file.name, {
+					type: "image/jpeg",
+					lastModified: Date.now(),
+				  });
+				  resolve(croppedFile);
+				}
+			  }, "image/jpeg");
+			};
+		  };
+		});
+	  };
+	  
+	
+	const onChange: UploadProps["onChange"] = async ({ fileList: newFileList }) => {
+		const latestFile = newFileList[newFileList.length - 1];
+	  
+		if (!latestFile) return;
+	  
+		console.log("Latest File:", latestFile);
+	  
+		const croppedFile = await cropImage(latestFile.originFileObj, 1024, 768);
+
+			  
+		setErrorMessage("");
+		setValue("gallery_image", "");
+		setImage(null);
+		
+	  
+		const ext: string | null = (
+			croppedFile.name.split(".").pop() || ""
+		).toLowerCase();
+
+		if (filesExt["image"].indexOf(ext) < 0) {
+		  setErrorMessage(fileInvalid["image"]);
+		  return;
+		} else if ((croppedFile.size as number) > filesSize["image"]) {
+		  setErrorMessage(`File size limit: The image exceeds ${filesLimit["image"]}`);
+		  return;
+		}
+	  
+		setImage(croppedFile); // Store cropped image
+		setFileList(newFileList);
+	  
+		const reader = new FileReader();		
+		reader.readAsDataURL(croppedFile);
+	  };
+
 	const { mutate } = useMutation(createGallery, {
 		onSuccess: async () => {
 			setLoading(false);
 			reset();
 			setErrorMessage("");
+			setFileList([]); // Clears the file list
+			setValue("gallery_image", "");
+			setImage(null);		
+			
 			SuccessToastMessage({
 				title: "Gallery Created Successfully",
 				id: "create_gallery_success",
@@ -168,40 +266,33 @@ function Gallery() {
 		}
 	};
 
+	const onPreview = async (file) => {
+		const src = file.url || (await getSrcFromFile(file));
+		const imgWindow = window.open(src);
+	
+		if (imgWindow) {
+		  const image = new Image();
+		  image.src = src;
+		  imgWindow.document.write(image.outerHTML);
+		} else {
+		  window.location.href = src;
+		}
+	  };
+
+	const handleRemove = (file) => {
+		
+		setFileList([]); // Clears the file list
+		setValue("gallery_image", "");
+		setImage(null);
+		
+	};  
+
 	const handleCancel = () => {
 		reset(); // Resets the form fields to their initial values
 		navigate("/admin/gallery");
 	  };
 
-	  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0];
-		if (file) {
-			const ext: string | null = (
-				file.name.split(".").pop() || ""
-			).toLowerCase();
-			setImage(null);
-			setErrorMessage("");
-		setValue("gallery_image", "");
-		setSelectedImage("");
-
-			if (filesExt["image"].indexOf(ext) < 0) {
-				setErrorMessage(fileInvalid["image"]);
-				return true;
-			} else if (file?.size > filesSize["image"]) {
-				setErrorMessage(
-					`File size limit: The image you tried uploading exceeds the maximum file size (${filesLimit["image"]}) `,
-				);
-			} else {
-				setImage(file);
-				const reader = new FileReader();
-				reader.onload = () => {
-					console.log("reader.result", reader.result);
-					setSelectedImage(reader.result as string);
-				};
-				reader.readAsDataURL(file);
-			}
-		}
-	};
+	 
 
 	const onSubmit = async (data: TGalleryFormData) => {
 		setLoading(true);
@@ -210,6 +301,7 @@ function Gallery() {
 			setErrorMessage(
 				`Please upload image file `,
 			);
+			setLoading(false);
 			return false;
 		}
 		data.gallery_image = getValues("gallery_image") || "";
@@ -231,14 +323,32 @@ function Gallery() {
 					
 					<div className="col-span-1">
 					<label htmlFor="gallery_image" className="font-medium text-gray-900 dark:text-darkPrimary">Gallery Image</label>
-					<div className="relative">						
-						<input
-							id="gallery_image"
-							type="file"
-							className="mt-1 block w-full text-sm text-gray-500"
-							accept={`${allowedFiles["image"]}`}
-							onChange={handleImageChange}							
-						/>
+					<div className="relative">	
+						<ImgCrop
+							rotationSlider
+							modalOk="Upload"
+							modalCancel="Cancel"
+							aspect={4 / 3}							
+							showReset
+							showGrid
+							modalProps={{
+								className: "custom-upload-modal",
+							}}>
+							<Upload
+								className="border-2 rounded-lg shadow-lg"
+								action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"								
+								fileList={fileList}
+								onChange={onChange}
+								onPreview={onPreview}
+								onRemove={handleRemove}
+								>
+								{fileList.length < 1 && (
+								<AntdButton className="bg-transparent mt-1 border-none" icon={<UploadOutlined />}>
+									Click to Upload
+								</AntdButton>
+								)}
+							</Upload>
+							</ImgCrop>
 						<span className="text-xs text-red-500">
 						{errorMessage && (
 							<>
@@ -280,7 +390,7 @@ function Gallery() {
 							<img src={import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL +
                     item?.gallery_image} alt="Uploaded" className="w-full h-40 object-cover rounded shadow" />
 							<button
-							  onClick={() => showDeleteModal(item.id)}
+							  onClick={() => showDeleteModal(item.id,item?.gallery_image)}
 							  className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 text-sm rounded"
 							>
 							  Delete
