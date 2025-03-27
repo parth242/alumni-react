@@ -572,6 +572,7 @@ function AddEvent() {
 						&nbsp;
 					</span>
 						{selectedImage || uploadedImage ? (
+							<>
 								<img
 									src={
 										selectedImage ||
@@ -580,6 +581,7 @@ function AddEvent() {
 									className="mt-4 w-40 h-40 square-full"
 									alt="eventImage"
 								/>
+							</>
 							) : (null)}
 					</div>
 					{loading && <Loader></Loader>}
