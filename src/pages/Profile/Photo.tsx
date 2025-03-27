@@ -231,7 +231,13 @@ function Photo() {
 		}
 	  };
 
-	  
+	const handleRemove = (file) => {
+		
+		setFileList([]); // Clears the file list
+		setValue("image", "");
+		setImage(null);
+		setSelectedImage("");
+	};  
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -338,11 +344,12 @@ function Photo() {
 								className: "custom-upload-modal",
 							}}>
 							<Upload
-								className="bg-white border-2 rounded-lg shadow-lg"
+								className="border-2 rounded-lg shadow-lg"
 								action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"								
 								fileList={fileList}
 								onChange={onChange}
 								onPreview={onPreview}
+								onRemove={handleRemove}
 								>
 								{fileList.length < 1 && (
 								<AntdButton className="bg-transparent mt-1 border-none" icon={<UploadOutlined />}>
