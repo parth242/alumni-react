@@ -328,6 +328,9 @@ const GroupDashboard = () => {
 				setEditorData(""); // Reset CKEditor content
 				setFileList([]);
 				fetchFeedList();
+				setErrorFileMessage("");
+				setValue("feed_image", "");
+				setFeedImage(null);
 				//navigate("/dashboard");
 			},
 			onError: async (e: HTTPError) => {
@@ -377,6 +380,9 @@ const GroupDashboard = () => {
 					console.log("uploadConfig", uploadConfig);
 					setValue("feed_image", uploadConfig?.data?.key);
 				}
+			} else{
+				setValue("feed_image", "");
+				setFeedImage(null);
 			}
 		} catch (error) {
 			return;
@@ -435,6 +441,14 @@ const GroupDashboard = () => {
 		const imgWindow = window.open(src);
 		imgWindow?.document.write(image.outerHTML);
 	};
+
+	const handleRemove = (file) => {
+		
+		setFileList([]); // Clears the file list
+		setValue("feed_image", "");
+		setFeedImage(null);
+		
+	}; 
 
 	return (
 		<>
@@ -501,10 +515,14 @@ const GroupDashboard = () => {
 						<div className="mt-4">
 							<FlexStartEnd>
 								<div className="space-x-4 flex">
-									<ImgCrop
+								<ImgCrop
 										rotationSlider
 										modalOk="Upload"
 										modalCancel="Cancel"
+										aspect={16 / 9}
+										aspectSlider
+										showReset
+										showGrid
 										modalProps={{
 											className: "custom-upload-modal", // Add a custom class to the modal
 										}}>
@@ -514,7 +532,8 @@ const GroupDashboard = () => {
 											fileList={fileList}
 											onChange={onChange}
 											onPreview={onPreview}
-											beforeUpload={() => false}>
+											onRemove={handleRemove}
+											>
 											{fileList.length < 1 && (
 												<AntdButton
 													className="bg-transparent mt-1 border-none"

@@ -359,6 +359,9 @@ function AlumniDashboard() {
 					console.log("uploadConfig", uploadConfig);
 					setValue("feed_image", uploadConfig?.data?.key);
 				}
+			} else{
+				setValue("feed_image", "");
+				setFeedImage(null);
 			}
 		} catch (error) {
 			return;
@@ -418,6 +421,14 @@ function AlumniDashboard() {
 		const imgWindow = window.open(src);
 		imgWindow?.document.write(image.outerHTML);
 	};
+
+	const handleRemove = (file) => {
+		
+		setFileList([]); // Clears the file list
+		setValue("feed_image", "");
+		setFeedImage(null);
+		
+	};  
 
 	
 	const [isSelected, setSelection] = useState(false);
@@ -514,7 +525,8 @@ function AlumniDashboard() {
 											fileList={fileList}
 											onChange={onChange}
 											onPreview={onPreview}
-											beforeUpload={() => false}>
+											onRemove={handleRemove}
+											>
 											{fileList.length < 1 && (
 												<AntdButton
 													className="bg-transparent mt-1 border-none"

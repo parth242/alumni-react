@@ -17,6 +17,8 @@ import AuthLogo from "components/layout/AuthLogo";
 import { LoginType } from "utils/types/user-types";
 import { classNames } from "utils";
 import Loader from "components/layout/loader";
+import HomeHeader from "components/layout/homeheader";
+import HomeFooter from "components/layout/homefooter";
 
 const EmailSchema = yup.object().shape({
 	email: yup
@@ -231,15 +233,15 @@ function Login() {
 
 	return (
 		<div className="text-sm">
+			<HomeHeader></HomeHeader>
 			{isLoading && <Loader></Loader>}
-			<div className="xs:grid-cols-12 grid h-screen sm:grid-cols-1 md:grid-cols-12 lg:grid-cols-12 xl:grid-cols-12">
-				<LoginSidebar />
-				<div className="col-span-4 animate-fade bg-white dark:bg-dark2">
+			<div className="h-screen flex justify-center items-center bg-gray-100">
+  				<div className="w-full max-w-md p-6 bg-white dark:bg-dark2 rounded-lg shadow-md">
 					<Form
 						register={register}
 						onSubmit={onSubmit}
 						handleSubmit={handleSubmit}
-						className={"h-screen"}>
+						className={"w-full"}>
 						<div className="flex min-h-full items-center justify-center px-4 py-12 text-gray-700 dark:text-darkSecondary sm:px-6 lg:px-8">
 							<div className="w-full max-w-md space-y-6">
 								{customersList &&
@@ -405,6 +407,7 @@ function Login() {
 					</Form>
 				</div>
 			</div>
+			<HomeFooter></HomeFooter>
 		</div>
 	);
 }
