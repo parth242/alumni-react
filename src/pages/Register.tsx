@@ -321,14 +321,14 @@ function Register() {
 	};
 
 	return (
-		<div className="text-sm">
+		<div className="flex flex-col min-h-screen text-sm">
 			<HomeHeader></HomeHeader>
 			{isLoading && <Loader></Loader>}
-			<div className="xs:grid-cols-12 grid h-screen sm:grid-cols-1 md:grid-cols-12 lg:grid-cols-12 xl:grid-cols-12">
-				<div className="col-span-12 animate-fade bg-white dark:bg-dark2">
+			<div className="grid flex-grow xs:grid-cols-12 sm:grid-cols-1 md:grid-cols-12 lg:grid-cols-12 xl:grid-cols-12">
+    			<div className="col-span-12 animate-fade bg-white dark:bg-dark2">
 					<form
 						onSubmit={handleSubmit(onSubmit)}
-						className={"h-screen"}>
+						className="min-h-[500px] p-6">
 						<div className="flex min-h-full items-center justify-center px-4 py-12 text-gray-700 dark:text-darkSecondary sm:px-6 lg:px-8">
 							{/* max-w-md */}
 							<div className="md:w-3/5 w-full space-y-6">
