@@ -389,8 +389,7 @@ function SlideshowDetails() {
 										import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL +
 											uploadedImage
 									}
-									className="w-100 h-100"
-									alt="userImage"
+									className="w-100 h-100"									
 								/>
 						</>
 					) : (

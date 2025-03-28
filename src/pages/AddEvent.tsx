@@ -377,13 +377,7 @@ function AddEvent() {
 	const onSubmit = async (data: TEventFormData) => {
 		setLoading(true);
 		await saveProfileImage();
-		if(getValues("event_image")==''){
-			setErrorMessage(
-				`Please upload Event Image`,
-			);
-			setLoading(false);
-			return false;
-		}
+		
 		data.event_image = getValues("event_image") || "";
 		console.log("data.event_image", data.event_image);
 		data.user_id = Number(myuser?.id);

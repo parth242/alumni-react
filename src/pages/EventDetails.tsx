@@ -16,7 +16,9 @@ import { TEventFormData,IEvent, TSelect} from "utils/datatypes";
 import axios, { AxiosResponse } from "axios";
 import { allowedFiles, fileInvalid, filesExt, filesLimit, filesSize } from "utils/consts";
 import Loader from "components/layout/loader";
-
+import ImgCrop from "antd-img-crop";
+import { UploadOutlined } from "@ant-design/icons";
+import { Upload, UploadFile, UploadProps, Button as AntdButton } from "antd";
 
 
 function EventDetails() {
@@ -31,6 +33,9 @@ function EventDetails() {
 	const [selectedImage, setSelectedImage] = useState<string>();
 	const [image, setImage] = useState<File | null>(null);
 	const [loading, setLoading] = useState(false);
+	const [oldImage, setOldImage] = useState<string>();
+	const [fileList, setFileList] = useState<UploadFile[]>([]);
+	const [uploadedImage, setUploadedImage] = useState<string>();
 
 	const [eventCategory] = useState([
 		{ text: "Reunions", value: "Reunions" },
@@ -115,13 +120,98 @@ function EventDetails() {
 	}, [id]);
 	useEffect(() => {
 		reset(eventDetails?.data);
+		setUploadedImage(eventDetails?.data?.event_image as string);
+		setOldImage(eventDetails?.data?.event_image as string);
 		trigger();
 	}, [eventDetails]);
 
 	console.log("eventDetails", eventDetails);
 
+	const getSrcFromFile = (file) => {
+		return new Promise((resolve) => {
+		  const reader = new FileReader();
+		  reader.readAsDataURL(file.originFileObj);
+		  reader.onload = () => resolve(reader.result);
+		});
+	  };
+
+	  const cropImage = (file: File, width: number, height: number) => {
+		return new Promise<File>((resolve) => {
+		  const reader = new FileReader();
+		  reader.readAsDataURL(file);
+		  reader.onload = (event) => {
+			const img = new Image();
+			img.src = event.target?.result as string;
+			img.onload = () => {
+			  const canvas = document.createElement("canvas");
+			  const ctx = canvas.getContext("2d");
+	  
+			  // Set canvas size
+			  canvas.width = width;
+			  canvas.height = height;
+	  
+			  // Draw cropped image on canvas
+			  ctx?.drawImage(img, 0, 0, width, height);
+	  
+			  // Convert canvas to Blob and then to File
+			  canvas.toBlob((blob) => {
+				if (blob) {
+				  const croppedFile = new File([blob], file.name, {
+					type: "image/jpeg",
+					lastModified: Date.now(),
+				  });
+				  resolve(croppedFile);
+				}
+			  }, "image/jpeg");
+			};
+		  };
+		});
+	  };
+	  
+	
+	const onChange: UploadProps["onChange"] = async ({ fileList: newFileList }) => {
+		const latestFile = newFileList[newFileList.length - 1];
+	  
+		if (!latestFile) return;
+	  
+		console.log("Latest File:", latestFile);
+	  
+		const croppedFile = await cropImage(latestFile.originFileObj, 1024, 768);
+
+			  
+		setErrorMessage("");
+		setValue("event_image", "");
+		setImage(null);
+		setSelectedImage("");
+	  
+		const ext: string | null = (
+			croppedFile.name.split(".").pop() || ""
+		).toLowerCase();
+
+		if (filesExt["image"].indexOf(ext) < 0) {
+		  setErrorMessage(fileInvalid["image"]);
+		  return;
+		} else if ((croppedFile.size as number) > filesSize["image"]) {
+		  setErrorMessage(`File size limit: The image exceeds ${filesLimit["image"]}`);
+		  return;
+		}
+	  
+		setImage(croppedFile); // Store cropped image
+		setFileList(newFileList);
+	  
+		const reader = new FileReader();
+		reader.onload = () => {
+		  console.log("Cropped Image Data:", reader.result);
+		  setSelectedImage(reader.result as string);
+		};
+		reader.readAsDataURL(croppedFile);
+	  };
+
 	const { mutate } = useMutation(createEvent, {
 		onSuccess: async () => {
+			setFileList([]); // Clears the file list
+			setValue("event_image", "");
+			setImage(null);			
 			setLoading(false);
 			SuccessToastMessage({
 				title: "Event Created Successfully",
@@ -135,27 +225,7 @@ function EventDetails() {
 			// console.log("error", error);
 			ErrorToastMessage({ error: e, id: "create_event" });
 		},
-	});
-
-	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0];
-		if (file) {
-			const ext: string | null = (
-				file.name.split(".").pop() || ""
-			).toLowerCase();
-			setImage(null);
-			if (filesExt["image"].indexOf(ext) < 0) {
-				setErrorMessage(fileInvalid["image"]);
-				return true;
-			} else if (file?.size > filesSize["image"]) {
-				setErrorMessage(
-					`File size limit: The image you tried uploading exceeds the maximum file size (${filesLimit["image"]}) `,
-				);
-			} else {
-				setImage(file);
-			}
-		}
-	};
+	});	
 
 	const saveProfileImage = async () => {
 		try {
@@ -163,6 +233,18 @@ function EventDetails() {
 			const selectedFile = (image as File) || "";
 			console.log("selectedFile", selectedFile);
 			if (selectedFile) {
+				if(oldImage!='' && oldImage!=null){
+					const responseapi = await axios.get(
+						import.meta.env.VITE_BASE_URL +
+							"/api/v1/upload/deleteOldImage?key=" +
+							oldImage,
+					);
+	
+					if (responseapi.status === 200) {
+						setOldImage("");
+					}
+	
+				}
 				const response = await axios.get(
 					import.meta.env.VITE_BASE_URL +
 						"/api/v1/upload?type=events&filename=" +
@@ -198,11 +280,35 @@ function EventDetails() {
 					console.log("uploadConfig", uploadConfig);
 					setValue("event_image", uploadConfig?.data?.key);
 				}
+			} else{
+				setValue("event_image", "");
+				setImage(null);
 			}
 		} catch (error) {
 			return;
 		}
 	};
+
+	const onPreview = async (file) => {
+		const src = file.url || (await getSrcFromFile(file));
+		const imgWindow = window.open(src);
+	
+		if (imgWindow) {
+		  const image = new Image();
+		  image.src = src;
+		  imgWindow.document.write(image.outerHTML);
+		} else {
+		  window.location.href = src;
+		}
+	  };
+
+	const handleRemove = (file) => {
+		
+		setFileList([]); // Clears the file list
+		setValue("event_image", "");
+		setImage(null);
+		setSelectedImage("");
+	};  
 
 	const onSubmit = async (data: TEventFormData) => {
 		setLoading(true);
@@ -284,13 +390,35 @@ function EventDetails() {
 					<div className="col-span-1">
 					<label htmlFor="event_image" className="font-medium text-gray-900 dark:text-darkPrimary">Event Image</label>
 					<div className="relative">						
-						<input
-							id="event_image"
-							type="file"
-							className="mt-1 block w-full text-sm text-gray-500"
-							accept={`${allowedFiles["image"]}`}
-							onChange={handleImageChange}							
-						/>
+					<ImgCrop
+							rotationSlider
+							modalOk="Upload"
+							modalCancel="Cancel"
+							aspect={4 / 3}  							
+							showReset
+							showGrid
+							modalProps={{
+								className: "custom-upload-modal",
+							}}>
+							<Upload
+								className="bg-black border border-gray-300 rounded-md px-4 py-2 mt-4 cursor-pointer shadow-sm hover:bg-gray-100 transition-all"
+								action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"								
+								fileList={fileList}
+								onChange={onChange}
+								onPreview={onPreview}
+								onRemove={handleRemove}
+								>
+								{fileList.length < 1 && (
+								<label
+								htmlFor="file-upload"
+								className="cursor-pointer text-gray-700 font-medium"
+								style={{ display: "inline-block" }}
+							  >
+								Browse...
+							  </label>
+								)}
+							</Upload>
+							</ImgCrop>
 						<span className="text-xs text-red-500">
 						{errorMessage && (
 							<>
