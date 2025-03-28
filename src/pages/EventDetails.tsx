@@ -429,20 +429,20 @@ function EventDetails() {
 					</span>
 					</div>
 					</div>
-					{eventDetails?.data.event_image && (
+					{selectedImage || uploadedImage ? (
 						<>
 					<div className="col-span-1">
 					<img
 									src={
+										selectedImage ||
 										import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL +
-											eventDetails?.data.event_image
+										uploadedImage
 									}
-									className="w-32 h-32 rounded-full"
-									alt="userImage"
+									className="mt-4 w-40 h-40 square-full"								
 								/>
 					</div>
 					</>
-					)}
+					) : (null)}
 				</div>
 				
 				
