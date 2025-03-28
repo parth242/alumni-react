@@ -328,7 +328,7 @@ function Register() {
     			<div className="col-span-12 animate-fade bg-white dark:bg-dark2">
 					<form
 						onSubmit={handleSubmit(onSubmit)}
-						className="min-h-[500px] p-6">
+						className="min-h-[500px]">
 						<div className="flex min-h-full items-center justify-center px-4 py-12 text-gray-700 dark:text-darkSecondary sm:px-6 lg:px-8">
 							{/* max-w-md */}
 							<div className="md:w-3/5 w-full space-y-6">

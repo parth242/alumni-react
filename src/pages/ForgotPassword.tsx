@@ -33,19 +33,18 @@ function ForgotPassword() {
 	});
 
 	return (
-		<div className="text-sm">
+		<div className="flex flex-col min-h-screen text-sm">
 			<HomeHeader></HomeHeader>
 			{isLoading && <Loader></Loader>}
-			<div className="xs:grid-cols-12 grid h-screen sm:grid-cols-1 md:grid-cols-12 lg:grid-cols-12 xl:grid-cols-12">
-				
-			<div className="col-span-12 animate-fade bg-white dark:bg-dark2">
+			<div className="grid flex-grow xs:grid-cols-12 sm:grid-cols-1 md:grid-cols-12 lg:grid-cols-12 xl:grid-cols-12">
+    			<div className="col-span-12 animate-fade bg-white dark:bg-dark2">
 					{!resetRequest.sent ? (
 						<form
 							onSubmit={handleSubmit(({ email, password }) =>
 								mutate({ email, password }),
 							)}
 							noValidate
-							className="h-screen">
+							className="min-h-[500px]">
 							<div className="flex min-h-full items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
 								<div className="w-full max-w-md space-y-6">
 									<div>
