@@ -401,7 +401,7 @@ function EventDetails() {
 								className: "custom-upload-modal",
 							}}>
 							<Upload
-								className="bg-black border border-gray-300 rounded-md px-4 py-2 mt-4 cursor-pointer shadow-sm hover:bg-gray-100 transition-all"
+								className="border-2 rounded-lg shadow-lg"
 								action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"								
 								fileList={fileList}
 								onChange={onChange}
@@ -409,13 +409,9 @@ function EventDetails() {
 								onRemove={handleRemove}
 								>
 								{fileList.length < 1 && (
-								<label
-								htmlFor="file-upload"
-								className="cursor-pointer text-gray-700 font-medium"
-								style={{ display: "inline-block" }}
-							  >
-								Browse...
-							  </label>
+								<AntdButton className="bg-transparent mt-1 border-none" icon={<UploadOutlined />}>
+									Click to Upload
+								</AntdButton>
 								)}
 							</Upload>
 							</ImgCrop>
@@ -438,7 +434,7 @@ function EventDetails() {
 										import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL +
 										uploadedImage
 									}
-									className="mt-4 w-40 h-40 square-full"								
+									className="w-100 h-100"									
 								/>
 					</div>
 					</>

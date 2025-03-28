@@ -572,8 +572,7 @@ function AddEvent() {
 										selectedImage ||
 										import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL + uploadedImage
 									}
-									className="mt-4 w-40 h-40 square-full"
-									alt="eventImage"
+									className="mt-4 w-40 h-40 square-full"									
 								/>
 							</>
 							) : (null)}
