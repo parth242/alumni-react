@@ -235,13 +235,13 @@ function Login() {
 		<div className="text-sm">
 			<HomeHeader></HomeHeader>
 			{isLoading && <Loader></Loader>}
-			<div className="h-screen flex justify-center items-center bg-gray-100">
-  				<div className="w-full max-w-md p-6 bg-white dark:bg-dark2 rounded-lg shadow-md">
+			<div className="xs:grid-cols-12 grid h-screen sm:grid-cols-1 md:grid-cols-12 lg:grid-cols-12 xl:grid-cols-12">
+				<div className="col-span-12 animate-fade bg-white dark:bg-dark2 rounded-lg shadow-md">
 					<Form
 						register={register}
 						onSubmit={onSubmit}
 						handleSubmit={handleSubmit}
-						className={"w-full"}>
+						className={"h-screen"}>
 						<div className="flex min-h-full items-center justify-center px-4 py-12 text-gray-700 dark:text-darkSecondary sm:px-6 lg:px-8">
 							<div className="w-full max-w-md space-y-6">
 								{customersList &&

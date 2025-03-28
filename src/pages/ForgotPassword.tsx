@@ -4,9 +4,11 @@ import { useMutation } from "react-query";
 import Loader from "components/layout/loader";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import LoginSidebar from "components/layout/loginSidebar";
 import Icon from "utils/icon";
 import { patterns } from "utils/consts";
+import HomeHeader from "components/layout/homeheader";
+import HomeFooter from "components/layout/homefooter";
+
 
 function ForgotPassword() {
 	const {
@@ -32,10 +34,11 @@ function ForgotPassword() {
 
 	return (
 		<div className="text-sm">
+			<HomeHeader></HomeHeader>
 			{isLoading && <Loader></Loader>}
 			<div className="xs:grid-cols-12 grid h-screen sm:grid-cols-1 md:grid-cols-12 lg:grid-cols-12 xl:grid-cols-12">
-				<LoginSidebar />
-				<div className="col-span-4 animate-fade bg-white dark:bg-dark2">
+				
+			<div className="col-span-12 animate-fade bg-white dark:bg-dark2">
 					{!resetRequest.sent ? (
 						<form
 							onSubmit={handleSubmit(({ email, password }) =>
@@ -46,11 +49,7 @@ function ForgotPassword() {
 							<div className="flex min-h-full items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
 								<div className="w-full max-w-md space-y-6">
 									<div>
-										<img
-											className="mx-auto h-12 w-auto"
-											src="/assets/images/logo.png"
-											alt="Workflow"
-										/>
+										
 										<h2 className="mt-6 text-center text-3xl font-extrabold tracking-tight text-gray-900 dark:text-darkPrimary">
 											Reset Password
 										</h2>
@@ -117,11 +116,7 @@ function ForgotPassword() {
 						<div className="grid min-h-full items-center justify-center px-4 py-12 sm:px-6 lg:px-12">
 							<div className="w-full max-w-md space-y-8">
 								<div>
-									<img
-										className="mx-auto h-12 w-auto"
-										src="/assets/images/logo.png"
-										alt="Workflow"
-									/>
+									
 									<h2 className="mt-6 text-center text-3xl font-extrabold tracking-tight text-gray-900 dark:text-darkPrimary">
 										Email sent!
 									</h2>
@@ -159,6 +154,7 @@ function ForgotPassword() {
 					)}
 				</div>
 			</div>
+			<HomeFooter></HomeFooter>
 		</div>
 	);
 }

@@ -30,6 +30,8 @@ import { useCountrys } from "api/services/countryService";
 import { useStates } from "api/services/stateService";
 import { useDepartments } from "api/services/departmentService";
 import { useCourses, createUserCourse } from "api/services/courseService";
+import HomeHeader from "components/layout/homeheader";
+import HomeFooter from "components/layout/homefooter";
 
 const EmailSchema = yup.object().shape({
 	email: yup
@@ -320,6 +322,7 @@ function Register() {
 
 	return (
 		<div className="text-sm">
+			<HomeHeader></HomeHeader>
 			{isLoading && <Loader></Loader>}
 			<div className="xs:grid-cols-12 grid h-screen sm:grid-cols-1 md:grid-cols-12 lg:grid-cols-12 xl:grid-cols-12">
 				<div className="col-span-12 animate-fade bg-white dark:bg-dark2">
@@ -656,6 +659,7 @@ function Register() {
 					</form>
 				</div>
 			</div>
+			<HomeFooter></HomeFooter>
 		</div>
 	);
 }
