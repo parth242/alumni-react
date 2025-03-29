@@ -132,9 +132,15 @@ const ProtectedRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
 };
 const PublicRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
 	const user = localStorage.getItem("user");
-	if (user && location.pathname != "/access_disabled") {
-		return <Navigate to="/admin/dashboard" />;
-	}
+	
+	if(user){
+		const items = JSON.parse(user);
+		if(items?.is_admin==1 && location.pathname != "/access_disabled" && location.pathname != "/"){
+			return <Navigate to="/admin/dashboard" />;
+		} else if (items?.is_alumni==1 && location.pathname != "/access_disabled" && location.pathname != "/") {
+			return <Navigate to="/dashboard" />;
+		}
+	}	
 	return children;
 };
 

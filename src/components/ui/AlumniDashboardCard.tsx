@@ -1,24 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button } from "flowbite-react";
 import BtnComponent from "./BtnComponent";
-import { IFeed, IComment, TCommentFormData, TReportFormData } from "utils/datatypes";
+import { IFeed, IComment, TCommentFormData, TReportFormData, ConfirmPopupDataType } from "utils/datatypes";
 import Textarea from "components/ui/common/Textarea";
 import { endDateWithSuffix, formatDateWithSuffix } from "./NewsItem";
 import { useForm, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { HTTPError } from "ky";
 import { useMutation } from "react-query";
+import Icon from "utils/icon";
 import * as yup from "yup";
 import {
 	ErrorToastMessage,
 	SuccessToastMessage,
 	useUploadImage,
 } from "api/services/user";
-import { createComment, useFeedComments, CreateReport } from "api/services/feedService";
+import { createComment, useFeedComments, CreateReport, deleteFeed } from "api/services/feedService";
 import FlexStartEnd from "./common/FlexStartEnd";
 import { Form, Input, Space, Drawer, Card, Avatar, Radio } from "antd";
 import { useNavigate, Link } from "react-router-dom";
 import { HiFlag } from "react-icons/hi";
+import axios, { AxiosResponse } from "axios";
+import ConfirmPopup from "components/ui/ConfirmPopup";
 
 // Define the Alumni interface
 
@@ -54,6 +57,19 @@ const AlumniDashboardCard: React.FC<AlumniDashboardCardProps> = ({ feed,fetchFee
 	const [isReportReason, setIsReportReason] = useState("");	
 
 	const [shareBtnValue, setShareBtnValue] = useState("Copy");
+
+	const [itemId, setItemId] = useState(null);
+	const [oldFeedImage, setOldFeedImage] = useState<string>();
+	const [isDeleteConfirm, setIsDeleteConfirm] = useState(false);
+	const [IsDeleteCancelled, setIsDeleteCancelled] = useState(false);
+	const [ConfirmResult, setConfirmResult] = useState(false);
+	const [cancelBtnTitle, setcancelBtnTitle] = useState("Cancel");
+	const [confirmBtnTitle, setconfirmBtnTitle] = useState("Confirm");
+
+	const ConfirmPopupData: ConfirmPopupDataType = {
+		title: "Feed Delete",
+		text: "Are you sure you want to delete Feed?",
+	};
 
 	const [form] = Form.useForm();
 
@@ -233,6 +249,51 @@ const AlumniDashboardCard: React.FC<AlumniDashboardCardProps> = ({ feed,fetchFee
 		}
 	};
 
+	const { mutate: deleteItem, isLoading: uploadIsLoading } = useMutation(
+		deleteFeed,
+		{
+			onSuccess: async () => {
+				SuccessToastMessage({
+					title: "Delete Feed Successfully",
+					id: "delete_feed_success",
+				});
+				fetchFeedList();
+			},
+			onError: async (e: HTTPError) => {
+				// const error = await e.response.text();
+				// console.log("error", error);
+				ErrorToastMessage({ error: e, id: "delete_feed" });
+			},
+		},
+	);
+
+	const submitDelete = async (itemId: any) => {
+		if(oldFeedImage!='' && oldFeedImage!=null){
+			const responseapi = await axios.get(
+				import.meta.env.VITE_BASE_URL +
+					"/api/v1/upload/deleteOldImage?key=" +
+					oldFeedImage,
+			);
+
+			if (responseapi.status === 200) {
+				deleteItem(itemId);
+				setIsDeleteConfirm(false);
+				setOldFeedImage("");
+			}
+
+		}		
+	};
+	// Handle the displaying of the modal based on type and id
+	const showDeleteModal = (itemId: any,feedImage: string) => {
+		setItemId(itemId);
+		setOldFeedImage(feedImage);
+		console.log(itemId);
+
+		//setDeleteMessage(`Are you sure you want to delete the vegetable '${vegetables.find((x) => x.id === id).name}'?`);
+
+		setIsDeleteConfirm(true);
+	};
+
 	//console.log('baseUrl',baseUrl);
 	// Type assertion for the imported JSON data
 	//const alumniData: Alumni[] = alumniDataJson as Alumni[];
@@ -337,6 +398,14 @@ const AlumniDashboardCard: React.FC<AlumniDashboardCardProps> = ({ feed,fetchFee
 									color="red"
 									className="cursor-pointer"
 									onClick={() => handleReport(Number(feed.id))}
+								/>
+								<Icon
+									icon="trash-outline"
+									className="w-6 h-6 cursor-pointer"
+									data-tooltip-id="tooltip"
+									data-tooltip-content="Delete Feed"
+									onClick={() =>
+									showDeleteModal(feed.id,feed?.feed_image)}
 								/>
 							</div>
 						</div>
@@ -493,6 +562,17 @@ const AlumniDashboardCard: React.FC<AlumniDashboardCardProps> = ({ feed,fetchFee
 					)}
 				</div>
 			</Drawer>
+			<ConfirmPopup
+				isDeleteConfirm={isDeleteConfirm}
+				setIsDeleteConfirm={setIsDeleteConfirm}
+				setIsDeleteCancelled={setIsDeleteCancelled}
+				data={ConfirmPopupData}
+				setConfirmResult={setConfirmResult}
+				cancelBtnTitle={cancelBtnTitle}
+				confirmBtnTitle={confirmBtnTitle}
+				ConfirmModal={submitDelete}
+				itemId={Number(itemId)}
+			/>
 		</>
 	);
 };
