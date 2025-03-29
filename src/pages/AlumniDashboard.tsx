@@ -597,7 +597,8 @@ function AlumniDashboard() {
 										<AlumniDashboardCard
 											feed={feed}
 											fetchFeedList={fetchFeedList}
-											key={feed.id}											
+											key={feed.id}
+											loggedUserId={userIdGroup}											
 										/>
 									))}
 								</div>

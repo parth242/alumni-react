@@ -30,9 +30,11 @@ const { Meta } = Card;
 interface AlumniDashboardCardProps {
     feed: IFeed;
     fetchFeedList: () => void; // Add fetchFeedList as a function with no arguments
+	key: number;
+	loggedUserId: number;
 }
 
-const AlumniDashboardCard: React.FC<AlumniDashboardCardProps> = ({ feed,fetchFeedList}) => {
+const AlumniDashboardCard: React.FC<AlumniDashboardCardProps> = ({ feed,fetchFeedList, key, loggedUserId}) => {
 	console.log("feed", feed);
 	const navigate = useNavigate();
 	const [isOpen, setIsOpen] = useState(false);
@@ -393,12 +395,13 @@ const AlumniDashboardCard: React.FC<AlumniDashboardCardProps> = ({ feed,fetchFee
 							</div>
 
 							{/* Right section */}
-							<div>
+							<div className="flex justify-end items-center gap-4 text-red-500 w-full"> 
 								<HiFlag
 									color="red"
-									className="cursor-pointer"
+									className="w-6 h-6 cursor-pointer"
 									onClick={() => handleReport(Number(feed.id))}
 								/>
+								{loggedUserId==feed?.user_id && (
 								<Icon
 									icon="trash-outline"
 									className="w-6 h-6 cursor-pointer"
@@ -407,6 +410,7 @@ const AlumniDashboardCard: React.FC<AlumniDashboardCardProps> = ({ feed,fetchFee
 									onClick={() =>
 									showDeleteModal(feed.id,feed?.feed_image)}
 								/>
+								)}
 							</div>
 						</div>
 					</div>
