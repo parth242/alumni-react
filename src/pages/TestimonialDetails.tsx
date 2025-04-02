@@ -42,7 +42,7 @@ function TestimonialDetails() {
 		story_description: yup
 			.string()
 			.required("Story Description is required")
-			.max(100, "Story Description cannot exceed 100 characters"),		
+			.max(100, "Story Description cannot exceed 400 characters"),		
 		status: yup
 			.string()
 			.required("Status is required").default("active"),
