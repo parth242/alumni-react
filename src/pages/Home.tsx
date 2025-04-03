@@ -24,6 +24,9 @@ import "swiper/css/navigation";
 import AOS from "aos";
 import "aos/dist/aos.css";
 
+import GLightbox from "glightbox";
+import "glightbox/dist/css/glightbox.css"; // Import CSS
+
 function Home() {
 	const navigate = useNavigate();
 	const [{ user, selectedCustomer }, setAppState] = useAppState();
@@ -109,7 +112,7 @@ function Home() {
 	} = useGallerys({
 		enabled: true,		
 		page_number: pageNumber,
-		page_size: 12	
+		page_size: 8	
 	}) || [];
 
   const {	
@@ -124,6 +127,8 @@ function Home() {
 	}) || [];
 
   useEffect(() => {
+    const lightbox = GLightbox({ selector: ".glightbox" });
+    return () => lightbox.destroy(); 
     AOS.init({
       duration: 600,
       easing: "ease-in-out",
@@ -634,6 +639,7 @@ function Home() {
                       : "/assets/images/profile.png"
                   }
                   alt=""
+                  title={item?.first_name+" "+item?.last_name}
                 />
               </div>
             </SwiperSlide>
