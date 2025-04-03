@@ -107,6 +107,7 @@ import AlumniMessageDetail from "pages/AlumniMessageDetail";
 import Gallery from "pages/Gallery";
 import Testimonials from "pages/Testimonials";
 import TestimonialDetails from "pages/TestimonialDetails";
+import HomeEvents from "pages/HomeEvents";
 
 const queryClient = new QueryClient();
 
@@ -154,6 +155,14 @@ const createRoutes = () => (
 						element={
 							<PublicRoute>
 								<Home />
+							</PublicRoute>
+						}
+					/>
+					<Route
+						path="/events"
+						element={
+							<PublicRoute>
+								<HomeEvents />
 							</PublicRoute>
 						}
 					/>

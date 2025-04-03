@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from "react";
 
-declare global {
-	interface Window {
-	  GLightbox: any; // Declare GLightbox globally
-	}
-  }
-
 
 export default function HomeFooter() {
 	useEffect(() => {
 		// Initialize any external JavaScript libraries here
-		
+		const loadScripts = () => {
 		  // Example of dynamically loading Bootstrap JS and other libraries
 		  const bootstrapScript = document.createElement('script');
 		  bootstrapScript.src = 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js';
@@ -25,14 +19,6 @@ export default function HomeFooter() {
 		  const glightboxScript = document.createElement('script');
 		  glightboxScript.src = 'assets/vendor/glightbox/js/glightbox.min.js';
 		  glightboxScript.async = true;
-		  
-
-		  glightboxScript.onload = () => {
-			if (window.GLightbox) {
-			  window.GLightbox({ selector: ".glightbox" }); // ✅ Initialize Glightbox after script loads
-			}
-		  };
-
 		  document.body.appendChild(glightboxScript);
 	
 		  const purecounterScript = document.createElement('script');
@@ -59,10 +45,9 @@ export default function HomeFooter() {
 		  mainScript.src = 'assets/jshome/main.js';
 		  mainScript.async = true;
 		  document.body.appendChild(mainScript);
-		
-		  return () => {
-			document.body.removeChild(glightboxScript); // Cleanup on unmount
-		  };
+		};
+	
+		loadScripts(); // Load scripts when component is mounted
 	  }, []);
 	
 	return (
