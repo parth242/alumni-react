@@ -24,8 +24,7 @@ import "swiper/css/navigation";
 import AOS from "aos";
 import "aos/dist/aos.css";
 
-import GLightbox from "glightbox";
-import "glightbox/dist/css/glightbox.css"; // Import CSS
+
 
 function Home() {
 	const navigate = useNavigate();
@@ -127,8 +126,7 @@ function Home() {
 	}) || [];
 
   useEffect(() => {
-    const lightbox = GLightbox({ selector: ".glightbox" });
-    return () => lightbox.destroy(); 
+    
     AOS.init({
       duration: 600,
       easing: "ease-in-out",
