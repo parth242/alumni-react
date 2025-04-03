@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
 
+declare global {
+	interface Window {
+	  GLightbox: any; // Declare GLightbox globally
+	}
+  }
+
 
 export default function HomeFooter() {
 	useEffect(() => {

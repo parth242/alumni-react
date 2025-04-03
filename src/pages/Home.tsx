@@ -111,7 +111,7 @@ function Home() {
 	} = useGallerys({
 		enabled: true,		
 		page_number: pageNumber,
-		page_size: 8	
+		page_size: 9
 	}) || [];
 
   const {	
