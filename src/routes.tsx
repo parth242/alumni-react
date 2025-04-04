@@ -159,7 +159,7 @@ const createRoutes = () => (
 						}
 					/>
 					<Route
-						path="/events"
+						path="homeevents"
 						element={
 							<PublicRoute>
 								<HomeEvents />

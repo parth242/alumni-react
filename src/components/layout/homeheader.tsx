@@ -131,7 +131,13 @@ export default function HomeHeader() {
                     <li><a href="#">Share Opportunities</a></li>
                   </ul>
                 </li>
-                <li><a href="#" className="main-menu">Events</a></li>
+                <li>
+                <Link
+													to="/homeevents"
+													className="main-menu">
+													Events
+												</Link>   
+                 </li>
                 <li><a href="#" className="main-menu">Gallery</a></li>
               </ul>
               <i className="mobile-nav-toggle d-xl-none bi bi-list"></i>

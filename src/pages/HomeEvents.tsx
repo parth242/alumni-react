@@ -123,22 +123,7 @@ function HomeEvents() {
 						<>
 							{/* Filter Section */}
 							<div className="flex flex-wrap md:justify-center gap-6 mb-6">
-								<Button
-									style={{ backgroundColor: "#440178" }}
-									className="text-center text-white"
-									outline
-									onClick={() => navigate("/add-events")}
-									size="md">
-									Add Event
-								</Button>
-								<Button
-									style={{ backgroundColor: "#440178" }}
-									className="text-center text-white"
-									outline
-									onClick={() => navigate("/manage-events")}
-									size="md">
-									Manage Events
-								</Button>
+								
 								{/* Category Filters */}
 								<div className="flex flex-wrap gap-4 md:justify-center items-center">
 									<label>
@@ -210,7 +195,7 @@ function HomeEvents() {
 									events.map(event => (
 										<Card
 											key={event.id}
-											className="flex flex-col w-full h-auto bg-white shadow-md transition-opacity duration-500 opacity-0 animate-fade-in">
+											className="flex flex-col w-full h-auto bg-white shadow-md transition-opacity duration-500 animate-fade-in">
 											<CardHeader
 												shadow={false}
 												floated={false}
