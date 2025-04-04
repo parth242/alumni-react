@@ -305,9 +305,9 @@ const createRoutes = () => (
 					<Route
 						path="newsroom"
 						element={
-							<ProtectedRoute>
+							<PublicRoute>
 								<ShowNewsRoom />
-							</ProtectedRoute>
+							</PublicRoute>
 						}
 					/>
 					<Route

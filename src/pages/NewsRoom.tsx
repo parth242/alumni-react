@@ -13,6 +13,9 @@ import ReactTooltip from "react-tooltip";
 import { Button } from "flowbite-react";
 import BtnLink from "components/ui/common/BtnLink";
 import FlexStartEnd from "components/ui/common/FlexStartEnd";
+import HomeHeader from "components/layout/homeheader";
+import HomeFooter from "components/layout/homefooter";
+import { FooterComponent } from "components/layout/Footer";
 
 function NewsRoom() {
 	const navigate = useNavigate();
@@ -30,6 +33,15 @@ function NewsRoom() {
 
 	const [newss, setNewss] = useState<INews[]>([]);
 	const [totalNewss, setTotalNewss] = useState<INews[]>([]);
+	const [userId, setUserId] = useState(0);
+
+	useEffect(() => {
+		const userString = localStorage.getItem("user");
+		if (userString !== null) {
+			const items = JSON.parse(userString);			
+			setUserId(items.id);
+		}
+	}, []);
 
 	const {
 		isLoading,
@@ -129,7 +141,13 @@ function NewsRoom() {
 	return (
 		<>
 			<div className="w-full mx-auto bg-gray-100">
-				<SiteNavbar />
+				{userId ? (
+					<SiteNavbar />
+				) : (
+					<HomeHeader />
+				)
+				}
+				
 			</div>
 			<div className="w-full ">
 				<div className="w-full md:w-10/12 mx-auto py-6 px-4 relative">
@@ -205,6 +223,12 @@ function NewsRoom() {
 					)}
 				</div>
 			</div>
+			{userId ? (
+					<FooterComponent />
+				) : (
+					<HomeFooter />
+				)
+				}
 		</>
 	);
 }

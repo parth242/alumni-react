@@ -116,7 +116,9 @@ export default function HomeHeader() {
                 <li><a href="#" className="active main-menu">Home</a></li>
                 <li><a href="#" className="main-menu">Principal's Message</a></li>
                 <li><a href="#" className="main-menu">About Alumni</a></li>
-                <li><a href="#" className="main-menu">Newsroom</a></li>
+                <li>
+                  <Link	to="/newsroom" className="main-menu"> Newsroom </Link>   
+                </li>                
                 <li><a href="#" className="main-menu">Members</a></li>
                 <li className="dropdown">
                   <a href="#" className="main-menu">
@@ -132,12 +134,8 @@ export default function HomeHeader() {
                   </ul>
                 </li>
                 <li>
-                <Link
-													to="/homeevents"
-													className="main-menu">
-													Events
-												</Link>   
-                 </li>
+                  <Link	to="/homeevents" className="main-menu"> Events </Link>   
+                </li>
                 <li><a href="#" className="main-menu">Gallery</a></li>
               </ul>
               <i className="mobile-nav-toggle d-xl-none bi bi-list"></i>
