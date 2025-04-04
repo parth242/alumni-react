@@ -138,7 +138,7 @@ const PublicRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
 		const items = JSON.parse(user);
 		if(items?.is_admin==1 && location.pathname != "/access_disabled" && location.pathname != "/"){
 			return <Navigate to="/admin/dashboard" />;
-		} else if (items?.is_alumni==1 && location.pathname != "/access_disabled" && location.pathname != "/") {
+		} else if (items?.is_alumni==1 && (location.pathname == "/login" || location.pathname == "/register")) {
 			return <Navigate to="/dashboard" />;
 		}
 	}	
@@ -257,9 +257,9 @@ const createRoutes = () => (
 					<Route
 						path="members"
 						element={
-							<ProtectedRoute>
+							<PublicRoute>
 								<Members />
-							</ProtectedRoute>
+							</PublicRoute>
 						}
 					/>
 					<Route

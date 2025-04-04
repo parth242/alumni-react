@@ -1,5 +1,5 @@
 import { useForm, useFieldArray } from "react-hook-form";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import SiteNavbar from "components/layout/sitenavbar";
 import React, { useEffect, useState } from "react";
 import { useUserData } from "api/services/user";
@@ -21,6 +21,8 @@ import CardUI from "components/ui/common/Card";
 import { AiOutlineLoading } from "react-icons/ai";
 import Select from "components/ui/common/Select";
 import { useDepartments } from "api/services/departmentService";
+import HomeHeader from "components/layout/homeheader";
+import HomeFooter from "components/layout/homefooter";
 
 function Members() {
 	const {
@@ -62,6 +64,16 @@ function Members() {
 	const [selectedClearEndYear, setSelectedClearEndYear] = useState<number>(0);
 	const [selectedCourseClearText, setSelectedCourseClearText] = useState("");
 	const [selectedDepartmentClearText, setSelectedDepartmentClearText] = useState("");
+
+	const [userId, setUserId] = useState(0);
+
+	useEffect(() => {
+		const userString = localStorage.getItem("user");
+		if (userString !== null) {
+			const items = JSON.parse(userString);			
+			setUserId(items.id);
+		}
+	}, []);
 
 	const handleSearchClick = () => {
 		//console.log("Name Search:", searchInput);
@@ -270,7 +282,12 @@ function Members() {
 	return (
 		<>
 			<div className="w-full mx-auto bg-gray-100">
-				<SiteNavbar />
+			{userId ? (
+					<SiteNavbar />
+				) : (
+					<HomeHeader />
+				)
+				}
 			</div>
 			{/* {isLoading && <Loader></Loader>} */}
 			<div className="w-full mx-auto bg-gray-100 ">
@@ -284,6 +301,7 @@ function Members() {
 								Search and connect with friends, batchmates and
 								other alumni or browse members by
 							</p>
+							{userId ? (
 							<div className="flex flex-col space-y-4 md:space-y-0 md:flex-row md:space-x-4 items-center justify-center w-full">
 								<div className="flex items-center rounded-md w-full max-w-xs p-2 ">
 									<TextInput
@@ -341,6 +359,15 @@ function Members() {
 									</Button>
 								</div>
 							</div>
+							) : (
+								<div className="flex flex-col space-y-4 md:space-y-0 md:flex-row md:space-x-4 items-center justify-center w-full">
+									<p className="mb-8 md:text-lg text-sm font-semibold">
+										Search and connect with friends, batchmates and
+										other alumni or browse members by
+										<Link to="/login">Register / Login</Link> to browse members by Year, Name, Courses or Departments 
+									</p>
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
@@ -426,6 +453,7 @@ function Members() {
 							)}
 						</>
 					</div>
+					{userId ? (
 					<div className="flex justify-center mt-10">
 						{currentRecords < totalRecords && (
 							<Button
@@ -442,9 +470,21 @@ function Members() {
 							</Button>
 						)}
 					</div>
+					) : (
+						<p className="mb-8 md:text-lg text-sm font-semibold">
+										Search and connect with friends, batchmates and
+										other alumni or browse members by
+										<Link to="/login">Register / Login</Link> to browse members by Year, Name, Courses or Departments 
+									</p>
+					)}
 				</div>
 			</div>
-			<FooterComponent />
+			{userId ? (
+					<FooterComponent />
+				) : (
+					<HomeFooter />
+				)
+				}
 		</>
 	);
 }

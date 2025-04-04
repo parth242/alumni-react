@@ -119,7 +119,9 @@ export default function HomeHeader() {
                 <li>
                   <Link	to="/newsroom" className="main-menu"> Newsroom </Link>   
                 </li>                
-                <li><a href="#" className="main-menu">Members</a></li>
+                <li>
+                  <Link	to="/members" className="main-menu"> Members </Link>                  
+                </li>
                 <li className="dropdown">
                   <a href="#" className="main-menu">
                     <span>Alumni Assist</span> <i className="bi bi-chevron-down toggle-dropdown"></i>
