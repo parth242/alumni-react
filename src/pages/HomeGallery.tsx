@@ -17,8 +17,6 @@ import LinkCommon from "components/ui/common/LinkCommon";
 import { formatDateWithSuffix } from "components/ui/NewsItem";
 import { useGallerys } from "api/services/galleryService";
 
-import AOS from "aos";
-import "aos/dist/aos.css";
 
 function HomeGallery() {
 	const navigate = useNavigate();
@@ -46,16 +44,7 @@ function HomeGallery() {
 	}) || [];
 
 	
-	useEffect(() => {
-    
-		AOS.init({
-		  duration: 600,
-		  easing: "ease-in-out",
-		  once: true,
-		  mirror: false,
-		});
-		
-	  }, []);
+	
 	return (
 		<>
 			<div className="w-full mx-auto bg-gray-100">
@@ -76,7 +65,7 @@ function HomeGallery() {
 						<>
 							
 							{/* Gallery Cards */}
-							<div className="container" data-aos="fade-up" data-aos-delay="100">
+							
           <div className="row g-0 pt-4">
             {/* Gallery Items */}
             {galleryList &&
@@ -107,7 +96,7 @@ function HomeGallery() {
                     }
             {/* Add more gallery items similarly */}
           </div>
-        </div>
+        
 							<div className="flex justify-center mt-10">
 								{currentRecords < totalRecords && (
 									<Button
