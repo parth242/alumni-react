@@ -17,8 +17,8 @@ import LinkCommon from "components/ui/common/LinkCommon";
 import { formatDateWithSuffix } from "components/ui/NewsItem";
 import { useGallerys } from "api/services/galleryService";
 
-const categories = ["Reunions", "Meetups", "Conferences", "Symposiums"];
-const dateFilters = ["Upcoming", "Past"];
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 function HomeGallery() {
 	const navigate = useNavigate();
@@ -45,11 +45,17 @@ function HomeGallery() {
 		page_size: 10
 	}) || [];
 
-	useEffect(() => {
-		ReactTooltip.rebuild();
-	}, []);
-
 	
+	useEffect(() => {
+    
+		AOS.init({
+		  duration: 600,
+		  easing: "ease-in-out",
+		  once: true,
+		  mirror: false,
+		});
+		
+	  }, []);
 	return (
 		<>
 			<div className="w-full mx-auto bg-gray-100">
