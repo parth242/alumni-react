@@ -362,8 +362,7 @@ function Members() {
 							) : (
 								<div className="flex flex-col space-y-4 md:space-y-0 md:flex-row md:space-x-4 items-center justify-center w-full">
 									<p className="mb-8 md:text-lg text-sm font-semibold">
-										Search and connect with friends, batchmates and
-										other alumni or browse members by
+										
 										<Link to="/login">Register / Login</Link> to browse members by Year, Name, Courses or Departments 
 									</p>
 								</div>
@@ -472,9 +471,8 @@ function Members() {
 					</div>
 					) : (
 						<p className="mb-8 md:text-lg text-sm font-semibold">
-										Search and connect with friends, batchmates and
-										other alumni or browse members by
-										<Link to="/login">Register / Login</Link> to browse members by Year, Name, Courses or Departments 
+								
+								<Link to="/login">Register / Login</Link> to browse members by Year, Name, Courses or Departments 
 									</p>
 					)}
 				</div>

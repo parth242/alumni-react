@@ -80,6 +80,7 @@ const NewsItem: React.FC<NewsItemProps> = ({ news }) => (
 						backgroundColor: "#ffffff",
 						borderWidth: "1px",
 						borderColor: "#440178",
+						color: "#000",
 						fontWeight: "semibold",
 					}}
 					to={`/newsroom/${news.id}`}>
