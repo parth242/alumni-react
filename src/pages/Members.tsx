@@ -297,11 +297,17 @@ function Members() {
 							<h1 className="md:text-3xl text-xl text-black font-bold mb-2">
 								Members
 							</h1>
-							<p className="mb-8 md:text-lg text-sm font-semibold">
-								Search and connect with friends, batchmates and
-								other alumni or browse members by
+							{userId ? ( 
+								<p className="mb-8 md:text-lg text-sm font-semibold">								
+									Search and connect with friends, batchmates and
+									other alumni or browse members by								
+								</p>
+							) : (
+								<p className="mb-8 md:text-lg text-sm font-semibold">								
+								<Link to="/login">Register / Login</Link> to browse members by Year, Name, Courses or Departments 							
 							</p>
-							{userId ? (
+							)}
+							{userId && (
 							<div className="flex flex-col space-y-4 md:space-y-0 md:flex-row md:space-x-4 items-center justify-center w-full">
 								<div className="flex items-center rounded-md w-full max-w-xs p-2 ">
 									<TextInput
@@ -358,14 +364,7 @@ function Members() {
 										Search
 									</Button>
 								</div>
-							</div>
-							) : (
-								<div className="flex flex-col space-y-4 md:space-y-0 md:flex-row md:space-x-4 items-center justify-center w-full">
-									<p className="mb-8 md:text-lg text-sm font-semibold">
-										
-										<Link to="/login">Register / Login</Link> to browse members by Year, Name, Courses or Departments 
-									</p>
-								</div>
+							</div>							
 							)}
 						</div>
 					</div>
@@ -470,10 +469,11 @@ function Members() {
 						)}
 					</div>
 					) : (
-						<p className="mb-8 md:text-lg text-sm font-semibold">
-								
-								<Link to="/login">Register / Login</Link> to browse members by Year, Name, Courses or Departments 
-									</p>
+						<div className="flex justify-center mt-10">
+						<p className="mb-8 text-sm">								
+							<Link to="/login">Register / Login</Link> to browse members by Year, Name, Courses or Departments 
+						</p>
+						</div>
 					)}
 				</div>
 			</div>

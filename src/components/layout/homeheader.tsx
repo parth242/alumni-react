@@ -138,7 +138,9 @@ export default function HomeHeader() {
                 <li>
                   <Link	to="/homeevents" className="main-menu"> Events </Link>   
                 </li>
-                <li><a href="#" className="main-menu">Gallery</a></li>
+                <li>
+                  <Link	to="/homegallery" className="main-menu"> Gallery </Link>
+                </li>
               </ul>
               <i className="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>

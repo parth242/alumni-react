@@ -108,6 +108,7 @@ import Gallery from "pages/Gallery";
 import Testimonials from "pages/Testimonials";
 import TestimonialDetails from "pages/TestimonialDetails";
 import HomeEvents from "pages/HomeEvents";
+import HomeGallery from "pages/HomeGallery";
 
 const queryClient = new QueryClient();
 
@@ -163,6 +164,14 @@ const createRoutes = () => (
 						element={
 							<PublicRoute>
 								<HomeEvents />
+							</PublicRoute>
+						}
+					/>
+					<Route
+						path="homegallery"
+						element={
+							<PublicRoute>
+								<HomeGallery />
 							</PublicRoute>
 						}
 					/>

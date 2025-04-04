@@ -76,13 +76,7 @@ const NewsItem: React.FC<NewsItemProps> = ({ news }) => (
 					Read More
 				</BtnLink>
 				<BtnLink
-					style={{
-						backgroundColor: "#ffffff",
-						borderWidth: "1px",
-						borderColor: "#440178",
-						color: "#000",
-						fontWeight: "semibold",
-					}}
+					className="!bg-white !border !border-[#440178] !text-black !font-semibold"
 					to={`/newsroom/${news.id}`}>
 					Posted {formatDateWithSuffix(news.posted_date)}
 				</BtnLink>
