@@ -177,7 +177,7 @@ export default function HomeHeader() {
              
               
                 <li>
-                  <Link	key={index} to={`/${item.path}`} className="main-menu">
+                  <Link	key={index} to={`/${item.path}`} className={`${pageName == item.path ? "active" : ""} "main-menu"`}>
                     {item.title} 
                   </Link>   
                 </li> 
@@ -185,14 +185,14 @@ export default function HomeHeader() {
                 ) : (
                   
                   <li className="dropdown">
-                  <Link	key={index} to="#" className="main-menu">
+                  <Link	key={index} to="#" className={`${pageName == item.path ? "active" : ""} "main-menu"`}>
                     <span>{item.title} </span> <i className="bi bi-chevron-down toggle-dropdown"></i>
                   </Link>
                 <ul>
                   {item?.submenu?.data.map(
                   (itemsub: any, i: number) => (
                     <li>
-                      <Link	key={i} to={`${itemsub.page_url}`}>
+                      <Link	key={i} to={`/${itemsub.page_url}`}>
                         {itemsub.moduleshortname} 
                       </Link>   
                     </li> 
