@@ -86,6 +86,9 @@ export default function HomeHeader() {
 		});
 	}, [location.pathname]);
 
+  console.log('pathname', location.pathname);
+  console.log('pageName', pageName);
+
 	const { mutate, isLoading: logoutLoading } = useMutation(logout, {
 		onSuccess: async () => {
 			setAppState({ user: undefined });
@@ -177,7 +180,7 @@ export default function HomeHeader() {
              
               
                 <li>
-                  <Link	key={index} to={`/${item.path}`} className={`${pageName == item.path ? "active" : ""} "main-menu"`}>
+                  <Link	key={index} to={`/${item.path}`} className={`${pageName == item.path ? "active main-menu" : "main-menu"} `}>
                     {item.title} 
                   </Link>   
                 </li> 
@@ -185,7 +188,7 @@ export default function HomeHeader() {
                 ) : (
                   
                   <li className="dropdown">
-                  <Link	key={index} to="#" className={`${pageName == item.path ? "active" : ""} "main-menu"`}>
+                  <Link	key={index} to="#" className={`${pageName == item.path ? "active main-menu" : "main-menu"}`}>
                     <span>{item.title} </span> <i className="bi bi-chevron-down toggle-dropdown"></i>
                   </Link>
                 <ul>
