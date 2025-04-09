@@ -189,7 +189,7 @@ export default function HomeHeader() {
                     <span>{item.title} </span> <i className="bi bi-chevron-down toggle-dropdown"></i>
                   </Link>
                 <ul>
-                  {item?.submenu.map(
+                  {item?.submenu?.data.map(
                   (itemsub: any, i: number) => (
                     <li>
                       <Link	key={i} to={`${itemsub.page_url}`}>
