@@ -4,12 +4,8 @@ import { useAppState } from "utils/useAppState";
 import { useMutation } from "react-query";
 import { logout } from "api";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import Icon from "utils/icon";
-import { classNames } from "utils";
-import { HTTPError } from "ky";
-import { StringStringType } from "utils/consts";
 import { useHeadermenus, useHeaderSubmenus } from "api/services/submenuService";
-import { Menu, WabaStatus,ISubmenu } from "utils/datatypes";
+import { Menu, ISubmenu } from "utils/datatypes";
 
 export default function HomeHeader() {
 	const [{ showSidebar, pageName, isDark, company_data }, setAppState] =
@@ -23,24 +19,14 @@ export default function HomeHeader() {
 	const navigate = useNavigate();
 
   useEffect(() => {
-		const fetchData = async () => {	 
-		
+		const fetchData = async () => {	 		
 		  try {
-			
-			
-
 			const userDataResponse = (await useHeadermenus() as ISubmenu);
 			var submenuall = userDataResponse?.data;
 		
-		
-			  
-			
 		  } catch (error) {
 			console.error(`Error fetching data for ID ${error}`);
 		  }
-
-		  
-		 
 		  //const submenulData = submenu?.data;
 		  console.log('submenuallab',submenuall);
 		const originalData = await Promise.all(submenuall.map(async (mn: any) => {
@@ -80,15 +66,13 @@ export default function HomeHeader() {
 	  	 
 	console.log('menuheader',menu);
 	useEffect(() => {
-		let pageName: string[] = location.pathname.split("/");
-    console.log('pageNamestart', pageName);
+		let pageName: string[] = location.pathname.split("/");   
 		setAppState({
-			pageName: pageName[0],
+			pageName: pageName[1],
 		});
 	}, [location.pathname]);
 
-  console.log('pathname', location.pathname);
-  console.log('pageName', pageName);
+ 
 
 	const { mutate, isLoading: logoutLoading } = useMutation(logout, {
 		onSuccess: async () => {

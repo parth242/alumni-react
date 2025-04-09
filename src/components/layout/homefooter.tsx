@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useFootermenus } from "api/services/submenuService";
+import { Menu, ISubmenu } from "utils/datatypes";
 
 
 export default function HomeFooter() {
+	const [menunew,setMenuNew] = useState([]);
+
 	useEffect(() => {
 		// Initialize any external JavaScript libraries here
 		const loadScripts = () => {
@@ -49,6 +54,46 @@ export default function HomeFooter() {
 	
 		loadScripts(); // Load scripts when component is mounted
 	  }, []);
+
+	  useEffect(() => {
+		const fetchData = async () => {	 		
+		  try {
+			const userDataResponse = (await useFootermenus() as ISubmenu);
+			var submenuall = userDataResponse?.data;
+		
+		  } catch (error) {
+			console.error(`Error fetching data for ID ${error}`);
+		  }
+
+		
+		  //const submenulData = submenu?.data;
+		  console.log('submenuallab',submenuall);
+		const originalData = await Promise.all(submenuall.map(async (mn: any) => {
+	
+			return { 
+					id: mn.id, 
+					path: mn.page_url,
+					forRole: true,
+					title: mn.moduleshortname,
+					name: mn.module_alias,
+					component: mn.moduleshortname,
+					is_visible: true,
+					is_locked: true,
+					
+				}
+			;
+		
+		}));
+
+		setMenuNew(originalData);
+		
+		 		 
+		};
+		
+		fetchData();
+	  }, []); // Empty dependency array means this effect runs once on mount
+
+    const menu : Menu[] = menunew;
 	
 	return (
 		
@@ -81,13 +126,13 @@ export default function HomeFooter() {
 			<div className="col-lg-2 col-md-3 footer-links">
 			  <h4>Useful Links</h4>
 			  <ul>
-				<li><a href="#">Home</a></li>
-				<li><a href="#">Principal's Message</a></li>
-				<li><a href="#">About Alumni</a></li>
-				<li><a href="#">Newsroom</a></li>
-				<li><a href="#">Members</a></li>
-				<li><a href="#">Events</a></li>
-				<li><a href="#">Gallery</a></li>
+			  {menu.map(
+				(item: Menu, index: number) => ( 
+					<li>
+						<Link key={index} to={`/${item.path}`}>  {item.title} </Link>   
+					</li> 
+				),               
+                )}
 			  </ul>
 			</div>
 		  </div>
