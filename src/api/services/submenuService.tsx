@@ -46,6 +46,33 @@ const useSubmenus = async () => {
 	}
 };
 
+const useHeadermenus = async () => {
+	try {
+		const result = await authClient.get(`api/v1/submenu/headermenu`).json();
+		return result;
+	} catch (error) {
+		return Promise.reject(error);
+	}
+};
+
+const useHeaderSubmenus = async (menuId: number) => {
+	try {
+		const result = await authClient.get(`api/v1/submenu/mainmodule_id=${menuId}`).json();
+		return result;
+	} catch (error) {
+		return Promise.reject(error);
+	}
+};
+
+const useFootermenus = async () => {
+	try {
+		const result = await authClient.get(`api/v1/submenu/footermenu`).json();
+		return result;
+	} catch (error) {
+		return Promise.reject(error);
+	}
+};
+
 
 
 const useSubmenusAction = ({
@@ -78,5 +105,8 @@ const useSubmenusAction = ({
 export {
 	useSubmenus,
 	getSubmenu,
-	useSubmenusAction
+	useSubmenusAction,
+	useHeadermenus,
+	useHeaderSubmenus,
+	useFootermenus
 };

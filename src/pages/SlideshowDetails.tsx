@@ -46,9 +46,15 @@ function SlideshowDetails() {
 		slide_title: yup
 			.string()
 			.required("Slideshow Title is required")
-			.min(3, "Must be more then 3 character"),
+			.max(15, "Story Description cannot exceed 15 characters"),
+
+		slide_description: yup
+			.string()				
+			.max(200, "Slide Description cannot exceed 200 characters"),
 
 		slide_image: yup.mixed().required("Slideshow Image is required"),	
+
+		
 			
 		status: yup
 			.string()
@@ -397,11 +403,12 @@ function SlideshowDetails() {
 					)}
 					</div>
 
-					<div className="col-span-1">
+					<div className="col-span-1">						
 						<Textarea
-								placeholder="Enter Slide Description"
+								placeholder="Enter Description"
 								name={"slide_description"}
 								label={"Description"}
+								error={errors?.slide_description?.message}
 								register={register}
 							/>
 					</div>

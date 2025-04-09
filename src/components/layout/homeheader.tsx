@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { Disclosure, Transition } from "@headlessui/react";
 import { useAppState } from "utils/useAppState";
 import { useMutation } from "react-query";
 import { logout } from "api";
@@ -8,6 +8,8 @@ import Icon from "utils/icon";
 import { classNames } from "utils";
 import { HTTPError } from "ky";
 import { StringStringType } from "utils/consts";
+import { useHeadermenus, useHeaderSubmenus } from "api/services/submenuService";
+import { Menu, WabaStatus,ISubmenu } from "utils/datatypes";
 
 export default function HomeHeader() {
 	const [{ showSidebar, pageName, isDark, company_data }, setAppState] =
@@ -15,12 +17,68 @@ export default function HomeHeader() {
 	const [{ user, customers, wabaActivationStatus, selectedCustomer }] =
 		useAppState();
 	
-	
+  const [menunew,setMenuNew] = useState([]);
 
 	const location = useLocation();
 	const navigate = useNavigate();
 
-	
+  useEffect(() => {
+		const fetchData = async () => {	 
+		
+		  try {
+			
+			
+
+			const userDataResponse = (await useHeadermenus() as ISubmenu);
+			var submenuall = userDataResponse?.data;
+		
+		
+			  
+			
+		  } catch (error) {
+			console.error(`Error fetching data for ID ${error}`);
+		  }
+
+		  
+		 
+		  //const submenulData = submenu?.data;
+		  console.log('submenuallab',submenuall);
+		const originalData = await Promise.all(submenuall.map(async (mn: any) => {
+		
+      const submenusmain = await useHeaderSubmenus(mn.id);
+
+      if(submenusmain?.total_records>0){
+        var hassubmenu = true;
+      } else{
+        var hassubmenu = false;
+      }
+			return { 
+					id: mn.id, 
+					path: mn.page_url,
+					forRole: true,
+					title: mn.moduleshortname,
+					name: mn.module_alias,
+					component: mn.moduleshortname,
+					is_visible: true,
+					is_locked: true,
+					has_submenus: hassubmenu,
+          submenu: submenusmain
+				}
+			;
+		
+		}));
+
+		setMenuNew(originalData);
+		
+		 		 
+		};
+		
+		fetchData();
+	  }, []); // Empty dependency array means this effect runs once on mount
+
+    const menu : Menu[] = menunew;
+	  	 
+	console.log('menuheader',menu);
 	useEffect(() => {
 		let pageName: string[] = location.pathname.replace("/admin/", "").split("/");
 		setAppState({
@@ -113,11 +171,12 @@ export default function HomeHeader() {
 
             <nav id="navmenu" className="navmenu">
               <ul>
+              
                 <li><a href="#" className="active main-menu">Home</a></li>
                 <li><a href="#" className="main-menu">Principal's Message</a></li>
                 <li><a href="#" className="main-menu">About Alumni</a></li>
                 <li>
-                  <Link	to="/newsroom" className="main-menu"> Newsroom </Link>   
+                <Link	to="/members" className="main-menu"> Members </Link>   
                 </li>                
                 <li>
                   <Link	to="/members" className="main-menu"> Members </Link>                  
@@ -141,6 +200,7 @@ export default function HomeHeader() {
                 <li>
                   <Link	to="/homegallery" className="main-menu"> Gallery </Link>
                 </li>
+               
               </ul>
               <i className="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
