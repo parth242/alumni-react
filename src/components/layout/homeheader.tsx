@@ -171,36 +171,39 @@ export default function HomeHeader() {
 
             <nav id="navmenu" className="navmenu">
               <ul>
+              {menu.map(
+						(item: Menu, index: number) =>
+							(item?.has_submenus==false) ? (              
+             
               
-                <li><a href="#" className="active main-menu">Home</a></li>
-                <li><a href="#" className="main-menu">Principal's Message</a></li>
-                <li><a href="#" className="main-menu">About Alumni</a></li>
                 <li>
-                <Link	to="/members" className="main-menu"> Members </Link>   
-                </li>                
-                <li>
-                  <Link	to="/members" className="main-menu"> Members </Link>                  
+                  <Link	key={index} to={`/${item.path}`} className="main-menu">
+                    {item.title} 
+                  </Link>   
+                </li> 
+                
+                ) : (
+                  
+                  <li className="dropdown">
+                  <Link	key={index} to="#" className="main-menu">
+                    <span>{item.title} </span> <i className="bi bi-chevron-down toggle-dropdown"></i>
+                  </Link>
+                <ul>
+                  {item?.submenu.map(
+                  (itemsub: any, i: number) => (
+                    <li>
+                      <Link	key={i} to={`${itemsub.page_url}`}>
+                        {itemsub.moduleshortname} 
+                      </Link>   
+                    </li> 
+                  ))
+                  }                    
+                </ul>
                 </li>
-                <li className="dropdown">
-                  <a href="#" className="main-menu">
-                    <span>Alumni Assist</span> <i className="bi bi-chevron-down toggle-dropdown"></i>
-                  </a>
-                  <ul>
-                    <li><a href="#">Be a Mentor</a></li>
-                    <li><a href="#">Volunteer</a></li>
-                    <li><a href="#">General Request</a></li>
-                    <li><a href="#">Invite Friends</a></li>
-                    <li><a href="#">Share Achievements</a></li>
-                    <li><a href="#">Share Opportunities</a></li>
-                  </ul>
-                </li>
-                <li>
-                  <Link	to="/homeevents" className="main-menu"> Events </Link>   
-                </li>
-                <li>
-                  <Link	to="/homegallery" className="main-menu"> Gallery </Link>
-                </li>
+                 
+                ),
                
+                )}
               </ul>
               <i className="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
