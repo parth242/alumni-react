@@ -80,7 +80,8 @@ export default function HomeHeader() {
 	  	 
 	console.log('menuheader',menu);
 	useEffect(() => {
-		let pageName: string[] = location.pathname.replace("/admin/", "").split("/");
+		let pageName: string[] = location.pathname.split("/");
+    console.log('pageNamestart', pageName);
 		setAppState({
 			pageName: pageName[0],
 		});
