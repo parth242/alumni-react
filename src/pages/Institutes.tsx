@@ -239,7 +239,7 @@ function Institutes() {
 	const { mutate: updateItem, isLoading: statusIsLoading } = useMutation(updateInstituteId, {
 		onSuccess: async () => {
 			
-			navigate("admin/dashboard");
+			navigate("/admin/dashboard");
 		},
 		onError: async (e: HTTPError) => {
 			// const error = await e.response.text();

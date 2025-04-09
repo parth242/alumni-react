@@ -70,6 +70,7 @@ export default function HomeHeader() {
 		setAppState({
 			pageName: pageName[1],
 		});
+    window.scrollTo(0, 0);
 	}, [location.pathname]);
 
  
