@@ -5,6 +5,7 @@ import { useMutation } from "react-query";
 import { logout } from "api";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useHeadermenus, useHeaderSubmenus } from "api/services/submenuService";
+import { currentInstitute } from "api/services/instituteService";
 import { Menu, ISubmenu } from "utils/datatypes";
 
 export default function HomeHeader() {
@@ -18,8 +19,18 @@ export default function HomeHeader() {
 	const location = useLocation();
 	const navigate = useNavigate();
 
+  let {
+		isLoading,
+		data: instituteDetails,
+		refetch: fetchInstituteDetails,
+		isFetching: isFetchingInstituteDetails,
+		remove,
+	} = currentInstitute() || [];
+
   useEffect(() => {
+    fetchInstituteDetails();
 		const fetchData = async () => {	 		
+     
 		  try {
 			const userDataResponse = (await useHeadermenus() as ISubmenu);
 			var submenuall = userDataResponse?.data;
@@ -97,7 +108,7 @@ export default function HomeHeader() {
       {/* Meta Tags and Links */}
       <meta charSet="utf-8" />
       <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-      <title>Alumni</title>
+      <title>{instituteDetails?.data.institute_name}</title>
       <meta name="description" content="" />
       <meta name="keywords" content="" />
       <link href="assets/img/favicon.png" rel="icon" />
@@ -121,18 +132,38 @@ export default function HomeHeader() {
           <div className="container d-flex justify-content-center justify-content-md-between">
             <div className="social-links d-none d-md-flex align-items-center">
               <p>Follow Us On: </p>
-              <a href="#" className="twitter">
+              <a href={instituteDetails?.data.twitter_url ? instituteDetails?.data.twitter_url : '#'} 
+                className="twitter" 
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <i className="bi bi-twitter-x"></i>
               </a>
-              <a href="#" className="facebook">
+
+              <a href={instituteDetails?.data.facebook_url ? instituteDetails?.data.facebook_url : '#'} 
+                className="facebook" 
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <i className="bi bi-facebook"></i>
               </a>
-              <a href="#" className="instagram">
+              
+              <a href={instituteDetails?.data.instagram_url ? instituteDetails?.data.instagram_url : '#'} 
+                className="instagram" 
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <i className="bi bi-instagram"></i>
               </a>
-              <a href="#" className="linkedin">
+
+              <a href={instituteDetails?.data.linkedin_url ? instituteDetails?.data.linkedin_url : '#'} 
+                className="linkedin" 
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <i className="bi bi-linkedin"></i>
-              </a>
+              </a>              
+             
             </div>
 
             <div className="contact-info d-flex align-items-center">

@@ -37,6 +37,27 @@ const getInstitute = ({
 	);
 };
 
+const currentInstitute = () => {
+	return useQuery<InstituteResponse, HTTPError>(
+		["institute"],
+		async () => {
+			try {
+				return await apiClient
+					.get(
+						`api/v1/institute/current`,
+					)
+					.json();
+			} catch (error) {
+				return Promise.reject(error);
+			}
+		},
+		{
+			refetchOnWindowFocus: false,
+			retry: false,
+			refetchOnMount: false,
+		},
+	);
+};
 
 const useInstitutes = ({
 	enabled,
@@ -122,6 +143,7 @@ const updateInstituteId= async (id:IInstitute) => {
 export {
 	useInstitutes,
 	getInstitute,
+	currentInstitute,
 	createInstitute,	
 	statusInstitute,
 	deleteInstitute,

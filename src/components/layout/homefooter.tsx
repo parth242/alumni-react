@@ -1,13 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useFootermenus } from "api/services/submenuService";
+import { currentInstitute } from "api/services/instituteService";
 import { Menu, ISubmenu } from "utils/datatypes";
 
 
 export default function HomeFooter() {
 	const [menunew,setMenuNew] = useState([]);
 
+	let {
+		isLoading,
+		data: instituteDetails,
+		refetch: fetchInstituteDetails,
+		isFetching: isFetchingInstituteDetails,
+		remove,
+	} = currentInstitute() || [];
+
 	useEffect(() => {
+		fetchInstituteDetails();
 		// Initialize any external JavaScript libraries here
 		const loadScripts = () => {
 		  // Example of dynamically loading Bootstrap JS and other libraries
@@ -54,6 +64,13 @@ export default function HomeFooter() {
 	
 		loadScripts(); // Load scripts when component is mounted
 	  }, []);
+
+	  useEffect(() => {
+		reset(eventDetails?.data);
+		setUploadedImage(eventDetails?.data?.event_image as string);
+		setOldImage(eventDetails?.data?.event_image as string);
+		trigger();
+	}, [instituteDetails]);
 
 	  useEffect(() => {
 		const fetchData = async () => {	 		
@@ -105,21 +122,48 @@ export default function HomeFooter() {
 				<span className="sitename">Alumni <br /> Network</span>
 			  </a>
 			  <div className="footer-contact pt-3">
-				<p>#84, First Floor, 8th Main,</p>
-				<p>Jayanagar III Block,</p>
-				<p>Bengaluru – 560011, Karnataka, India</p>
+			  <div
+					dangerouslySetInnerHTML={{ __html: instituteDetails?.data?.site_address ? instituteDetails?.data?.site_address : '' }}
+					/>
 				<p className="mt-3">
-				  <strong>Phone:</strong> <span>+91 80 41510302</span>
+				  <strong>Phone:</strong> <span>{instituteDetails?.data?.contact_number ? instituteDetails?.data?.contact_number : ''}</span>
 				</p>
 				<p>
-				  <strong>Email:</strong> <span>info@spori.pro</span>
+				  <strong>Email:</strong> <span>{instituteDetails?.data?.contact_email ? instituteDetails?.data?.contact_email : ''}</span>
 				</p>
 			  </div>
 			  <div className="social-links d-flex mt-4">
-				<a href="#"><i className="bi bi-twitter-x"></i></a>
-				<a href="#"><i className="bi bi-facebook"></i></a>
-				<a href="#"><i className="bi bi-instagram"></i></a>
-				<a href="#"><i className="bi bi-linkedin"></i></a>
+			  <a href={instituteDetails?.data.twitter_url ? instituteDetails?.data.twitter_url : '#'} 
+                className="twitter" 
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i className="bi bi-twitter-x"></i>
+              </a>
+
+              <a href={instituteDetails?.data.facebook_url ? instituteDetails?.data.facebook_url : '#'} 
+                className="facebook" 
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i className="bi bi-facebook"></i>
+              </a>
+              
+              <a href={instituteDetails?.data.instagram_url ? instituteDetails?.data.instagram_url : '#'} 
+                className="instagram" 
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i className="bi bi-instagram"></i>
+              </a>
+
+              <a href={instituteDetails?.data.linkedin_url ? instituteDetails?.data.linkedin_url : '#'} 
+                className="linkedin" 
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i className="bi bi-linkedin"></i>
+              </a>
 			  </div>
 			</div>
   
@@ -141,7 +185,7 @@ export default function HomeFooter() {
 		<div className="container copyright text-center mt-4">
 		  <p>
 			© <span id="year"></span> <span>Copyright</span>
-			<strong className="px-1 sitename">Alumni Network.</strong>
+			<strong className="px-1 sitename">{instituteDetails?.data.institute_name}.</strong>
 			<span>All Rights Reserved.</span>
 		  </p>
 		</div>

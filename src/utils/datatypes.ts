@@ -1324,6 +1324,13 @@ export type IInstitute = {
 	institute_siteurl: string;
 	university_id: number;
 	status: string;
+	twitter_url: string;
+	facebook_url: string;
+	instagram_url: string;
+	linkedin_url: string;
+	contact_number: string;
+	contact_email: string;
+	site_address: string;
 	created_on: Date;
 	updated_on: Date;
 	createdAt: Date;
