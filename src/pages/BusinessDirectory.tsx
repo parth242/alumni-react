@@ -269,7 +269,39 @@ const BusinessDirectory = () => {
 				},
 			]);
 		} else {
-			console.error("Fetched data is not in the expected format.");
+			// Extract unique locations from businessdirectoryList
+			const locations = [
+				...new Set(
+					[],
+				),
+			]; // Create an array of unique locations
+
+			setMenuData([
+				{
+					id: "industries",
+					title: "Industries",
+					icon: "FactoryIcon",
+					items: [],
+				},
+				{
+					id: "products",
+					title: "Products",
+					icon: "FactoryIcon",
+					items: [],
+				},
+				{
+					id: "services",
+					title: "Services",
+					icon: "VideoSettingsIcon",
+					items: [],
+				},
+				{
+					id: "locations",
+					title: "Locations",
+					icon: "FactoryIcon",
+					items: [],
+				},
+			]);
 		}
 	}, [industries, productsData, servicesData, businessdirectoryList]);
 
