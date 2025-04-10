@@ -65,13 +65,7 @@ export default function HomeFooter() {
 		loadScripts(); // Load scripts when component is mounted
 	  }, []);
 
-	  useEffect(() => {
-		reset(eventDetails?.data);
-		setUploadedImage(eventDetails?.data?.event_image as string);
-		setOldImage(eventDetails?.data?.event_image as string);
-		trigger();
-	}, [instituteDetails]);
-
+	  
 	  useEffect(() => {
 		const fetchData = async () => {	 		
 		  try {
