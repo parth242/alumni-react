@@ -986,6 +986,8 @@ export type IBusinessDirectory = {
 	member_ids?: string;
 	services?: string;
 	products?: string;
+	createdAt: Date;
+	updatedAt: Date;
 };
 export type BusinessDirectorysResponse = {
 	total_records: number;

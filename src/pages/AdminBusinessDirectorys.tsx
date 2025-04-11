@@ -342,7 +342,7 @@ function AdminBusinessDirectorys() {
 														<TableData data={item.business_website} />	
 														<TableData data={item.location} />	
 														<TableData data={item.contact_number} />
-														<TableData data={item.user?.first_name+" "+item.user?.last_name} />
+														<TableData data={item.business_email} />
 														
 														<TableData data={
 															<>
@@ -406,14 +406,15 @@ function AdminBusinessDirectorys() {
 															</>
 														} />
 
-														<TableData data={item.contact_number} />												
+														<TableData data={item.user?.first_name+" "+item.user?.last_name} />
+																										
 														
 														<TableData
-															data={format(new Date(item.created_on || ""), "p, do MMMM yyyy")}
+															data={format(new Date(item.createdAt || ""), "p, do MMMM yyyy")}
 														/>
 
 														<TableData
-															data={format(new Date(item.updated_on || ""), "p, do MMMM yyyy")}
+															data={format(new Date(item.updatedAt || ""), "p, do MMMM yyyy")}
 														/>
 														
 														<TableData data={
