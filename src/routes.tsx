@@ -109,6 +109,8 @@ import Testimonials from "pages/Testimonials";
 import TestimonialDetails from "pages/TestimonialDetails";
 import HomeEvents from "pages/HomeEvents";
 import HomeGallery from "pages/HomeGallery";
+import AdminBusinessDirectorys from "pages/AdminBusinessDirectorys";
+import AdminBusinessDirectoryDetails from "pages/AdminBusinessDirectoryDetails";
 
 const queryClient = new QueryClient();
 
@@ -425,6 +427,22 @@ const createRoutes = () => (
 							}
 						/>
 					</Route>
+					<Route
+						path="businessdirectorys"
+						element={
+							<ProtectedRoute>
+								<AdminBusinessDirectorys />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="businessdirectory-details/:id"
+						element={
+							<ProtectedRoute>
+								<AdminBusinessDirectoryDetails />
+							</ProtectedRoute>
+						}
+					/>
 					<Route
 						path="my-groups"
 						element={
