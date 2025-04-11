@@ -20,7 +20,7 @@ import { TBusinessDirectoryFormData,IBusinessDirectory, TSelect,TSelectJob,
 	IProfessionalarea, IIndustry,
 	TSelectIndu,} from "utils/datatypes";
 import { useIndustrys } from "api/services/industryService";
-import { allowedFiles, fileInvalid, filesExt, filesLimit, filesSize } from "utils/consts";
+import { allowedFiles, fileInvalid, filesExt, filesLimit, filesSize, patterns } from "utils/consts";
 import axios, { AxiosResponse } from "axios";
 import ImgCrop from "antd-img-crop";
 import { UploadOutlined } from "@ant-design/icons";
@@ -307,25 +307,32 @@ function AdminBusinessDirectoryDetails() {
 	const schema = yup.object().shape({
 		id: yup.string().optional(),
 
-		businessdirectory_title: yup.string().required("BusinessDirectory Title is required."),
+		business_name: yup.string().required("Business Directory Name is required."),
 
-		company: yup.string().required("Company is required."),
+		business_website: yup.string()
+		.required("Website is required")
+		.matches(patterns.WEBSITE, "Please enter a valid website URL"),
 
-		contact_email: yup.string().required("Contact Email is required."),
+		business_email: yup.string()
+		.required("Email is required")
+		.matches(patterns.EMAIL, "Invalid email address"),
 
-		area_name: yup
-			.array()
-			.of(yup.string().required("BusinessDirectory area is required"))
-			.min(1, "At least one businessdirectory area is required") // Minimum 1 element required in the array
-			.required("BusinessDirectory area is required"),
+		contact_number: yup.string().required("Contact Number is required.")
+		.matches(/^[0-9]+$/, "Contact number must contain only digits"),
 
-		skill_name: yup
-			.array()
-			.of(yup.string().required("BusinessDirectory Skill is required"))
-			.min(1, "At least one businessdirectory skill is required") // Minimum 1 element required in the array
-			.required("BusinessDirectory skill is required"),
+		number_of_employees: yup.string().required("Number Of Employee is required.")
+		.matches(/^\d+$/, "Invalid Number of Employees"),
 
-			status: yup
+		industry_id: yup
+			.string()
+			.required("Industry is required"),
+
+		founded: yup.string().required("Number Of Employee is required.")
+			.matches(/^\d{4}$/, "Invalid founded"),
+
+		location: yup.string().required("Location is required."),		
+
+		status: yup
 			.string()
 			.required("Status is required")
 		
@@ -369,7 +376,8 @@ function AdminBusinessDirectoryDetails() {
 		
 
 		reset(businessdirectoryDetails?.data);
-
+		setUploadedImage(businessdirectoryDetails?.data?.business_logo as string);
+		setOldImage(businessdirectoryDetails?.data?.business_logo as string);
 		trigger();
 	}, [businessdirectoryDetails]);
 
@@ -377,6 +385,10 @@ function AdminBusinessDirectoryDetails() {
 
 	const { mutate } = useMutation(createBusinessDirectory, {
 		onSuccess: async () => {
+			setFileList([]); // Clears the file list
+			setValue("business_logo", "");
+			setImage(null);			
+			setLoading(false);
 			SuccessToastMessage({
 				title: "BusinessDirectory Created Successfully",
 				id: "create_businessdirectory_success",
@@ -389,7 +401,11 @@ function AdminBusinessDirectoryDetails() {
 			ErrorToastMessage({ error: e, id: "create_businessdirectory" });
 		},
 	});
-	const onSubmit = (data: TBusinessDirectoryFormData) => {
+	const onSubmit = async (data: TBusinessDirectoryFormData) => {
+		setLoading(true);
+		await saveProfileImage();
+
+		data.business_logo = getValues("business_logo") || "";
 		const storedUserData = localStorage.getItem('user');
 
 		if (storedUserData) {
@@ -463,7 +479,8 @@ function AdminBusinessDirectoryDetails() {
 						<Select
 							name={"industry_id"}
 							label={"Industry"}
-							items={industryList}
+							size="large"
+							options={industryList}
 							error={errors?.industry_id?.message}
 							register={register}
 						/>
