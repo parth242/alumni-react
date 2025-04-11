@@ -428,7 +428,7 @@ const createRoutes = () => (
 						/>
 					</Route>
 					<Route
-						path="businessdirectorys"
+						path="businessdirectories"
 						element={
 							<ProtectedRoute>
 								<AdminBusinessDirectorys />
