@@ -968,6 +968,7 @@ export type IBusinessDirectory = {
 	founded: number;
 	number_of_employees: number;
 	industry?: { industry_name: string };
+	user?: { first_name: string,  last_name: string};
 	location: string;
 	business_email: string;
 	description: number;

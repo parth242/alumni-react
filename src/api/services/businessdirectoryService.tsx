@@ -129,6 +129,14 @@ const deleteBusinessDirectory = async (id: IBusinessDirectory) => {
 	}
 };
 
+const statusBusinessDirectory = async (req: any) => {
+	try {
+		return await authClient.post(`api/v1/businessdirectory/status/`, { json: req }).json();
+	} catch (error) {
+		return Promise.reject(error);
+	}
+};
+
 export {
 	useBusinessDirectorys,
 	getBusinessDirectory,
@@ -137,4 +145,5 @@ export {
 	updateBusinessDirectoryServices,
 	updateBusinessDirectoryProducts,
 	updateBusinessDirectoryMembers,
+	statusBusinessDirectory,
 };
