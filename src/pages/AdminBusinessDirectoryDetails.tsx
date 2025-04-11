@@ -393,7 +393,7 @@ function AdminBusinessDirectoryDetails() {
 				title: "BusinessDirectory Created Successfully",
 				id: "create_businessdirectory_success",
 			});
-			navigate("/admin/businessdirectorys");
+			navigate("/admin/businessdirectories");
 		},
 		onError: async (e: HTTPError) => {
 			// const error = await e.response.text();
@@ -425,7 +425,7 @@ function AdminBusinessDirectoryDetails() {
 
 	const handleCancel = () => {
 		reset(); // Resets the form fields to their initial values
-		navigate("/admin/businessdirectorys");
+		navigate("/admin/businessdirectories");
 	  };
 	
 	
