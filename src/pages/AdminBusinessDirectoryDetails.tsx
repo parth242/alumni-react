@@ -43,7 +43,7 @@ function AdminBusinessDirectoryDetails() {
 		[],
 	);
 
-	const [industryList, setIndustryList] = useState<TSelectIndu[]>([]);
+	const [industryList, setIndustryList] = useState<TSelect[]>([]);
 
 	const [image, setImage] = useState<File | null>(null);
 	const [loading, setLoading] = useState(false);
@@ -245,8 +245,8 @@ function AdminBusinessDirectoryDetails() {
 	useEffect(() => {
 		if (industries) {
 			const industriesList = industries.data.map((item: IIndustry) => {
-				return { label: item.industry_name, value: item.id };
-			}) as TSelectIndu[];
+				return { text: item.industry_name, value: item.id };
+			}) as TSelect[];
 			setIndustryList([...industriesList]);
 		} else {
 			setIndustryList([]);
@@ -479,8 +479,7 @@ function AdminBusinessDirectoryDetails() {
 						<Select
 							name={"industry_id"}
 							label={"Industry"}
-							size="large"
-							options={industryList}
+							items={industryList}
 							error={errors?.industry_id?.message}
 							register={register}
 						/>
