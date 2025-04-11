@@ -427,22 +427,7 @@ const createRoutes = () => (
 							}
 						/>
 					</Route>
-					<Route
-						path="businessdirectories"
-						element={
-							<ProtectedRoute>
-								<AdminBusinessDirectorys />
-							</ProtectedRoute>
-						}
-					/>
-					<Route
-						path="businessdirectory-details/:id"
-						element={
-							<ProtectedRoute>
-								<AdminBusinessDirectoryDetails />
-							</ProtectedRoute>
-						}
-					/>
+					
 					<Route
 						path="my-groups"
 						element={
@@ -1175,6 +1160,30 @@ const createRoutes = () => (
 								</ProtectedRoute>
 							}
 						/>
+						<Route
+						path="businessdirectories"
+						element={
+							<ProtectedRoute>
+								<AdminBusinessDirectorys />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="businessdirectory-details"
+						element={
+							<ProtectedRoute>
+								<AdminBusinessDirectoryDetails />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="businessdirectory-details/:id"
+						element={
+							<ProtectedRoute>
+								<AdminBusinessDirectoryDetails />
+							</ProtectedRoute>
+						}
+					/>
 						<Route
 							path="feeds"
 							element={
