@@ -111,6 +111,7 @@ import HomeEvents from "pages/HomeEvents";
 import HomeGallery from "pages/HomeGallery";
 import AdminBusinessDirectorys from "pages/AdminBusinessDirectorys";
 import AdminBusinessDirectoryDetails from "pages/AdminBusinessDirectoryDetails";
+import FeedDetails from "pages/FeedDetails";
 
 const queryClient = new QueryClient();
 
@@ -1192,22 +1193,22 @@ const createRoutes = () => (
 								</ProtectedRoute>
 							}
 						/>
-						{/* <Route
-							path="event-details"
+						 <Route
+							path="feed-details"
 							element={
 								<ProtectedRoute>
-									<EventDetails />
+									<FeedDetails />
 								</ProtectedRoute>
 							}
 						/>
 						<Route
-							path="event-details/:id"
+							path="feed-details/:id"
 							element={
 								<ProtectedRoute>
-									<EventDetails />
+									<FeedDetails />
 								</ProtectedRoute>
 							}
-						/> */}
+						/> 
 
 						<Route
 							path="institutes"

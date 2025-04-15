@@ -11,9 +11,35 @@ import { ErrorToastMessage, SuccessToastMessage } from "api/services/user";
 import { getFeed, createFeed } from "api/services/feedService";
 import { useNavigate, useParams } from "react-router-dom";
 import { HTTPError } from "ky";
-import { TFeedFormData, ICourse, TSelect } from "utils/datatypes";
+import { TFeedFormData, ICourse, TSelect, ICategory, IUserGroup } from "utils/datatypes";
 import { useCourses } from "api/services/courseService";
 import Textarea from "components/ui/common/Textarea";
+import {
+	pageStartFrom,
+	patterns,
+	allowedFiles,
+	fileInvalid,
+	filesExt,
+	filesLimit,
+	filesSize,
+} from "utils/consts";
+import axios, { AxiosResponse } from "axios";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import ImgCrop from "antd-img-crop";
+import { Upload, Button as AntdButton } from "antd";
+import type { GetProp, UploadFile, UploadProps } from "antd";
+import MyUploadAdapter from "../components/MyUploadAdapter";
+import { useGroups } from "api/services/groupService";
+import { useCategorys } from "api/services/categoryService";
+
+function MyCustomUploadAdapterPlugin(editor: any) {
+	editor.plugins.get("FileRepository").createUploadAdapter = (
+		loader: any,
+	) => {
+		return new MyUploadAdapter(loader); // Create an instance of MyUploadAdapter
+	};
+}
 
 
 function FeedDetails() {
@@ -24,6 +50,14 @@ function FeedDetails() {
 
 	const [courseList, setCourseList] = useState<TSelect[]>([]);	
 	const [selectedCourse, setSelectedCourse] = useState<number>(0);
+	const [editorData, setEditorData] = useState("");
+	const [loading, setLoading] = useState(false);
+	const [selectedImage, setSelectedImage] = useState<string>();
+	const [uploadedImage, setUploadedImage] = useState<string>();
+	const [oldImage, setOldImage] = useState<string>();
+	const [groups, setGroups] = useState<TSelect[]>([]);
+	const [categorys, setCategorys] = useState<TSelect[]>([]);
+	const [userIdGroup, setUserIdGroup] = useState(0);
 
 	const [statusList] = useState([
 		{ text: "Active", value: "active" },
@@ -42,32 +76,71 @@ function FeedDetails() {
 	});
 
 	const {
-		data: courses,
-		refetch: fetchcourseListData,
-		isFetching: isFetchingCourseListData,
-	} = useCourses({
+		data: categoryList,
+		refetch: fetchCategoryList,
+		isFetching: isFetchingCategoryList,
+	} = useCategorys({
 		enabled: true,
-		filter_status: "active",
+		filter_status: 'active',
 		filter_name: "",
 		page_number: 1,
 		page_size: 0,
 	}) || [];
 	useEffect(() => {
-		
-		if (courses) {
-			const courseList = courses.data.map((item: ICourse) => {				
-				return { text: item.course_name, value: item.id };
+		if (categoryList) {
+			const categorysList = categoryList.data.map((item: ICategory) => {
+				return { text: item.category_name, value: item.id };
 			}) as TSelect[];
-			setCourseList(courseList);
-		} 
-	}, [courses]);
+			setCategorys([
+				{ text: "Post Category", value: 0 },
+				...categorysList,
+			]);
+		} else {
+			setCategorys([{ text: "Post Category", value: 0 }]);
+		}
+	}, [categoryList]);
+
+	const {
+		data: groupList,
+		refetch: fetchGroupList,
+		isFetching: isFetchingGroupList,
+	} = useGroups({
+		enabled: userIdGroup > 0,
+		filter_status: 'active',
+		filter_name: "",
+		user_id: userIdGroup,
+		page_number: 0,
+		page_size: 0,
+	}) || [];
+
+	useEffect(() => {
+		if(userIdGroup>0){
+		fetchGroupList();
+		}
+	}, [userIdGroup]);
+	
+	useEffect(() => {
+		if (groupList) {
+			const groupsList = groupList.data.map((item: IUserGroup) => {
+				return { text: item.group?.group_name, value: item.group_id };
+			}) as TSelect[];
+			setGroups([
+				{ text: "Visible to All Members", value: 0 },
+				...groupsList,
+			]);
+		} else {
+			setGroups([{ text: "Visible to All Members", value: 0 }]);
+		}
+	}, [groupList]);
 
 	const {
 		trigger,
 		register,
+		setValue,
 		handleSubmit,
 		reset,
 		formState: { errors },
+		getValues,
 	} = useForm<TFeedFormData>({
 		resolver: yupResolver(schema)
 		
@@ -95,10 +168,62 @@ function FeedDetails() {
 	}, [id]);
 	useEffect(() => {
 		reset(feedDetails?.data);
+		setUploadedImage(feedDetails?.data?.feed_image as string);
+		setOldImage(feedDetails?.data?.feed_image as string);
+		setUserIdGroup(Number(feedDetails?.data?.user_id));
 		trigger();
 	}, [feedDetails]);
 
 	console.log("feedDetails", errors);
+
+	const parseEditorContent = (content: string) => {
+		// No need to manipulate the content anymore. Just pass it as it is.
+		return content; // Return the raw HTML (including <img> tags)
+	};
+
+	const [fileList, setFileList] = useState<UploadFile[]>([]);
+	const [errorFileMessage, setErrorFileMessage] = useState<string | null>(
+		null,
+	);
+
+	const [feedImage, setFeedImage] = useState<File | null>(null);
+
+	const onChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
+		const latestFile = newFileList[newFileList.length - 1];
+
+		console.log("Latest File:", latestFile);
+		// Access the actual file object
+		const file = latestFile.originFileObj;
+
+		if (file) {
+			const ext: string | null = (
+				file.name.split(".").pop() || ""
+			).toLowerCase();
+
+			setErrorFileMessage("");
+			setValue("feed_image", "");
+			setFeedImage(null);
+			setSelectedImage("");
+
+			if (filesExt["image"].indexOf(ext) < 0) {
+				setErrorFileMessage(fileInvalid["image"]);
+				return true;
+			} else if ((file.size as number) > filesSize["image"]) {
+				setErrorFileMessage(
+					`File size limit: The image you tried uploading exceeds the maximum file size (${filesLimit["image"]}) `,
+				);
+			} else {
+				setFeedImage(file);
+				setFileList(newFileList);
+				const reader = new FileReader();
+				reader.onload = () => {
+				console.log("Cropped Image Data:", reader.result);
+				setSelectedImage(reader.result as string);
+				};
+				reader.readAsDataURL(file);
+			}
+		}
+	};
 
 	const { mutate } = useMutation(createFeed, {
 		onSuccess: async () => {
@@ -106,6 +231,11 @@ function FeedDetails() {
 				title: "Feed Created Successfully",
 				id: "create_feed_success",
 			});
+			setEditorData(""); // Reset CKEditor content
+				setFileList([]);				
+				setErrorFileMessage("");
+				setValue("feed_image", "");
+				setFeedImage(null);
 			navigate("/admin/feeds");
 		},
 		onError: async (e: HTTPError) => {
@@ -114,9 +244,108 @@ function FeedDetails() {
 			ErrorToastMessage({ error: e, id: "create_feed" });
 		},
 	});
-	const onSubmit = (data: TFeedFormData) => {
+
+
+	const saveProfileImage = async () => {
+		try {
+			let uploadConfig: AxiosResponse | null = null;
+			const selectedFile = (feedImage as File) || "";
+			console.log("selectedFile", selectedFile);
+			if (selectedFile) {
+				if(oldImage!='' && oldImage!=null){
+					const responseapi = await axios.get(
+						import.meta.env.VITE_BASE_URL +
+							"/api/v1/upload/deleteOldImage?key=" +
+							oldImage,
+					);
+	
+					if (responseapi.status === 200) {
+						setOldImage("");
+					}
+	
+				}
+				const response = await axios.get(
+					import.meta.env.VITE_BASE_URL +
+						"/api/v1/upload?type=feed-image&filename=" +
+						selectedFile.name,
+				);
+				if (response.status === 200) {
+					console.log("response", response);
+					uploadConfig = response.data;
+					console.log(
+						"uploadConfig?.data?.url",
+						uploadConfig?.data?.url,
+					);
+					const upload = await axios.put(
+						uploadConfig?.data?.url,
+						selectedFile,
+						{
+							headers: {
+								"Content-Type": selectedFile?.type || "",
+							},
+							onUploadProgress: progressEvent => {
+								const percentCompleted = Math.round(
+									(progressEvent.loaded * 100) /
+										(progressEvent.total || 1),
+								);
+								// onProgress(percentCompleted);
+								console.log(
+									"percentCompleted",
+									percentCompleted,
+								);
+							},
+						},
+					);
+					console.log("uploadConfig", uploadConfig);
+					setValue("feed_image", uploadConfig?.data?.key);
+				}
+			} else{
+				setValue("feed_image", "");
+				setFeedImage(null);
+			}
+		} catch (error) {
+			return;
+		}
+	};
+
+	const onSubmit = async (data: TFeedFormData) => {
+		setLoading(true);
+		await saveProfileImage();
+		data.feed_image = getValues("feed_image") || "";
+		if(data.group_id==""){
+			data.group_id = 0;
+		}
+
+		if(data.category_id==""){
+			data.category_id = 0;
+		}
+		
 		mutate(data);
 	};
+
+	const onPreview = async (file: UploadFile) => {
+		let src = file.url as string;
+		if (!src) {
+			src = await new Promise(resolve => {
+				const reader = new FileReader();
+				reader.readAsDataURL(file.originFileObj as File);
+				reader.onload = () => resolve(reader.result as string);
+			});
+		}
+		const image = new Image();
+		image.src = src;
+		const imgWindow = window.open(src);
+		imgWindow?.document.write(image.outerHTML);
+	};
+
+	const handleRemove = (file) => {
+		
+		setFileList([]); // Clears the file list
+		setValue("feed_image", "");
+		setFeedImage(null);
+		setSelectedImage("");
+	};  
+
 
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [fileChanged, setFileChanged] = useState<boolean>(false);
@@ -134,30 +363,119 @@ function FeedDetails() {
 			<form className="mt-5" onSubmit={handleSubmit(onSubmit)}>
 				
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-6 mt-10">
-					<div className="col-span-1">
-					<Textarea
-										placeholder="Enter Content"
-										label={"Content"}
-										name={"description"}
-										register={register}
-										rows={4}
-									/>
+					<div className="col-span-2">
+					<div className="custom-editor-main min-h-[200px] border-2 border-[#440178] rounded-lg p-2.5 shadow-lg">
+							<CKEditor
+								editor={ClassicEditor as any}
+								data={editorData}
+								config={{
+									extraPlugins: [MyCustomUploadAdapterPlugin],
+									placeholder:
+										"Type here to start your discussion... Feel free to share your thoughts and ideas!", // Placeholder text
+									toolbar: [
+										"heading",
+										"|",
+										"bold",
+										"italic",
+										"link",
+										"bulletedList",
+										"numberedList",
+										"blockQuote",
+										"|",
+										"insertTable",
+										// "mediaEmbed",
+										"undo",
+										"redo",
+										// "imageUpload",
+									],
+								}}
+								onChange={async (event, editor) => {
+									const data = editor.getData();
+									const textContent =
+										parseEditorContent(data); // No need to strip out images now
+									setEditorData(data); // Save full HTML content
+									setValue("description", textContent); // Set description to full content
+								}}
+							/>
+							<input type="hidden" {...register("description")} />
+
+							{/* Display error message */}
+							{errors.description && (
+								<span className="text-xs text-red-500">
+									{errors.description.message}
+								</span>
+							)}
+						</div>
 					</div>
 					<div className="col-span-1">
-						<Input
-							name={"feed_name"}
-							label={"Feed Name"}
+					<label htmlFor="feed_image" className="font-medium text-gray-900 dark:text-darkPrimary">Feed Image</label>
+					<div className="relative">						
+					<ImgCrop
+							rotationSlider
+							modalOk="Upload"
+							modalCancel="Cancel"
+							aspect={16 / 9}							
+							showReset
+							showGrid
+							modalProps={{
+								className: "custom-upload-modal",
+							}}>
+							<Upload
+								className="border-2 rounded-lg shadow-lg"
+								action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"								
+								fileList={fileList}
+								onChange={onChange}
+								onPreview={onPreview}
+								onRemove={handleRemove}
+								>
+								{fileList.length < 1 && (
+								<AntdButton className="bg-transparent mt-1 border-none" icon={<UploadOutlined />}>
+									Click to Upload
+								</AntdButton>
+								)}
+							</Upload>
+							</ImgCrop>
+						<span className="text-xs text-red-500">
+						{errorMessage && (
+							<>
+								<span>{errorMessage}</span>
+							</>
+						)}
+						&nbsp;
+					</span>
+					</div>
+					</div>
+					{selectedImage || uploadedImage ? (
+						<>
+					<div className="col-span-1">
+					<img
+									src={
+										selectedImage ||
+										import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL +
+										uploadedImage
+									}
+									className="w-40 h-40 square-full"								
+								/>
+					</div>
+					</>
+					) : (null)}
+				
+					<div className="col-span-1">
+						<Select
+							name={"category_id"}
+							label={"Category"}
+							items={categorys}
+							register={register}
 							
-							register={register}							
 						/>
 					</div>
 					<div className="col-span-1">
-						<Input
-							placeholder="Enter Feed Short Code"
-							name={"feed_shortcode"}
-							label={"Feed Short Code"}
-							error={errors?.feed_shortcode?.message}
-							register={register}							
+						<Select
+							name={"group_id"}
+							label={"User Group"}
+							items={groups}
+							register={register}
+							
 						/>
 					</div>
 					<div className="col-span-1">
