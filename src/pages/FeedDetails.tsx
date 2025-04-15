@@ -32,6 +32,7 @@ import type { GetProp, UploadFile, UploadProps } from "antd";
 import MyUploadAdapter from "../components/MyUploadAdapter";
 import { useGroups } from "api/services/groupService";
 import { useCategorys } from "api/services/categoryService";
+import { UploadOutlined } from "@ant-design/icons";
 
 function MyCustomUploadAdapterPlugin(editor: any) {
 	editor.plugins.get("FileRepository").createUploadAdapter = (
