@@ -122,8 +122,16 @@ function FeedDetails() {
 	
 	useEffect(() => {
 		if (groupList) {
+
+			const uniqueMap = new Map<number, IUserGroup>();
+
+				
+
 			const groupsList = groupList.data.map((item: IUserGroup) => {
-				return { text: item.group?.group_name, value: item.group_id };
+				if (!uniqueMap.has(item.group_id)) {
+				uniqueMap.set(item.group_id, item);
+				return { text: item.group?.group_name, value: item.group_id };				
+				}
 			}) as TSelect[];
 			setGroups([
 				{ text: "Visible to All Members", value: 0 },
@@ -172,6 +180,7 @@ function FeedDetails() {
 		setUploadedImage(feedDetails?.data?.feed_image as string);
 		setOldImage(feedDetails?.data?.feed_image as string);
 		setUserIdGroup(Number(feedDetails?.data?.user_id));
+		setEditorData(feedDetails?.data?.description || "");
 		trigger();
 	}, [feedDetails]);
 
