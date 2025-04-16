@@ -59,7 +59,7 @@ function FeedDetails() {
 	const [groups, setGroups] = useState<TSelect[]>([]);
 	const [categorys, setCategorys] = useState<TSelect[]>([]);
 	const [userIdGroup, setUserIdGroup] = useState(0);
-
+	
 	const [statusList] = useState([
 		{ text: "Active", value: "active" },
 		{ text: "Inactive", value: "inactive" },
@@ -122,17 +122,21 @@ function FeedDetails() {
 	
 	useEffect(() => {
 		if (groupList) {
+			
+			const seenGroupIds = new Set<number>();
 
-			const uniqueMap = new Map<number, IUserGroup>();
-
-				
-
-			const groupsList = groupList.data.map((item: IUserGroup) => {
-				if (!uniqueMap.has(item.group_id)) {
-				uniqueMap.set(item.group_id, item);
-				return { text: item.group?.group_name, value: item.group_id };				
-				}
-			}) as TSelect[];
+			const groupsList = groupList.data
+				.filter((item: IUserGroup) => {
+					if (!seenGroupIds.has(item.group_id)) {
+						seenGroupIds.add(item.group_id);
+						return true;
+					}
+					return false;
+				})
+				.map((item: IUserGroup) => ({
+					text: item.group?.group_name,
+					value: item.group_id,
+				})) as TSelect[];
 			setGroups([
 				{ text: "Visible to All Members", value: 0 },
 				...groupsList,
