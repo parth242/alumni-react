@@ -59,7 +59,7 @@ function FeedDetails() {
 	const [groups, setGroups] = useState<TSelect[]>([]);
 	const [categorys, setCategorys] = useState<TSelect[]>([]);
 	const [userIdGroup, setUserIdGroup] = useState(0);
-	
+
 	const [statusList] = useState([
 		{ text: "Active", value: "active" },
 		{ text: "Inactive", value: "inactive" },
@@ -123,20 +123,9 @@ function FeedDetails() {
 	useEffect(() => {
 		if (groupList) {
 			
-			const seenGroupIds = new Set<number>();
-
-			const groupsList = groupList.data
-				.filter((item: IUserGroup) => {
-					if (!seenGroupIds.has(item.group_id)) {
-						seenGroupIds.add(item.group_id);
-						return true;
-					}
-					return false;
-				})
-				.map((item: IUserGroup) => ({
-					text: item.group?.group_name,
-					value: item.group_id,
-				})) as TSelect[];
+			const groupsList = groupList.data.map((item: IUserGroup) => {
+				return { text: item.group?.group_name, value: item.group_id };
+			}) as TSelect[];
 			setGroups([
 				{ text: "Visible to All Members", value: 0 },
 				...groupsList,
@@ -377,7 +366,7 @@ function FeedDetails() {
 			<form className="mt-5" onSubmit={handleSubmit(onSubmit)}>
 				
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-6 mt-10">
-					<div className="col-span-2">
+					<div className="col-span-3">
 					<div className="custom-editor-main min-h-[200px] border-2 border-[#440178] rounded-lg p-2.5 shadow-lg">
 							<CKEditor
 								editor={ClassicEditor as any}
@@ -459,9 +448,9 @@ function FeedDetails() {
 					</span>
 					</div>
 					</div>
-					{selectedImage || uploadedImage ? (
-						<>
-					<div className="col-span-1">
+					
+					<div className="col-span-2">
+					{selectedImage || uploadedImage ? (					
 					<img
 									src={
 										selectedImage ||
@@ -470,9 +459,10 @@ function FeedDetails() {
 									}
 									className="w-40 h-40 square-full"								
 								/>
-					</div>
-					</>
+				
 					) : (null)}
+					</div>
+					
 				
 					<div className="col-span-1">
 						<Select
