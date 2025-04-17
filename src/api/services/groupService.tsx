@@ -54,10 +54,10 @@ const useGroups = ({
 						`api/v1/group/
 						?` +
 						(filter_status != ""
-							? "&filter_status=" + filter_status
+							? "filter_status=" + filter_status
 							: "") +							
 						(filter_name ? "&filter_name=" + filter_name : "") +
-						`user_id=${user_id}&page_number=${page_number}
+						`&user_id=${user_id}&page_number=${page_number}
 						&page_size=${page_size}&flow_types=0&flow_types=1&flow_types=2`,
 					)
 					.json();
