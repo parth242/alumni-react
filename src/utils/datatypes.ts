@@ -792,6 +792,8 @@ export type IFeed = {
 	feed_image: string;
 	status: string;
 	user_id: number;
+	group_id: number;
+	category_id: number;
 	user?: { first_name: string; last_name: string; image: string };
 	dashboard_category?: { category_name: string };
 	group?: { group_name: string };

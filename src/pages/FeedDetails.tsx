@@ -77,6 +77,50 @@ function FeedDetails() {
 	});
 
 	const {
+		trigger,
+		register,
+		setValue,
+		handleSubmit,
+		reset,
+		formState: { errors },
+		getValues,
+	} = useForm<TFeedFormData>({
+		resolver: yupResolver(schema)
+		
+	});
+
+	let {
+		isLoading,
+		data: feedDetails,
+		refetch: fetchFeedDetails,
+		isFetching: isFetchingFeedDetails,
+		remove,
+	} = getFeed({
+		enabled: +id > 0,
+		id: +id,
+	}) || [];
+	useEffect(() => {
+		if (id) {
+			fetchFeedDetails();
+		} else {
+			feedDetails = undefined;
+			setTimeout(() => {
+				reset();
+			});
+		}
+	}, [id]);
+	useEffect(() => {
+		reset(feedDetails?.data);
+		setUploadedImage(feedDetails?.data?.feed_image as string);
+		setOldImage(feedDetails?.data?.feed_image as string);
+		setUserIdGroup(Number(feedDetails?.data?.user_id));
+		setEditorData(feedDetails?.data?.description || "");
+		setValue('group_id',Number(feedDetails?.data?.group_id));
+		trigger();
+	}, [feedDetails]);
+
+
+	const {
 		data: categoryList,
 		refetch: fetchCategoryList,
 		isFetching: isFetchingCategoryList,
@@ -118,7 +162,8 @@ function FeedDetails() {
 		if(userIdGroup>0){
 		fetchGroupList();
 		}
-	}, [userIdGroup]);
+		setValue('group_id',Number(feedDetails?.data?.group_id));
+	}, [userIdGroup, feedDetails?.data]);
 	
 	useEffect(() => {
 		if (groupList) {
@@ -135,49 +180,7 @@ function FeedDetails() {
 		}
 	}, [groupList]);
 
-	const {
-		trigger,
-		register,
-		setValue,
-		handleSubmit,
-		reset,
-		formState: { errors },
-		getValues,
-	} = useForm<TFeedFormData>({
-		resolver: yupResolver(schema)
-		
-	});
-
-	let {
-		isLoading,
-		data: feedDetails,
-		refetch: fetchFeedDetails,
-		isFetching: isFetchingFeedDetails,
-		remove,
-	} = getFeed({
-		enabled: +id > 0,
-		id: +id,
-	}) || [];
-	useEffect(() => {
-		if (id) {
-			fetchFeedDetails();
-		} else {
-			feedDetails = undefined;
-			setTimeout(() => {
-				reset();
-			});
-		}
-	}, [id]);
-	useEffect(() => {
-		reset(feedDetails?.data);
-		setUploadedImage(feedDetails?.data?.feed_image as string);
-		setOldImage(feedDetails?.data?.feed_image as string);
-		setUserIdGroup(Number(feedDetails?.data?.user_id));
-		setEditorData(feedDetails?.data?.description || "");
-		setValue('group_id',feedDetails?.data?.group_id);
-		trigger();
-	}, [feedDetails]);
-
+	
 	console.log("feedDetails", feedDetails);
 
 	const parseEditorContent = (content: string) => {
