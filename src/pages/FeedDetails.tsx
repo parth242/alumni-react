@@ -161,9 +161,8 @@ function FeedDetails() {
 	useEffect(() => {
 		if(userIdGroup>0){
 		fetchGroupList();
-		}
-		setValue('group_id',Number(feedDetails?.data?.group_id));
-	}, [userIdGroup, feedDetails?.data]);
+		}		
+	}, [userIdGroup]);
 	
 	useEffect(() => {
 		if (groupList) {
@@ -178,7 +177,9 @@ function FeedDetails() {
 		} else {
 			setGroups([{ text: "Visible to All Members", value: 0 }]);
 		}
-	}, [groupList]);
+		setValue('group_id',Number(feedDetails?.data?.group_id));
+		setValue('category_id',Number(feedDetails?.data?.category_id));
+	}, [groupList, feedDetails?.data]);
 
 	
 	console.log("feedDetails", feedDetails);

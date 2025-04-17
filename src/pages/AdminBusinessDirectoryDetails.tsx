@@ -404,7 +404,7 @@ function AdminBusinessDirectoryDetails() {
 	const onSubmit = async (data: TBusinessDirectoryFormData) => {
 		setLoading(true);
 		await saveProfileImage();
-
+  
 		data.business_logo = getValues("business_logo") || "";
 		const storedUserData = localStorage.getItem('user');
 
