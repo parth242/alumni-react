@@ -116,7 +116,7 @@ function AlumniDashboard() {
 		refetch: fetchGroupList,
 		isFetching: isFetchingGroupList,
 	} = useGroups({
-		enabled: userIdGroup > 0,
+		enabled: false,
 		filter_status: activeStatus,
 		filter_name: searchText,
 		user_id: userIdGroup,

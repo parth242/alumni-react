@@ -106,7 +106,7 @@ function FeedDetails() {
 		refetch: fetchGroupList,
 		isFetching: isFetchingGroupList,
 	} = useGroups({
-		enabled: userIdGroup > 0,
+		enabled: false,
 		filter_status: 'active',
 		filter_name: "",
 		user_id: userIdGroup,
@@ -174,10 +174,11 @@ function FeedDetails() {
 		setOldImage(feedDetails?.data?.feed_image as string);
 		setUserIdGroup(Number(feedDetails?.data?.user_id));
 		setEditorData(feedDetails?.data?.description || "");
+		setValue('group_id',feedDetails?.data?.group_id);
 		trigger();
 	}, [feedDetails]);
 
-	console.log("feedDetails", errors);
+	console.log("feedDetails", feedDetails);
 
 	const parseEditorContent = (content: string) => {
 		// No need to manipulate the content anymore. Just pass it as it is.
