@@ -186,7 +186,18 @@ export default function HomeHeader() {
         <div className="branding d-flex align-items-center">
           <div className="container position-relative d-flex align-items-center justify-content-between">
             <a href="/" className="logo d-flex align-items-center">
-              <h1 className="sitename">Alumni <br /> Network</h1>
+              <h1 className="sitename">
+                {instituteDetails?.data.institute_logo ? (
+                  <>
+              <img																											
+														src={import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL + instituteDetails?.data.institute_logo}
+														alt=""
+													/>
+                          </>
+              ) : ("Alumni <br /> Network")
+            }
+             
+                </h1>
             </a>
 
             <nav id="navmenu" className="navmenu">

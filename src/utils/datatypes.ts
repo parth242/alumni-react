@@ -1319,6 +1319,7 @@ export type TInstituteFormData = {
 	id?: number;
 	institute_name: string;
 	institute_siteurl: string;
+	institute_logo?: string;
 	university_id: number;
 	status: string;
 };
@@ -1327,6 +1328,7 @@ export type IInstitute = {
 	institute_id: number;
 	institute_name: string;
 	institute_siteurl: string;
+	institute_logo: string;
 	university_id: number;
 	status: string;
 	twitter_url: string;

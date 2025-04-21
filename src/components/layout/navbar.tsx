@@ -500,8 +500,8 @@ export default function Navbar() {
 													)}>
 													<span className="sr-only">Open user menu</span>
 													<img
-														className="h-8 w-8 rounded-full bg-white dark:bg-dark1"
-														src={user?.image ? import.meta.env.VITE_BASE_URL + "upload/profile/" + user?.image : "/assets/images/user.svg"}
+														className="h-8 w-8 rounded-full bg-white dark:bg-dark1"														
+														src={user?.image ? import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL + user?.image : "/assets/images/user.svg"}
 														alt=""
 													/>
 												</Menu.Button>
