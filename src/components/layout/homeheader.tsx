@@ -188,14 +188,12 @@ export default function HomeHeader() {
             <a href="/" className="logo d-flex align-items-center">
               
                 {instituteDetails?.data.institute_logo ? (
-                  <>
-                   <h1 className="sitename">
+                  <>                   
               <img																											
 														src={import.meta.env.VITE_TEBI_CLOUD_FRONT_PROFILE_S3_URL + instituteDetails?.data.institute_logo}
 														alt=""
-													/>
-                          </h1>
-                          </>
+													/>                        
+                  </>
               ) : (
                 <>
                 <h1 className="sitename">Alumni <br /> Network</h1>
