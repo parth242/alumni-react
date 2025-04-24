@@ -68,8 +68,7 @@ const useBusinessDirectorys = ({
 	);
 };
 
-const createBusinessDirectory = async (req: TBusinessDirectoryFormData) => {
-	console.log("Hiiiiii");
+const createBusinessDirectory = async (req: TBusinessDirectoryFormData) => {	
 	try {
 		return await authClient
 			.post(`api/v1/businessdirectory/create`, { json: req })
