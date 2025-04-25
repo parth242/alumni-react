@@ -25,7 +25,11 @@ import { useIndustrys } from "api/services/industryService";
 import { allowedFiles, fileInvalid, filesExt, filesLimit, filesSize, patterns } from "utils/consts";
 import axios, { AxiosResponse } from "axios";
 import ImgCrop from "antd-img-crop";
-import { UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined, FacebookOutlined,
+	InstagramOutlined,
+	LinkedinOutlined,
+	TwitterOutlined,
+	YoutubeOutlined, } from "@ant-design/icons";
 import { Upload, UploadFile, UploadProps, Button as AntdButton } from "antd";
 
 
@@ -249,6 +253,8 @@ function AdminBusinessDirectoryDetails() {
 	useEffect(() => {
 		
 		fetchindustryListData();
+		fetchServiceData();
+		fetchProductData();
 		return () => {
 			return;
 		};
@@ -641,6 +647,70 @@ function AdminBusinessDirectoryDetails() {
 								name={"description"}
 								label={"Description"}
 								register={register}
+							/>
+				</div>
+				</div>
+
+				<div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-6 mt-10">
+					<h1>Social Media</h1>
+				<div className="col-span-1">
+						<Input
+								placeholder="Enter Facebook"
+								name={"social_facebook"}
+								label={"Facebook"}
+								preIcon={
+									<FacebookOutlined className="text-blue-500" />
+								}
+								register={register}
+								error={errors?.social_facebook?.message}
+							/>
+				</div>
+				<div className="col-span-1">
+						<Input
+								placeholder="Enter Instagram"
+								name={"social_instagram"}
+								label={"Instagram"}
+								preIcon={
+									<InstagramOutlined className="text-blue-500" />
+								}
+								register={register}
+								error={errors?.social_instagram?.message}
+							/>
+				</div>
+				<div className="col-span-1">
+						<Input
+								placeholder="Enter LinkedIn"
+								name={"social_linkedin"}
+								label={"LinkedIn"}
+								preIcon={
+									<LinkedinOutlined className="text-blue-500" />
+								}
+								register={register}
+								error={errors?.social_linkedin?.message}
+							/>
+				</div>
+				<div className="col-span-1">
+						<Input
+								placeholder="Enter Twitter"
+								name={"social_twitter"}
+								label={"Twitter"}
+								preIcon={
+									<TwitterOutlined className="text-blue-500" />
+								}
+								register={register}
+								error={errors?.social_twitter?.message}
+							/>
+				</div>
+				<div className="col-span-1">
+						<Input
+								placeholder="Enter Youtube"
+								name={"social_youtube"}
+								label={"Youtube"}
+								preIcon={
+									<TwitterOutlined className="text-blue-500" />
+								}
+								register={register}
+								error={errors?.social_youtube?.message}
 							/>
 				</div>
 				</div>
