@@ -7,6 +7,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import InputCustom from "components/ui/common/InputCustom";
 import Icon from "utils/icon";
 import { useMutation } from "react-query";
 import { ErrorToastMessage, SuccessToastMessage, useUploadImage } from "api/services/user";
@@ -574,15 +575,7 @@ function AdminBusinessDirectoryDetails() {
 						/>
 					</div>				
 					
-					<div className="col-span-1">
-						<Select
-							name={"status"}
-							label={"Status"}
-							items={statusList}
-							error={errors?.status?.message}
-							register={register}
-						/>
-					</div>
+					
 
 					<div className="col-span-1">
 					<label htmlFor="business_logo" className="font-medium text-gray-900 dark:text-darkPrimary">Business Logo</label>
@@ -640,6 +633,76 @@ function AdminBusinessDirectoryDetails() {
 				</div>
 				
 				
+				
+
+				<div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-6 mt-10">					
+				<div className="col-span-1">
+					<InputCustom
+							label="Facebook"
+							name="social_facebook"
+							placeholder="Facebook"
+							preIcon={
+									<FacebookOutlined className="text-blue-500" />
+									}							
+							register={register}
+							trigger={trigger}
+							error={errors.social_facebook?.message}
+						/>
+				</div>
+				<div className="col-span-1">
+						<InputCustom
+							label="Instagram"
+							name="social_instagram"
+							placeholder="Instagram"
+							preIcon={
+										<InstagramOutlined className="text-pink-500" />
+									}
+							register={register}
+							trigger={trigger}
+							error={errors.social_instagram?.message}												
+						/>
+				</div>
+				<div className="col-span-1">
+						<InputCustom
+							label="LinkedIn"
+							name="social_linkedin"
+							placeholder="LinkedIn"
+							preIcon={
+									<LinkedinOutlined className="text-blue-500" />
+									}
+							register={register}
+							trigger={trigger}
+							error={errors.social_linkedin?.message}													
+						/>
+				</div>
+				<div className="col-span-1">
+							<InputCustom
+								label="Twitter"
+								name="social_twitter"
+								placeholder="Twitter"
+								preIcon={
+										<TwitterOutlined className="text-blue-500" />
+										}
+								register={register}
+								trigger={trigger}
+								error={errors.social_twitter?.message}												
+							/>
+				</div>
+				<div className="col-span-1">
+						   <InputCustom
+								label="Youtube"
+								name="social_youtube"
+								placeholder="Youtube"
+								preIcon={
+											<YoutubeOutlined className="text-blue-500" />
+										}
+								register={register}
+								trigger={trigger}
+								error={errors.social_youtube?.message}													
+							/>
+				</div>
+				</div>
+
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-6 mt-10">
 				<div className="col-span-2">
 						<Textarea
@@ -649,70 +712,15 @@ function AdminBusinessDirectoryDetails() {
 								register={register}
 							/>
 				</div>
-				</div>
-
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-6 mt-10">
-					<h1>Social Media</h1>
 				<div className="col-span-1">
-						<Input
-								placeholder="Enter Facebook"
-								name={"social_facebook"}
-								label={"Facebook"}
-								preIcon={
-									<FacebookOutlined className="text-blue-500" />
-								}
-								register={register}
-								error={errors?.social_facebook?.message}
-							/>
-				</div>
-				<div className="col-span-1">
-						<Input
-								placeholder="Enter Instagram"
-								name={"social_instagram"}
-								label={"Instagram"}
-								preIcon={
-									<InstagramOutlined className="text-blue-500" />
-								}
-								register={register}
-								error={errors?.social_instagram?.message}
-							/>
-				</div>
-				<div className="col-span-1">
-						<Input
-								placeholder="Enter LinkedIn"
-								name={"social_linkedin"}
-								label={"LinkedIn"}
-								preIcon={
-									<LinkedinOutlined className="text-blue-500" />
-								}
-								register={register}
-								error={errors?.social_linkedin?.message}
-							/>
-				</div>
-				<div className="col-span-1">
-						<Input
-								placeholder="Enter Twitter"
-								name={"social_twitter"}
-								label={"Twitter"}
-								preIcon={
-									<TwitterOutlined className="text-blue-500" />
-								}
-								register={register}
-								error={errors?.social_twitter?.message}
-							/>
-				</div>
-				<div className="col-span-1">
-						<Input
-								placeholder="Enter Youtube"
-								name={"social_youtube"}
-								label={"Youtube"}
-								preIcon={
-									<TwitterOutlined className="text-blue-500" />
-								}
-								register={register}
-								error={errors?.social_youtube?.message}
-							/>
-				</div>
+						<Select
+							name={"status"}
+							label={"Status"}
+							items={statusList}
+							error={errors?.status?.message}
+							register={register}
+						/>
+					</div>
 				</div>
 				
 				
