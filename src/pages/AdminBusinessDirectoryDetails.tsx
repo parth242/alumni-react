@@ -13,6 +13,8 @@ import { ErrorToastMessage, SuccessToastMessage, useUploadImage } from "api/serv
 import { getBusinessDirectory,createBusinessDirectory } from "api/services/businessdirectoryService";
 import { useProfessionalskills } from "api/services/professionalskillService";
 import { useProfessionalareas } from "api/services/professionalareaService";
+import { getServices } from "api/services/servicesService ";
+import { createProducts, getProducts } from "api/services/productsService ";
 import { useNavigate, useParams } from "react-router-dom";
 import { HTTPError } from "ky";
 import { TBusinessDirectoryFormData,IBusinessDirectory, TSelect,TSelectJob,
@@ -44,7 +46,9 @@ function AdminBusinessDirectoryDetails() {
 	);
 
 	const [industryList, setIndustryList] = useState<TSelect[]>([]);
-
+	const [serviceList, setServiceList] = useState<any[]>([]);
+	const [productList, setProductList] = useState<any[]>([]);
+	
 	const [image, setImage] = useState<File | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [oldImage, setOldImage] = useState<string>();
@@ -53,6 +57,14 @@ function AdminBusinessDirectoryDetails() {
 
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [selectedImage, setSelectedImage] = useState<string>();
+
+	const { data: servicesData, refetch: fetchServiceData } = getServices({
+		enabled: false,
+	});
+
+	const { data: productsData, refetch: fetchProductData } = getProducts({
+		enabled: false,
+	});
 
 	const getSrcFromFile = (file) => {
 		return new Promise((resolve) => {
@@ -252,6 +264,28 @@ function AdminBusinessDirectoryDetails() {
 			setIndustryList([]);
 		}
 	}, [industries]);
+
+	useEffect(() => {
+		if (servicesData) {
+			const servicesList = servicesData.data.map((item: any) => {
+				return { text: item.service_name, value: item.service_name };
+			}) as any[];
+			setServiceList([...servicesList]);
+		} else {
+			setServiceList([]);
+		}
+	}, [servicesData]);
+
+	useEffect(() => {
+		if (productsData) {
+			const productsList = productsData.data.map((item: any) => {
+				return { text: item.product_name, value: item.product_name };
+			}) as any[];
+			setProductList([...productsList]);
+		} else {
+			setProductList([]);
+		}
+	}, [productsData]);
 	
 	const {
 		data: professionalskills,
@@ -514,7 +548,25 @@ function AdminBusinessDirectoryDetails() {
 								register={register}
 								error={errors?.business_email?.message}
 							/>
-					</div>					
+					</div>	
+
+					<div className="col-span-1">
+						<Select
+							name={"services"}
+							label={"Services"}
+							items={serviceList}							
+							register={register}
+						/>
+					</div>
+
+					<div className="col-span-1">
+						<Select
+							name={"products"}
+							label={"Products"}
+							items={productList}							
+							register={register}
+						/>
+					</div>				
 					
 					<div className="col-span-1">
 						<Select
